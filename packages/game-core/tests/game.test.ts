@@ -177,6 +177,16 @@ describe("randomness", () => {
 });
 
 describe("game end and results", () => {
+  it("returns result totals without sharing mutable tuples with game state", () => {
+    const book = makeBook(Array.from({ length: 20 }, (_, i) => makeSpread(`s${i}`, 5, 1)));
+    const end = playToEnd(newGame(book, 5));
+    const snapshot = JSON.stringify(end);
+    const result = getResult(end);
+    result.roundWins[0] = 999;
+    result.peopleTotals[0] = 999;
+    expect(JSON.stringify(end)).toBe(snapshot);
+  });
+
   it("ends after the configured rounds when someone leads on round wins", () => {
     const book = makeBook(Array.from({ length: 40 }, (_, i) => makeSpread(`s${i}`, 5, 1)));
     for (const rounds of [5, 10, 15] as const) {

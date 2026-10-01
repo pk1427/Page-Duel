@@ -150,7 +150,11 @@ export function getResult(state: GameState): GameResult {
     throw new Error("Game is not finished");
   }
   const { roundWins, peopleTotals, rounds } = state;
-  const base = { roundWins, peopleTotals, roundsPlayed: rounds.length };
+  const base = {
+    roundWins: [...roundWins] as [number, number],
+    peopleTotals: [...peopleTotals] as [number, number],
+    roundsPlayed: rounds.length,
+  };
 
   if (roundWins[0] !== roundWins[1]) {
     return { ...base, winner: roundWins[0] > roundWins[1] ? 0 : 1, reason: "roundWins" };
