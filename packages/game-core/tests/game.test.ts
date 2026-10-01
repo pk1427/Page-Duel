@@ -69,6 +69,24 @@ describe("state machine", () => {
     scoreRound(s1);
     expect(JSON.stringify(s0)).toBe(snapshot);
   });
+
+  it("copies the input book so later caller mutations cannot affect eligibility or scoring", () => {
+    const book = makeBook(Array.from({ length: 20 }, (_, i) => makeSpread(`s${i}`, 4, 1)));
+    const state = newGame(book);
+    expect(state.config.book).not.toBe(book);
+
+    const mutableBook = book as unknown as {
+      spreads: Array<{ left: { people: number }; right: { people: number } }>;
+    };
+    for (const spread of mutableBook.spreads) {
+      spread.left.people = 0;
+      spread.right.people = 0;
+    }
+
+    expect(eligibleSpreads(book)).toHaveLength(0);
+    expect(eligibleSpreads(state.config.book)).toHaveLength(20);
+    expect(playRound(state).rounds[0]!.counts).toEqual([4, 1]);
+  });
 });
 
 describe("scoring", () => {
@@ -182,8 +200,8 @@ describe("game end and results", () => {
     const end = playToEnd(newGame(book, 5));
     const snapshot = JSON.stringify(end);
     const result = getResult(end);
-    result.roundWins[0] = 999;
-    result.peopleTotals[0] = 999;
+    (result.roundWins as [number, number])[0] = 999;
+    (result.peopleTotals as [number, number])[0] = 999;
     expect(JSON.stringify(end)).toBe(snapshot);
   });
 

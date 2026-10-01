@@ -1,6 +1,7 @@
 import { nextRandom } from "./rng";
 import { eligibleSpreads, validateBook } from "./spreads";
 import type {
+  Book,
   GameConfig,
   GameResult,
   GameState,
@@ -10,6 +11,19 @@ import type {
 } from "./types";
 
 const VALID_ROUND_COUNTS = new Set<number>([5, 10, 15]);
+
+/** Copy JSON-safe book data once so callers cannot mutate a live game through their input. */
+function cloneBook(book: Book): Book {
+  return {
+    ...book,
+    spreads: book.spreads.map((spread) => ({
+      ...spread,
+      left: { ...spread.left },
+      right: { ...spread.right },
+      ...(spread.flags === undefined ? {} : { flags: [...spread.flags] }),
+    })),
+  };
+}
 
 /** Which player owns the left / right page in a given round (GDD 4.1). */
 export function pageOwners(
@@ -29,12 +43,13 @@ export function startGame(config: GameConfig): GameState {
   if (!Number.isFinite(config.seed)) {
     throw new Error("seed must be a finite number");
   }
-  const check = validateBook(config.book);
+  const book = cloneBook(config.book);
+  const check = validateBook(book);
   if (!check.ok) {
     throw new Error(`Invalid book data:\n${check.errors.join("\n")}`);
   }
   // GDD 4.4: need at least 2x the round count of eligible spreads.
-  const eligible = eligibleSpreads(config.book).length;
+  const eligible = eligibleSpreads(book).length;
   if (eligible < config.rounds * 2) {
     throw new Error(
       `Book has ${eligible} eligible spreads; ${config.rounds * 2} needed for ${config.rounds} rounds.`,
@@ -45,7 +60,7 @@ export function startGame(config: GameConfig): GameState {
     config.players[1].trim() || "Player 2",
   ];
   return {
-    config: { ...config, players: names },
+    config: { ...config, book, players: names },
     phase: "awaitingFlip",
     rngState: config.seed >>> 0,
     usedSpreadIds: [],

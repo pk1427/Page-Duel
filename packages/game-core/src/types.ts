@@ -2,30 +2,30 @@ export type PlayerIndex = 0 | 1;
 export type RoundCount = 5 | 10 | 15;
 
 export interface Page {
-  page: number;
-  image: string;
+  readonly page: number;
+  readonly image: string;
   /** Number of people on this page (integer >= 0), per GDD rule 4.2. */
-  people: number;
+  readonly people: number;
 }
 
 export type SpreadFlag = "ambiguous" | "excluded";
 
 export interface Spread {
-  id: string;
-  left: Page;
-  right: Page;
-  flags?: SpreadFlag[];
+  readonly id: string;
+  readonly left: Page;
+  readonly right: Page;
+  readonly flags?: readonly SpreadFlag[];
 }
 
 export interface Book {
-  id: string;
-  title: string;
-  author: string;
-  illustrator?: string;
-  license?: string;
-  source?: string;
-  coverImage: string;
-  spreads: Spread[];
+  readonly id: string;
+  readonly title: string;
+  readonly author: string;
+  readonly illustrator?: string;
+  readonly license?: string;
+  readonly source?: string;
+  readonly coverImage: string;
+  readonly spreads: readonly Spread[];
 }
 
 export interface GameConfig {
@@ -46,35 +46,35 @@ export type Phase =
 
 export interface RoundResult {
   /** 1-based. Sudden-death rounds continue the numbering past config.rounds. */
-  roundNumber: number;
-  spreadId: string;
-  suddenDeath: boolean;
+  readonly roundNumber: number;
+  readonly spreadId: string;
+  readonly suddenDeath: boolean;
   /** People count per player for this round (already mapped through side ownership). */
-  counts: [number, number];
+  readonly counts: readonly [number, number];
   /** Round winner, or null for a draw. */
-  winner: PlayerIndex | null;
+  readonly winner: PlayerIndex | null;
 }
 
 export interface GameState {
-  config: GameConfig;
-  phase: Phase;
+  readonly config: GameConfig;
+  readonly phase: Phase;
   /** Internal RNG state, kept in state so every function stays pure. */
-  rngState: number;
-  usedSpreadIds: string[];
-  currentSpread: Spread | null;
+  readonly rngState: number;
+  readonly usedSpreadIds: readonly string[];
+  readonly currentSpread: Spread | null;
   /** 1-based number of the round currently being played (or last one played). */
-  roundNumber: number;
-  rounds: RoundResult[];
-  roundWins: [number, number];
-  peopleTotals: [number, number];
+  readonly roundNumber: number;
+  readonly rounds: readonly RoundResult[];
+  readonly roundWins: readonly [number, number];
+  readonly peopleTotals: readonly [number, number];
 }
 
 export type WinReason = "roundWins" | "peopleTotal" | "suddenDeath" | "draw";
 
 export interface GameResult {
-  winner: PlayerIndex | null;
-  reason: WinReason;
-  roundWins: [number, number];
-  peopleTotals: [number, number];
-  roundsPlayed: number;
+  readonly winner: PlayerIndex | null;
+  readonly reason: WinReason;
+  readonly roundWins: readonly [number, number];
+  readonly peopleTotals: readonly [number, number];
+  readonly roundsPlayed: number;
 }
