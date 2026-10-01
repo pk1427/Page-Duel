@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "Book People",
+    "slug": "book-people",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "bookpeople",
+    "userInterfaceStyle": "light",
+    "web": {
+      "output": "static"
+    },
+    "plugins": ["expo-router", "expo-splash-screen"],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

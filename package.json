@@ -4,10 +4,15 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "test": "pnpm --filter @book-people/game-core test",
-    "typecheck": "pnpm --filter @book-people/game-core typecheck",
-    "test:tools": ".venv/bin/python -m unittest tools/book-prep/tests/test_toolkit.py && node tools/book-prep/tests/counter-smoke.mjs"
+    "typecheck": "pnpm -r run typecheck",
+    "test:tools": ".venv/bin/python -m unittest tools/book-prep/tests/test_toolkit.py && node tools/book-prep/tests/counter-smoke.mjs",
+    "format": "prettier --write .",
+    "app:start": "pnpm --filter game start",
+    "app:web": "pnpm --filter game web",
+    "app:export": "pnpm --filter game exec expo export --platform web && pnpm --filter game exec expo export --platform android"
   },
   "devDependencies": {
-    "jsdom": "^30.1.1"
+    "jsdom": "^30.1.1",
+    "prettier": "^3.6.2"
   }
 }
