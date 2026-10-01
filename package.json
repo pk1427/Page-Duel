@@ -5,5 +5,8 @@
   "scripts": {
     "test": "pnpm --filter @book-people/game-core test",
     "typecheck": "pnpm --filter @book-people/game-core typecheck"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.1"
   }
 }
