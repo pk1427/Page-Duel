@@ -1,0 +1,9 @@
+{
+  "name": "book-people",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "test": "pnpm --filter @book-people/game-core test",
+    "typecheck": "pnpm --filter @book-people/game-core typecheck"
+  }
+}
