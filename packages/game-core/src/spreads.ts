@@ -23,6 +23,7 @@ export interface BookValidation {
 
 /** Sanity-check book data before it reaches a game. */
 export function validateBook(book: Book): BookValidation {
+  // TODO: V2 PDF upload will need structural validation (missing spreads array, wrong field types, etc.).
   const errors: string[] = [];
   const seen = new Set<string>();
   for (const s of book.spreads) {
