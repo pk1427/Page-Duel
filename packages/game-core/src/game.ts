@@ -166,7 +166,8 @@ export function getResult(state: GameState): GameResult {
       reason: "peopleTotal",
     };
   }
-  const decider = rounds.filter((r) => r.suddenDeath && r.winner !== null).at(-1);
+  const decisiveRounds = rounds.filter((r) => r.suddenDeath && r.winner !== null);
+  const decider = decisiveRounds[decisiveRounds.length - 1];
   if (decider && decider.winner !== null) {
     return { ...base, winner: decider.winner, reason: "suddenDeath" };
   }

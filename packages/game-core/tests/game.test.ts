@@ -232,7 +232,7 @@ describe("game end and results", () => {
       if (r.reason === "suddenDeath") {
         foundSudden = true;
         expect(r.roundsPlayed).toBeGreaterThan(5);
-        const last = end.rounds.at(-1)!;
+        const last = end.rounds[end.rounds.length - 1]!;
         expect(last.suddenDeath).toBe(true);
         expect(last.winner).not.toBeNull();
         // Sudden death does not alter the regular totals.
