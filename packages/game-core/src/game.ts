@@ -109,8 +109,7 @@ export function scoreRound(state: GameState): GameState {
   counts[leftOwner] = spread.left.people;
   counts[rightOwner] = spread.right.people;
 
-  const winner: PlayerIndex | null =
-    counts[0] > counts[1] ? 0 : counts[1] > counts[0] ? 1 : null;
+  const winner: PlayerIndex | null = counts[0] > counts[1] ? 0 : counts[1] > counts[0] ? 1 : null;
 
   const round: RoundResult = {
     roundNumber,
@@ -148,8 +147,8 @@ function isFinished(state: GameState, lastRound: RoundResult): boolean {
   if (lastRound.suddenDeath) {
     if (lastRound.winner !== null) return true;
   } else {
-    if (roundWins[0] !== roundWins[1]) return true;
     if (peopleTotals[0] !== peopleTotals[1]) return true;
+    if (roundWins[0] !== roundWins[1]) return true;
   }
   // Still tied: keep going while spreads remain, otherwise call it a draw.
   return remainingSpreads(state).length === 0;
@@ -171,15 +170,15 @@ export function getResult(state: GameState): GameResult {
     roundsPlayed: rounds.length,
   };
 
-  if (roundWins[0] !== roundWins[1]) {
-    return { ...base, winner: roundWins[0] > roundWins[1] ? 0 : 1, reason: "roundWins" };
-  }
   if (peopleTotals[0] !== peopleTotals[1]) {
     return {
       ...base,
       winner: peopleTotals[0] > peopleTotals[1] ? 0 : 1,
       reason: "peopleTotal",
     };
+  }
+  if (roundWins[0] !== roundWins[1]) {
+    return { ...base, winner: roundWins[0] > roundWins[1] ? 0 : 1, reason: "roundWins" };
   }
   const decisiveRounds = rounds.filter((r) => r.suddenDeath && r.winner !== null);
   const decider = decisiveRounds[decisiveRounds.length - 1];

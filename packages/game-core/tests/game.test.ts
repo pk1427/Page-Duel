@@ -9,7 +9,16 @@ import {
   startGame,
   validateBook,
 } from "../src";
-import { drawBook, makeBook, makeSpread, newGame, playRound, playToEnd, varietyBook } from "./helpers";
+import type { GameState } from "../src";
+import {
+  drawBook,
+  makeBook,
+  makeSpread,
+  newGame,
+  playRound,
+  playToEnd,
+  varietyBook,
+} from "./helpers";
 
 describe("eligibility and validation", () => {
   it("excludes both-zero spreads and excluded-flag spreads, keeps one-zero spreads", () => {
@@ -123,23 +132,35 @@ describe("randomness", () => {
 
   it("same seed gives the same game; different seeds differ", () => {
     const seq = (seed: number) =>
-      playToEnd(newGame(varietyBook(), 10, { seed })).rounds.map((r) => r.spreadId).join(",");
+      playToEnd(newGame(varietyBook(), 10, { seed }))
+        .rounds.map((r) => r.spreadId)
+        .join(",");
     expect(seq(7)).toBe(seq(7));
     expect(seq(7)).not.toBe(seq(8));
   });
 
   it("normalizes unusual finite numeric seeds reproducibly", () => {
-    const config = { players: ["A", "B"] as [string, string], book: varietyBook(), rounds: 5 as const };
+    const config = {
+      players: ["A", "B"] as [string, string],
+      book: varietyBook(),
+      rounds: 5 as const,
+    };
     for (const seed of [0, -123.75, Number.MAX_VALUE]) {
       const left = startGame({ ...config, seed });
       const right = startGame({ ...config, seed });
       expect(playToEnd(left)).toEqual(playToEnd(right));
     }
-    expect(() => startGame({ ...config, seed: Number.NaN })).toThrow(/seed must be a finite number/);
+    expect(() => startGame({ ...config, seed: Number.NaN })).toThrow(
+      /seed must be a finite number/,
+    );
   });
 
   it("different seeds produce different games", () => {
-    const config = { players: ["A", "B"] as [string, string], book: varietyBook(), rounds: 10 as const };
+    const config = {
+      players: ["A", "B"] as [string, string],
+      book: varietyBook(),
+      rounds: 10 as const,
+    };
     expect(playToEnd(startGame({ ...config, seed: 7 })).rounds).not.toEqual(
       playToEnd(startGame({ ...config, seed: 8 })).rounds,
     );
@@ -147,7 +168,9 @@ describe("randomness", () => {
 
   it("requires a seed at runtime", () => {
     expect(() =>
-      startGame({ players: ["A", "B"], book: varietyBook(), rounds: 5 } as unknown as Parameters<typeof startGame>[0]),
+      startGame({ players: ["A", "B"], book: varietyBook(), rounds: 5 } as unknown as Parameters<
+        typeof startGame
+      >[0]),
     ).toThrow(/seed must be a finite number/);
   });
 
@@ -165,20 +188,24 @@ describe("randomness", () => {
   it("terminates without repeated spreads and returns a consistent result across seeds", () => {
     const expectedResult = (state: ReturnType<typeof playToEnd>) => {
       const result = getResult(state);
-      if (state.roundWins[0] !== state.roundWins[1]) {
-        expect(result).toMatchObject({
-          winner: state.roundWins[0] > state.roundWins[1] ? 0 : 1,
-          reason: "roundWins",
-        });
-      } else if (state.peopleTotals[0] !== state.peopleTotals[1]) {
+      if (state.peopleTotals[0] !== state.peopleTotals[1]) {
         expect(result).toMatchObject({
           winner: state.peopleTotals[0] > state.peopleTotals[1] ? 0 : 1,
           reason: "peopleTotal",
         });
+      } else if (state.roundWins[0] !== state.roundWins[1]) {
+        expect(result).toMatchObject({
+          winner: state.roundWins[0] > state.roundWins[1] ? 0 : 1,
+          reason: "roundWins",
+        });
       } else {
-        const decider = state.rounds.filter((round) => round.suddenDeath && round.winner !== null).pop();
+        const decider = state.rounds
+          .filter((round) => round.suddenDeath && round.winner !== null)
+          .pop();
         expect(result).toMatchObject(
-          decider ? { winner: decider.winner, reason: "suddenDeath" } : { winner: null, reason: "draw" },
+          decider
+            ? { winner: decider.winner, reason: "suddenDeath" }
+            : { winner: null, reason: "draw" },
         );
       }
     };
@@ -195,6 +222,90 @@ describe("randomness", () => {
 });
 
 describe("game end and results", () => {
+  const finishedWith = (
+    peopleTotals: [number, number],
+    roundWins: [number, number],
+    suddenWinner: 0 | 1 | null = null,
+  ): GameState => ({
+    ...newGame(varietyBook(), 5),
+    phase: "finished",
+    peopleTotals,
+    roundWins,
+    rounds: suddenWinner === null ? [] : [{ roundNumber: 6, spreadId: "sudden", suddenDeath: true, counts: [3, 1], winner: suddenWinner }],
+  });
+
+  it("uses people totals before round wins", () => {
+    const result = getResult(finishedWith([23, 18], [2, 3]));
+    expect(result).toMatchObject({ winner: 0, reason: "peopleTotal" });
+  });
+
+  it("continues normal play after round one even when people totals differ", () => {
+    const book = makeBook(Array.from({ length: 20 }, (_, index) => makeSpread(`s${index}`, 4, 2)));
+    const afterRoundOne = playRound(newGame(book, 5));
+    expect(afterRoundOne.rounds).toHaveLength(1);
+    expect(afterRoundOne.peopleTotals).toEqual([4, 2]);
+    expect(isGameOver(afterRoundOne)).toBe(false);
+    expect(afterRoundOne.phase).toBe("roundScored");
+  });
+
+  it("commits the fully scored fifth round before the final result is read", () => {
+    const base = newGame(varietyBook(20), 5);
+    const finalSpread = makeSpread("final", 8, 1);
+    const beforeFinal: GameState = {
+      ...base,
+      phase: "spreadShown",
+      currentSpread: finalSpread,
+      usedSpreadIds: ["one", "two", "three", "four", "final"],
+      roundNumber: 5,
+      rounds: [
+        { roundNumber: 1, spreadId: "one", suddenDeath: false, counts: [8, 4], winner: 0 },
+        { roundNumber: 2, spreadId: "two", suddenDeath: false, counts: [8, 4], winner: 0 },
+        { roundNumber: 3, spreadId: "three", suddenDeath: false, counts: [8, 4], winner: 0 },
+        { roundNumber: 4, spreadId: "four", suddenDeath: false, counts: [8, 5], winner: 1 },
+      ],
+      peopleTotals: [32, 17],
+      roundWins: [3, 2],
+    };
+    const finalState = scoreRound(beforeFinal);
+    expect(finalState.phase).toBe("finished");
+    expect(finalState.peopleTotals).toEqual([40, 18]);
+    expect(finalState.roundWins).toEqual([4, 2]);
+    expect(getResult(finalState)).toMatchObject({ winner: 0, reason: "peopleTotal" });
+  });
+
+  it("applies final result priority only after all normal rounds complete", () => {
+    const beforeFinal = {
+      ...finishedWith([23, 18], [2, 3]),
+      phase: "roundScored" as const,
+      rounds: [],
+      roundNumber: 4,
+    };
+    expect(isGameOver(beforeFinal)).toBe(false);
+    expect(getResult(finishedWith([23, 18], [2, 3]))).toMatchObject({
+      winner: 0,
+      reason: "peopleTotal",
+    });
+    expect(getResult(finishedWith([20, 20], [4, 2]))).toMatchObject({
+      winner: 0,
+      reason: "roundWins",
+    });
+    expect(getResult(finishedWith([20, 20], [2, 2], 0))).toMatchObject({
+      winner: 0,
+      reason: "suddenDeath",
+    });
+  });
+
+  it("uses round wins when people totals tie", () => {
+    const result = getResult(finishedWith([20, 20], [4, 2]));
+    expect(result).toMatchObject({ winner: 0, reason: "roundWins" });
+  });
+
+  it("uses sudden death for a fully tied result and preserves a pool-exhausted draw", () => {
+    expect(getResult(finishedWith([20, 20], [2, 2], 0))).toMatchObject({ winner: 0, reason: "suddenDeath" });
+    expect(getResult(finishedWith([20, 20], [2, 2], 1))).toMatchObject({ winner: 1, reason: "suddenDeath" });
+    expect(getResult(finishedWith([20, 20], [2, 2]))).toMatchObject({ winner: null, reason: "draw" });
+  });
+
   it("returns result totals without sharing mutable tuples with game state", () => {
     const book = makeBook(Array.from({ length: 20 }, (_, i) => makeSpread(`s${i}`, 5, 1)));
     const end = playToEnd(newGame(book, 5));
@@ -205,33 +316,34 @@ describe("game end and results", () => {
     expect(JSON.stringify(end)).toBe(snapshot);
   });
 
-  it("ends after the configured rounds when someone leads on round wins", () => {
+  it("ends after the configured rounds when someone leads on people totals", () => {
     const book = makeBook(Array.from({ length: 40 }, (_, i) => makeSpread(`s${i}`, 5, 1)));
     for (const rounds of [5, 10, 15] as const) {
       const end = playToEnd(newGame(book, rounds));
       expect(end.rounds.length).toBe(rounds);
       const r = getResult(end);
       expect(r.winner).toBe(0);
-      expect(r.reason).toBe("roundWins");
+      expect(r.reason).toBe("peopleTotal");
     }
   });
 
-  it("tied round wins are decided by people total", () => {
-    // 5 rounds: alternate who wins, but player 1's wins are bigger. Build 2 spread types.
+  it("tied people totals are decided by round wins", () => {
+    // Different margin sizes let people totals tie while round wins differ.
     const spreads = [
-      ...Array.from({ length: 10 }, (_, i) => makeSpread(`a${i}`, 9, 1)), // P1 wins big
-      ...Array.from({ length: 10 }, (_, i) => makeSpread(`b${i}`, 1, 2)), // P2 wins small
+      ...Array.from({ length: 12 }, (_, i) => makeSpread(`a${i}`, 9, 0)),
+      ...Array.from({ length: 12 }, (_, i) => makeSpread(`b${i}`, 0, 3)),
+      ...Array.from({ length: 12 }, (_, i) => makeSpread(`d${i}`, 2, 2)),
     ];
     // Search seeds for a 10-round game (even count, so wins can tie) where totals differ.
     let found = false;
     for (let seed = 1; seed < 500 && !found; seed++) {
       const end = playToEnd(newGame(makeBook(spreads), 10, { seed }));
       const r = getResult(end);
-      if (r.reason === "peopleTotal") {
+      if (r.reason === "roundWins") {
         found = true;
-        expect(r.roundWins[0]).toBe(r.roundWins[1]);
-        expect(r.peopleTotals[0]).not.toBe(r.peopleTotals[1]);
-        expect(r.winner).toBe(r.peopleTotals[0] > r.peopleTotals[1] ? 0 : 1);
+        expect(r.peopleTotals[0]).toBe(r.peopleTotals[1]);
+        expect(r.roundWins[0]).not.toBe(r.roundWins[1]);
+        expect(r.winner).toBe(r.roundWins[0] > r.roundWins[1] ? 0 : 1);
       }
     }
     expect(found).toBe(true);

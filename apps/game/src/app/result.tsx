@@ -12,13 +12,17 @@ export default function Result() {
   return (
     <View style={s.p}>
       <Text style={s.h}>{winner}</Text>
-      <Text>Decided by {reasonLabel(r.reason)}</Text>
+      <Text>{r.reason === "draw" ? reasonLabel(r.reason) : `Decided by ${reasonLabel(r.reason)}`}</Text>
       <Text>
-        {names[0]}: {r.roundWins[0]} rounds, {r.peopleTotals[0]} people
+        {names[0]}
       </Text>
+      <Text style={s.people}>{r.peopleTotals[0]} people</Text>
+      <Text>{r.roundWins[0]} round wins</Text>
       <Text>
-        {names[1]}: {r.roundWins[1]} rounds, {r.peopleTotals[1]} people
+        {names[1]}
       </Text>
+      <Text style={s.people}>{r.peopleTotals[1]} people</Text>
+      <Text>{r.roundWins[1]} round wins</Text>
       <Pressable
         style={s.b}
         onPress={() => {
@@ -37,6 +41,7 @@ export default function Result() {
 const s = StyleSheet.create({
   p: { flex: 1, padding: 24, gap: 16, backgroundColor: "#f8f2e6" },
   h: { fontSize: 32, fontWeight: "800" },
+  people: { fontSize: 24, fontWeight: "700" },
   b: {
     minHeight: 52,
     justifyContent: "center",

@@ -30,6 +30,8 @@ describe("scheduleReveal", () => {
     vi.advanceTimersByTime(SCORE_MS);
     expect(score).toHaveBeenCalledOnce();
     expect(scored).toHaveBeenCalledOnce();
+    expect(scored.mock.calls[0]![0].rounds).toHaveLength(1);
+    expect(scored.mock.calls[0]![0].peopleTotals).not.toEqual(state.peopleTotals);
   });
   it("cleanup prevents stale callbacks", () => {
     vi.useFakeTimers();

@@ -1,12 +1,22 @@
 import { router } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { flipSpread, scoreRound } from "@book-people/game-core";
+import { flipSpread, scoreRound, type GameState } from "@book-people/game-core";
 import { useGame } from "../game-store";
 import { useRevealSequence } from "../useRevealSequence";
 
 export default function GameScreen() {
   const { state, update } = useGame();
   const reveal = useRevealSequence(scoreRound);
+  const scoredState = useRef<GameState | null>(null);
+  const [resultRequested, setResultRequested] = useState(false);
+
+  useEffect(() => {
+    if (resultRequested && state === scoredState.current && state.phase === "finished") {
+      reveal.reset();
+      router.replace("/result");
+    }
+  }, [resultRequested, reveal, state]);
 
   if (!state)
     return (
@@ -29,11 +39,17 @@ export default function GameScreen() {
   const begin = () => {
     const next = flipSpread(state);
     update(next);
-    reveal.start(next, update);
+    reveal.start(next, (scored) => {
+      scoredState.current = scored;
+      update(scored);
+    });
   };
   const continueGame = () => {
+    if (state.phase === "finished") {
+      setResultRequested(true);
+      return;
+    }
     reveal.reset();
-    if (state.phase === "finished") router.replace("/result");
   };
   const disabled = reveal.busy;
 
