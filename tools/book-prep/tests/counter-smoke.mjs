@@ -1,0 +1,20 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { JSDOM } from "jsdom";
+
+const html = await readFile(new URL("../counter.html", import.meta.url), "utf8");
+const dom = new JSDOM(html, { runScripts: "dangerously", url: "file:///counter.html", pretendToBeVisual: true });
+const { window } = dom;
+const book = { id: "smoke", title: "Smoke", author: "A", coverImage: "cover.webp", spreads: [1, 2, 3].map(n => ({ id: `s${n}`, left: { page: n * 2, image: "left.webp", people: null }, right: { page: n * 2 + 1, image: "right.webp", people: null }, flags: [] })) };
+window.loadBook(book);
+const input = id => window.document.getElementById(id);
+input("left").value = "2"; input("left").dispatchEvent(new window.Event("change", { bubbles: true }));
+input("right").value = "3"; input("right").dispatchEvent(new window.Event("change", { bubbles: true }));
+assert.equal(window.__book.spreads[0].left.people, 2);
+assert.equal(window.__book.spreads[0].right.people, 3);
+assert.equal(window.document.getElementById("progress").value, 1);
+window.document.getElementById("next").click();
+assert.equal(window.document.getElementById("indicator").textContent, "Spread 2 / 3");
+assert.match(JSON.stringify(window.__book), /"people":2/);
+assert.match(JSON.stringify(window.__book), /"people":null/);
+console.log("counter smoke: ok");
