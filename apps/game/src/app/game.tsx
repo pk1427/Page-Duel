@@ -1,18 +1,19 @@
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { flipSpread, scoreRound, type GameState } from "@book-people/game-core";
+import { resolveContentAsset } from "../content-assets";
 import { useGame } from "../game-store";
 import { useRevealSequence } from "../useRevealSequence";
 
 export default function GameScreen() {
-  const { state, update } = useGame();
+  const { state, selectedBook, update } = useGame();
   const reveal = useRevealSequence(scoreRound);
   const scoredState = useRef<GameState | null>(null);
   const [resultRequested, setResultRequested] = useState(false);
 
   useEffect(() => {
-    if (resultRequested && state === scoredState.current && state.phase === "finished") {
+    if (resultRequested && state === scoredState.current && state?.phase === "finished") {
       reveal.reset();
       router.replace("/result");
     }
@@ -65,18 +66,29 @@ export default function GameScreen() {
         {round > state.config.rounds ? "Sudden death" : `Round ${round} of ${state.config.rounds}`}
       </Text>
       <View style={styles.book}>
-        {sides?.map((page, index) => (
-          <View key={index} style={styles.page}>
-            <Text>{players[index]}</Text>
-            <Text style={styles.people}>{"👤".repeat(page.people)}</Text>
-            <Text style={styles.count}>
-              {((reveal.stage === "right" || reveal.stage === "scored") && index === 0) ||
-              reveal.stage === "scored"
-                ? page.people
-                : "?"}
-            </Text>
-          </View>
-        ))}
+        {sides?.map((page, index) => {
+          const asset = selectedBook ? resolveContentAsset(selectedBook, page) : page.image;
+          return (
+            <View key={index} style={styles.page}>
+              <Text>{players[index]}</Text>
+              {asset.startsWith("placeholder:") ? (
+                <Text style={styles.people}>{"👤".repeat(page.people)}</Text>
+              ) : (
+                <Image
+                  accessibilityLabel={`${players[index]} page`}
+                  source={{ uri: asset }}
+                  style={styles.image}
+                />
+              )}
+              <Text style={styles.count}>
+                {((reveal.stage === "right" || reveal.stage === "scored") && index === 0) ||
+                reveal.stage === "scored"
+                  ? page.people
+                  : "?"}
+              </Text>
+            </View>
+          );
+        })}
       </View>
       {banner && <Text style={styles.banner}>{banner}</Text>}
       <Pressable
@@ -108,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fffaf0",
   },
   people: { fontSize: 28, textAlign: "center" },
+  image: { width: "100%", aspectRatio: 0.7, resizeMode: "contain" },
   count: { fontSize: 28, fontWeight: "800" },
   banner: { fontSize: 20, fontWeight: "700", textAlign: "center" },
   button: {

@@ -9,7 +9,13 @@ pip install -r requirements.txt
 python extract.py book.pdf --id my-book --title "My Book" --author "Author" --first-left 12
 ```
 
-Find `--first-left` by locating the PDF page where the first illustration spread begins. In printed books, a spread is normally even-left/odd-right. Open `out/my-book/counter.html` from disk and select `book.json`. Count each page, then download `book.json` over `out/my-book/book.json`.
+Find `--first-left` by locating the PDF page where the first illustration spread begins. In printed books, a spread is normally even-left/odd-right. For the most reliable local review workflow, serve the generated folder and open the counter in Chrome:
+
+```sh
+python3 -m http.server 8000 --directory out/my-book
+```
+
+Visit `http://localhost:8000/counter.html`; it automatically loads `./book.json` and its `pages/` assets. When opening `counter.html` via `file://`, use **Choose Book Folder** in Chrome instead—the regular JSON file picker cannot grant access to sibling image files. Count each page, then download `book.json` over `out/my-book/book.json`.
 
 `null` means not counted yet. Excluded spreads do not need counts. The final file always contains integers.
 

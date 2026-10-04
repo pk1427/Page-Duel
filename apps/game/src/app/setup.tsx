@@ -7,7 +7,7 @@ export default function Setup() {
   const [a, setA] = useState("");
   const [b, setB] = useState("");
   const [rounds, setRounds] = useState<RoundCount>(10);
-  const { start, error } = useGame();
+  const { start, error, selectedBook } = useGame();
   const begin = () => {
     start([a, b], rounds);
     router.push("/game");
@@ -43,7 +43,8 @@ export default function Setup() {
       </View>
       <Text style={s.label}>Book</Text>
       <View style={s.book}>
-        <Text>The Book People Practice Book</Text>
+        <Text>{selectedBook?.title ?? "No book selected"}</Text>
+        {selectedBook?.author && <Text>{selectedBook.author}</Text>}
       </View>
       {error && <Text style={s.error}>{error}</Text>}
       <Pressable onPress={begin} style={s.button}>

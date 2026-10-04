@@ -1,11 +1,11 @@
-import { Link } from "expo-router";
+import { Link, type Href } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 export default function Home() {
   return (
     <View style={s.page}>
       <Text style={s.title}>Book People</Text>
       <Text style={s.copy}>Two players. One open book. Count the people and win the round.</Text>
-      <Link href="/setup" asChild>
+      <Link href={"/books" as Href} asChild>
         <Pressable style={s.button}>
           <Text style={s.buttonText}>Play</Text>
         </Pressable>

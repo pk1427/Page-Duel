@@ -1,16 +1,447 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Book People counter</title>
-<style>body{font:16px system-ui;margin:1rem auto;max-width:1200px;padding:0 1rem;color:#222}button,input{font:inherit}#spread{display:grid;grid-template-columns:1fr 1fr;gap:1rem}figure{margin:0}img{max-width:100%;max-height:65vh;display:block;margin:auto}label{display:block;margin:.5rem 0}.dots{display:flex;flex-wrap:wrap;gap:4px}.dot{width:16px;height:16px;padding:0;border-radius:50%;border:1px solid #777}.uncounted{background:#fff}.counted{background:#69b}.excluded{background:#999}.current{outline:3px solid #f90}#restore{background:#ffe7aa;padding:.6rem}progress{width:100%}</style>
-<body><h1>Book People counter</h1><input id="file" type="file" accept="application/json"><div id="restore" hidden></div><p id="indicator">Load a working book.json.</p><progress id="progress" value="0" max="1"></progress><p><button id="next">Next uncounted</button> <button id="download">Download book.json</button></p><div id="dots" class="dots"></div><main id="spread" hidden><figure><img id="left-image" alt="Left page"><label>Left people <input id="left" type="number" min="0" step="1"></label></figure><figure><img id="right-image" alt="Right page"><label>Right people <input id="right" type="number" min="0" step="1"></label></figure></main><details><summary>Counting rules</summary><table><tbody><tr><td>Illustrated humans</td><td>count.</td></tr><tr><td>Photographs</td><td>count.</td></tr><tr><td>Statues/portraits/paintings inside the page</td><td>count.</td></tr><tr><td>Face with no body</td><td>1.</td></tr><tr><td>Partly visible person</td><td>count if head or face visible.</td></tr><tr><td>Tiny background figures</td><td>only if individually distinguishable.</td></tr><tr><td>Crowd too dense to count</td><td>count the clearly visible ones and tick "ambiguous".</td></tr><tr><td>Humanoid characters (fairies, giants)</td><td>count if drawn human-like.</td></tr><tr><td>Animals</td><td>do not count.</td></tr><tr><td>Blank/text/decorative page</td><td>0.</td></tr><tr><td>Same person twice on one page</td><td>count each appearance.</td></tr><tr><td>Full-page illustration across both pages</td><td>tick "excluded".</td></tr></tbody></table></details>
-<script>
-let index=0; const $=id=>document.getElementById(id); const integer=v=>Number.isInteger(v)&&v>=0;
-function counted(s){return (s.flags||[]).includes('excluded')||(integer(s.left.people)&&integer(s.right.people))}
-function save(){try{localStorage.setItem('book-people:'+window.__book.id,JSON.stringify(window.__book))}catch(_){}}
-function flag(name){const s=window.__book.spreads[index];return `<label><input type="checkbox" data-flag="${name}" ${s.flags.includes(name)?'checked':''}> ${name}</label>`}
-function render(){if(!window.__book)return; const s=window.__book.spreads[index], total=window.__book.spreads.length,n=window.__book.spreads.filter(counted).length;$('spread').hidden=false;$('indicator').textContent=`Spread ${index+1} / ${total}`;$('progress').max=total;$('progress').value=n;$('left-image').src=s.left.image;$('right-image').src=s.right.image;$('left').value=s.left.people??'';$('right').value=s.right.people??'';$('left').focus();$('dots').replaceChildren(...window.__book.spreads.map((x,i)=>{let b=document.createElement('button');b.className='dot '+(i===index?'current ': '')+((x.flags||[]).includes('excluded')?'excluded':counted(x)?'counted':'uncounted');b.onclick=()=>{index=i;render()};return b})); const flags=document.createElement('div');flags.innerHTML=flag('ambiguous')+flag('excluded');$('spread').append(flags);flags.querySelectorAll('[data-flag]').forEach(x=>x.onchange=()=>{let a=s.flags||[];s.flags=x.checked?[...new Set([...a,x.dataset.flag])]:a.filter(y=>y!==x.dataset.flag);save();render()})}
-function set(side,value){let n=value===''?null:Number(value);window.__book.spreads[index][side].people=integer(n)?n:null;save();render()}
-['left','right'].forEach(id=>$(id).onchange=e=>set(id,e.target.value));$('left').onkeydown=e=>{if(e.key==='Enter'){$('right').focus();e.preventDefault()}};$('right').onkeydown=e=>{if(e.key==='Enter'){set('right',e.target.value);if(index<window.__book.spreads.length-1)index++;render();e.preventDefault()}};
-$('next').onclick=()=>{let i=window.__book.spreads.findIndex((s,i)=>i>index&&!counted(s));index=i<0?window.__book.spreads.findIndex(s=>!counted(s)):i<0?index:i;render()};document.onkeydown=e=>{if(!window.__book)return;if(e.key==='PageDown'){index=Math.min(index+1,window.__book.spreads.length-1);render()}if(e.key==='PageUp'){index=Math.max(index-1,0);render()}};
-function exportBookJson(book){return JSON.stringify(book,null,2)} window.exportBookJson=exportBookJson;
-$('download').onclick=()=>{const blob=new Blob([exportBookJson(window.__book)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='book.json';a.click();URL.revokeObjectURL(a.href)};
-window.loadBook=obj=>{window.__book=JSON.parse(JSON.stringify(obj));index=0;try{let saved=localStorage.getItem('book-people:'+obj.id);if(saved){let s=JSON.parse(saved),n=s.spreads.filter(counted).length;$('restore').hidden=false;$('restore').innerHTML=`Restore autosave (${n} counted) <button>Restore autosave</button>`;$('restore').querySelector('button').onclick=()=>{window.__book=s;$('restore').hidden=true;render()}}}catch(_){}render()};$('file').onchange=e=>{let r=new FileReader;r.onload=()=>window.loadBook(JSON.parse(r.result));r.readAsText(e.target.files[0])};
-</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Book People counter</title>
+    <style>
+      body {
+        color: #222;
+        font:
+          16px system-ui,
+          sans-serif;
+        margin: 1rem auto;
+        max-width: 1400px;
+        padding: 0 1rem;
+      }
+      button,
+      input,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      #source-status,
+      #restore {
+        border-radius: 0.35rem;
+        margin: 0.75rem 0;
+        padding: 0.7rem;
+      }
+      #source-status {
+        background: #e7f2ff;
+      }
+      #source-status.warning,
+      #restore {
+        background: #ffe7aa;
+      }
+      #source-status.error {
+        background: #ffd9d9;
+      }
+      #spread {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      figure {
+        margin: 0;
+      }
+      img {
+        display: block;
+        margin: auto;
+        max-height: 68vh;
+        max-width: 100%;
+        object-fit: contain;
+      }
+      label {
+        display: block;
+        margin: 0.5rem 0;
+      }
+      textarea {
+        box-sizing: border-box;
+        min-height: 4rem;
+        width: 100%;
+      }
+      .navigation,
+      .flags {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0.75rem 0;
+      }
+      .dots {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .dot {
+        border: 1px solid #777;
+        border-radius: 50%;
+        height: 16px;
+        padding: 0;
+        width: 16px;
+      }
+      .uncounted {
+        background: #fff;
+      }
+      .counted {
+        background: #69b;
+      }
+      .excluded {
+        background: #999;
+      }
+      .current {
+        outline: 3px solid #f90;
+      }
+      progress {
+        width: 100%;
+      }
+      @media (max-width: 760px) {
+        #spread {
+          grid-template-columns: 1fr;
+        }
+        img {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Book People counter</h1>
+    <p>
+      <button id="choose-folder" type="button">Choose Book Folder</button>
+      <label>or choose book.json <input id="file" type="file" accept="application/json" /></label>
+    </p>
+    <p id="source-status" aria-live="polite">Loading a working book.json…</p>
+    <div id="restore" hidden></div>
+    <p id="indicator">Load a working book.json.</p>
+    <progress id="progress" value="0" max="1"></progress>
+    <p id="progress-label">0 / 0 counted</p>
+    <p class="navigation">
+      <button id="previous" type="button">Previous</button>
+      <button id="next" type="button">Next</button>
+      <button id="next-uncounted" type="button">Next uncounted</button>
+      <button id="download" type="button">Download book.json</button>
+    </p>
+    <div id="dots" class="dots"></div>
+    <main id="spread" hidden>
+      <figure>
+        <img id="left-image" alt="Left page" />
+        <label>Left people <input id="left" type="number" min="0" step="1" /></label>
+      </figure>
+      <figure>
+        <img id="right-image" alt="Right page" />
+        <label>Right people <input id="right" type="number" min="0" step="1" /></label>
+      </figure>
+    </main>
+    <section id="annotation" hidden>
+      <div class="flags">
+        <label><input id="ambiguous" type="checkbox" /> ambiguous</label>
+        <label><input id="excluded" type="checkbox" /> excluded</label>
+      </div>
+      <label>Notes <textarea id="notes" placeholder="Optional review note"></textarea></label>
+    </section>
+    <details>
+      <summary>Counting rules</summary>
+      <ul>
+        <li>Illustrated humans → count</li>
+        <li>Photographs → count</li>
+        <li>Statues/portraits/paintings → count</li>
+        <li>Face with no body → 1</li>
+        <li>Partly visible person → count if head or face visible</li>
+        <li>Tiny background figures → only if individually distinguishable</li>
+        <li>Crowd too dense → count clearly visible people and mark ambiguous</li>
+        <li>Humanoid characters → count if human-like</li>
+        <li>Animals → do not count</li>
+        <li>Blank/text/decorative page → 0</li>
+        <li>Same person twice on one page → count each appearance</li>
+        <li>Full-page illustration across both pages → mark excluded</li>
+      </ul>
+    </details>
+    <script>
+      let index = 0;
+      let bookDirectory;
+      let imageRenderVersion = 0;
+      const objectUrls = new Map();
+      const $ = (id) => document.getElementById(id);
+      const integer = (value) => Number.isInteger(value) && value >= 0;
+
+      function counted(spread) {
+        return (
+          (spread.flags || []).includes("excluded") ||
+          (integer(spread.left.people) && integer(spread.right.people))
+        );
+      }
+
+      function setStatus(message, kind = "") {
+        const status = $("source-status");
+        status.textContent = message;
+        status.className = kind;
+      }
+
+      function clearObjectUrls() {
+        objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        objectUrls.clear();
+      }
+
+      function save() {
+        try {
+          localStorage.setItem("book-people:" + window.__book.id, JSON.stringify(window.__book));
+        } catch (_) {}
+      }
+
+      async function getDirectoryImageUrl(imagePath) {
+        if (!bookDirectory) return imagePath;
+        if (objectUrls.has(imagePath)) return objectUrls.get(imagePath);
+        const parts = imagePath.split("/").filter(Boolean);
+        let directory = bookDirectory;
+        for (const part of parts.slice(0, -1)) directory = await directory.getDirectoryHandle(part);
+        const fileHandle = await directory.getFileHandle(parts[parts.length - 1]);
+        const url = URL.createObjectURL(await fileHandle.getFile());
+        objectUrls.set(imagePath, url);
+        return url;
+      }
+
+      async function renderImages(spread) {
+        const version = ++imageRenderVersion;
+        try {
+          const [leftUrl, rightUrl] = await Promise.all([
+            getDirectoryImageUrl(spread.left.image),
+            getDirectoryImageUrl(spread.right.image),
+          ]);
+          if (version !== imageRenderVersion) return;
+          $("left-image").src = leftUrl;
+          $("right-image").src = rightUrl;
+        } catch (error) {
+          if (version !== imageRenderVersion) return;
+          setStatus(
+            "Could not load a page image. Choose Book Folder, or serve this folder with python3 -m http.server 8000 --directory .",
+            "error",
+          );
+          console.error(error);
+        }
+      }
+
+      function updateDots() {
+        $("dots").replaceChildren(
+          ...window.__book.spreads.map((spread, spreadIndex) => {
+            const button = document.createElement("button");
+            button.className =
+              "dot " +
+              (spreadIndex === index ? "current " : "") +
+              ((spread.flags || []).includes("excluded")
+                ? "excluded"
+                : counted(spread)
+                  ? "counted"
+                  : "uncounted");
+            button.title = `Spread ${spread.id}`;
+            button.onclick = () => {
+              index = spreadIndex;
+              render();
+            };
+            return button;
+          }),
+        );
+      }
+
+      function render() {
+        if (!window.__book) return;
+        const spread = window.__book.spreads[index];
+        const total = window.__book.spreads.length;
+        const complete = window.__book.spreads.filter(counted).length;
+        const leftPage = spread.left.printedPage ?? spread.left.page;
+        const rightPage = spread.right.printedPage ?? spread.right.page;
+        $("spread").hidden = false;
+        $("annotation").hidden = false;
+        $("indicator").textContent =
+          `Spread ${spread.id} · ${index + 1} / ${total} · printed pages ${leftPage}–${rightPage}`;
+        $("progress").max = total;
+        $("progress").value = complete;
+        $("progress-label").textContent = `${complete} / ${total} counted`;
+        $("left").value = spread.left.people ?? "";
+        $("right").value = spread.right.people ?? "";
+        $("ambiguous").checked = (spread.flags || []).includes("ambiguous");
+        $("excluded").checked = (spread.flags || []).includes("excluded");
+        $("notes").value = spread.notes || "";
+        $("previous").disabled = index === 0;
+        $("next").disabled = index === total - 1;
+        updateDots();
+        renderImages(spread);
+      }
+
+      function setPeople(side, value) {
+        const number = value === "" ? null : Number(value);
+        window.__book.spreads[index][side].people = integer(number) ? number : null;
+        save();
+        render();
+      }
+
+      function setFlag(name, checked) {
+        const spread = window.__book.spreads[index];
+        const flags = spread.flags || [];
+        spread.flags = checked
+          ? [...new Set([...flags, name])]
+          : flags.filter((flag) => flag !== name);
+        save();
+        render();
+      }
+
+      function setNotes(value) {
+        const spread = window.__book.spreads[index];
+        if (value) spread.notes = value;
+        else delete spread.notes;
+        save();
+      }
+
+      function moveTo(spreadIndex) {
+        index = Math.max(0, Math.min(spreadIndex, window.__book.spreads.length - 1));
+        render();
+      }
+
+      function nextUncounted() {
+        const spreads = window.__book.spreads;
+        let target = spreads.findIndex(
+          (spread, spreadIndex) => spreadIndex > index && !counted(spread),
+        );
+        if (target === -1) target = spreads.findIndex((spread) => !counted(spread));
+        if (target !== -1) moveTo(target);
+      }
+
+      function exportBookJson(book) {
+        return JSON.stringify(book, null, 2);
+      }
+      window.exportBookJson = exportBookJson;
+      window.loadBook = (book) => {
+        window.__book = JSON.parse(JSON.stringify(book));
+        index = 0;
+        try {
+          const saved = localStorage.getItem("book-people:" + book.id);
+          if (saved) {
+            const autosave = JSON.parse(saved);
+            const complete = autosave.spreads.filter(counted).length;
+            $("restore").hidden = false;
+            $("restore").replaceChildren(
+              document.createTextNode(`Restore autosave (${complete} counted) `),
+              Object.assign(document.createElement("button"), {
+                textContent: "Restore autosave",
+                onclick: () => {
+                  window.__book = autosave;
+                  $("restore").hidden = true;
+                  render();
+                },
+              }),
+            );
+          }
+        } catch (_) {}
+        render();
+      };
+
+      $("left").onchange = (event) => setPeople("left", event.target.value);
+      $("right").onchange = (event) => setPeople("right", event.target.value);
+      $("left").onkeydown = (event) => {
+        if (event.key === "Enter") {
+          $("right").focus();
+          event.preventDefault();
+        }
+      };
+      $("right").onkeydown = (event) => {
+        if (event.key === "Enter") {
+          setPeople("right", event.target.value);
+          moveTo(index + 1);
+          event.preventDefault();
+        }
+      };
+      $("ambiguous").onchange = (event) => setFlag("ambiguous", event.target.checked);
+      $("excluded").onchange = (event) => setFlag("excluded", event.target.checked);
+      $("notes").onchange = (event) => setNotes(event.target.value);
+      $("previous").onclick = () => moveTo(index - 1);
+      $("next").onclick = () => moveTo(index + 1);
+      $("next-uncounted").onclick = nextUncounted;
+      $("download").onclick = () => {
+        if (!window.__book) return;
+        const blob = new Blob([exportBookJson(window.__book)], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "book.json";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 0);
+      };
+
+      $("file").onchange = (event) => {
+        const [file] = event.target.files;
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            bookDirectory = undefined;
+            clearObjectUrls();
+            window.loadBook(JSON.parse(reader.result));
+            setStatus(
+              location.protocol === "file:"
+                ? "book.json loaded. To load page images from disk, choose Book Folder (Chrome) or serve this folder over HTTP."
+                : "book.json loaded from the file picker.",
+              location.protocol === "file:" ? "warning" : "",
+            );
+          } catch (error) {
+            setStatus(`Could not read book.json: ${error.message}`, "error");
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      $("choose-folder").onclick = async () => {
+        if (!window.showDirectoryPicker) {
+          setStatus(
+            "This browser does not support Choose Book Folder. Use Chrome or serve the folder with python3 -m http.server 8000 --directory .",
+            "warning",
+          );
+          return;
+        }
+        try {
+          const directory = await window.showDirectoryPicker({ mode: "read" });
+          const bookFile = await directory.getFileHandle("book.json");
+          const book = JSON.parse(await (await bookFile.getFile()).text());
+          clearObjectUrls();
+          bookDirectory = directory;
+          window.loadBook(book);
+          setStatus("Loaded book.json and page images from the selected folder.");
+        } catch (error) {
+          if (error.name !== "AbortError")
+            setStatus(`Could not open the book folder: ${error.message}`, "error");
+        }
+      };
+
+      document.onkeydown = (event) => {
+        if (!window.__book) return;
+        if (event.key === "PageDown") {
+          moveTo(index + 1);
+          event.preventDefault();
+        }
+        if (event.key === "PageUp") {
+          moveTo(index - 1);
+          event.preventDefault();
+        }
+      };
+      window.addEventListener("beforeunload", clearObjectUrls);
+
+      if (location.protocol === "http:" || location.protocol === "https:") {
+        fetch("./book.json")
+          .then((response) => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+          })
+          .then((book) => {
+            window.loadBook(book);
+            setStatus("Loaded ./book.json and page images from this local server.");
+          })
+          .catch((error) => setStatus(`Could not load ./book.json: ${error.message}`, "error"));
+      } else {
+        setStatus(
+          "Opened from file://. Choose Book Folder (Chrome) to load book.json and pages, or run python3 -m http.server 8000 --directory . in this folder.",
+          "warning",
+        );
+      }
+    </script>
+  </body>
+</html>

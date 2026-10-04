@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, type Href } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { getResult } from "@book-people/game-core";
 import { useGame } from "../game-store";
@@ -12,15 +12,13 @@ export default function Result() {
   return (
     <View style={s.p}>
       <Text style={s.h}>{winner}</Text>
-      <Text>{r.reason === "draw" ? reasonLabel(r.reason) : `Decided by ${reasonLabel(r.reason)}`}</Text>
       <Text>
-        {names[0]}
+        {r.reason === "draw" ? reasonLabel(r.reason) : `Decided by ${reasonLabel(r.reason)}`}
       </Text>
+      <Text>{names[0]}</Text>
       <Text style={s.people}>{r.peopleTotals[0]} people</Text>
       <Text>{r.roundWins[0]} round wins</Text>
-      <Text>
-        {names[1]}
-      </Text>
+      <Text>{names[1]}</Text>
       <Text style={s.people}>{r.peopleTotals[1]} people</Text>
       <Text>{r.roundWins[1]} round wins</Text>
       <Pressable
@@ -32,7 +30,7 @@ export default function Result() {
       >
         <Text>Play again</Text>
       </Pressable>
-      <Pressable style={s.b} onPress={() => router.replace("/setup")}>
+      <Pressable style={s.b} onPress={() => router.replace("/books" as Href)}>
         <Text>Choose another book</Text>
       </Pressable>
     </View>

@@ -3,3 +3,4 @@ dist
 .expo
 .pnpm-store
 .venv
+.local/
