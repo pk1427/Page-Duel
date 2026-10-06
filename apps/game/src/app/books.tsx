@@ -4,71 +4,99 @@ import { eligibleSpreads } from "@book-people/game-core";
 import { toPlayableBook } from "@book-people/book-data";
 import { resolveContentAsset } from "../content-assets";
 import { useGame } from "../game-store";
+import { Badge, Body, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
 
 export default function BooksScreen() {
   const { playableBooks, selectBook, error } = useGame();
   return (
-    <View style={styles.page}>
-      <Text style={styles.title}>Choose a book</Text>
-      <Text style={styles.copy}>Each game uses spreads from one book only.</Text>
-      {playableBooks.map((book) => (
-        <Pressable
-          key={book.id}
-          accessibilityLabel={`Choose ${book.title}`}
-          onPress={() => {
-            selectBook(book.id);
-            router.push("/setup");
-          }}
-          style={styles.card}
-        >
-          <View style={styles.cover}>
-            {book.coverImage && !book.coverImage.startsWith("placeholder:") ? (
-              <Image
-                accessibilityLabel={`${book.title} cover`}
-                source={{ uri: resolveContentAsset(book, { image: book.coverImage }) }}
-                style={styles.coverImage}
-              />
-            ) : (
-              <Text style={styles.coverText}>{book.coverImage ? "Book" : "No cover"}</Text>
-            )}
-          </View>
-          <View style={styles.cardCopy}>
-            <Text style={styles.bookTitle}>{book.title}</Text>
-            {book.author && <Text>{book.author}</Text>}
-            <Text>{eligibleSpreads(toPlayableBook(book)).length} playable spreads</Text>
-          </View>
-        </Pressable>
-      ))}
-      {error && <Text style={styles.error}>{error}</Text>}
-    </View>
+    <Screen>
+      <View style={styles.heading}>
+        <Eyebrow>Your library</Eyebrow>
+        <Title>Choose a book</Title>
+        <Body>Every match stays inside one book, so every spread belongs to the same world.</Body>
+      </View>
+      <View style={styles.grid}>
+        {playableBooks.map((book, index) => (
+          <Pressable
+            key={book.id}
+            accessibilityLabel={`Choose ${book.title}`}
+            onPress={() => {
+              selectBook(book.id);
+              router.push("/setup");
+            }}
+            style={({ pressed }) => [styles.pressableCard, pressed && styles.cardPressed]}
+          >
+            <Card style={[styles.card, index === 0 && styles.featuredCard]}>
+              <View style={styles.cover}>
+                {book.coverImage && !book.coverImage.startsWith("placeholder:") ? (
+                  <Image
+                    accessibilityLabel={`${book.title} cover`}
+                    source={{ uri: resolveContentAsset(book, { image: book.coverImage }) }}
+                    style={styles.coverImage}
+                  />
+                ) : (
+                  <Text style={styles.coverText}>{book.title.slice(0, 1)}</Text>
+                )}
+              </View>
+              <View style={styles.cardCopy}>
+                <Badge tone={index === 0 ? "accent" : "moss"}>
+                  {index === 0 ? "Featured" : "Ready to play"}
+                </Badge>
+                <Text style={styles.bookTitle}>{book.title}</Text>
+                {book.author && <Text style={styles.author}>{book.author}</Text>}
+                <Text style={styles.spreadCount}>
+                  {eligibleSpreads(toPlayableBook(book)).length} playable spreads
+                </Text>
+                <Text style={styles.choose}>Open this book →</Text>
+              </View>
+            </Card>
+          </Pressable>
+        ))}
+      </View>
+      {error && (
+        <Text accessibilityRole="alert" style={styles.error}>
+          {error}
+        </Text>
+      )}
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, gap: 14, padding: 24, backgroundColor: "#f8f2e6" },
-  title: { fontSize: 32, fontWeight: "800", color: "#30251c" },
-  copy: { fontSize: 17, color: "#594a3d" },
+  heading: { gap: space.xs, maxWidth: 620 },
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: space.md },
+  pressableCard: { flexBasis: 330, flexGrow: 1, maxWidth: 540 },
+  cardPressed: { opacity: 0.82, transform: [{ scale: 0.99 }] },
   card: {
-    alignItems: "center",
-    backgroundColor: "white",
-    borderColor: "#8b7765",
-    borderRadius: 10,
-    borderWidth: 1,
+    alignItems: "stretch",
     flexDirection: "row",
-    gap: 14,
-    padding: 14,
+    gap: space.sm,
+    height: "100%",
+    minHeight: 195,
+    padding: space.sm,
   },
+  featuredCard: { borderColor: "#D7A88E", borderWidth: 2 },
   cover: {
     alignItems: "center",
-    backgroundColor: "#e6a93c",
-    borderRadius: 6,
-    height: 76,
+    backgroundColor: palette.plum,
+    borderRadius: radius.small,
+    height: 160,
     justifyContent: "center",
-    width: 56,
+    overflow: "hidden",
+    width: 108,
   },
-  coverText: { fontSize: 12, fontWeight: "700" },
+  coverText: { color: palette.paper, fontFamily: "serif", fontSize: 44, fontWeight: "700" },
   coverImage: { height: "100%", resizeMode: "cover", width: "100%" },
-  cardCopy: { flex: 1, gap: 4 },
-  bookTitle: { fontSize: 19, fontWeight: "700" },
-  error: { color: "#a22" },
+  cardCopy: { flex: 1, gap: space.xxs, justifyContent: "center" },
+  bookTitle: {
+    color: palette.ink,
+    fontFamily: "serif",
+    fontSize: 25,
+    fontWeight: "800",
+    lineHeight: 29,
+  },
+  author: { color: palette.muted, fontSize: 15, fontStyle: "italic" },
+  spreadCount: { color: palette.moss, fontSize: 14, fontWeight: "700", marginTop: space.xxs },
+  choose: { color: palette.accentDark, fontSize: 15, fontWeight: "800", marginTop: space.xs },
+  error: { color: palette.danger, fontSize: 15, fontWeight: "700" },
 });

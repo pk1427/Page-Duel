@@ -1,21 +1,56 @@
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
+import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, space } from "../ui";
+
+const steps = [
+  ["1", "Choose a book", "Pick a ready book. Every round comes from that book only."],
+  ["2", "Share the spread", "One reader owns the left page, the other owns the right."],
+  ["3", "Reveal together", "Flip the spread and watch each page’s people count appear."],
+  ["4", "Score the round", "The higher count takes the round. A tie is a draw."],
+  [
+    "5",
+    "Read the final score",
+    "Most people wins. If people tie, round wins decide. A final tie goes to sudden death.",
+  ],
+] as const;
+
 export default function How() {
   return (
-    <View style={s.p}>
-      <Text style={s.h}>How to Play</Text>
-      <Text style={s.t}>1. Flip a new spread.</Text>
-      <Text style={s.t}>2. Count the people on your page.</Text>
-      <Text style={s.t}>3. More people wins the round. Win the most rounds to win.</Text>
-      <Link href="/" style={s.l}>
-        Back home
-      </Link>
-    </View>
+    <Screen>
+      <View style={s.heading}>
+        <Eyebrow>Before you begin</Eyebrow>
+        <Title>How to play</Title>
+        <Body>Book People keeps the rules short, so the book can do the talking.</Body>
+      </View>
+      <View style={s.steps}>
+        {steps.map(([number, heading, copy]) => (
+          <Card key={number} style={s.step}>
+            <Text style={s.number}>{number}</Text>
+            <View style={s.stepCopy}>
+              <Text style={s.stepHeading}>{heading}</Text>
+              <Text style={s.stepText}>{copy}</Text>
+            </View>
+          </Card>
+        ))}
+      </View>
+      <AppButton onPress={() => router.replace("/books")}>Choose a book</AppButton>
+    </Screen>
   );
 }
+
 const s = StyleSheet.create({
-  p: { flex: 1, padding: 24, gap: 18, backgroundColor: "#f8f2e6" },
-  h: { fontSize: 32, fontWeight: "800" },
-  t: { fontSize: 19 },
-  l: { fontSize: 18 },
+  heading: { gap: space.xs, maxWidth: 640 },
+  steps: { gap: space.xs },
+  step: { alignItems: "flex-start", flexDirection: "row", gap: space.sm },
+  number: {
+    color: palette.accentDark,
+    fontFamily: "serif",
+    fontSize: 31,
+    fontWeight: "800",
+    lineHeight: 35,
+    minWidth: 28,
+  },
+  stepCopy: { flex: 1, gap: 3 },
+  stepHeading: { color: palette.ink, fontSize: 18, fontWeight: "800" },
+  stepText: { color: palette.muted, fontSize: 16, lineHeight: 23 },
 });
