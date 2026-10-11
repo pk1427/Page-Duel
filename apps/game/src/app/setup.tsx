@@ -62,7 +62,12 @@ export default function Setup() {
         <View style={s.bookCopy}>
           <Badge tone="moss">Selected book</Badge>
           <Text style={s.bookTitle}>{selectedBook.title}</Text>
-          {selectedBook.author && <Text style={s.author}>{selectedBook.author}</Text>}
+          {selectedBook.author && (
+            <Text style={s.author}>
+              {selectedBook.author}
+              {selectedBook.year ? ` · ${selectedBook.year}` : ""}
+            </Text>
+          )}
         </View>
         <AppButton onPress={() => router.replace("/books")} tone="quiet">
           Change

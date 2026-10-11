@@ -2,6 +2,10 @@
   "id": "alice-loc-1885",
   "title": "Alice's Adventures in Wonderland",
   "author": "Lewis Carroll",
+  "year": 1885,
+  "description": "Illustrated by John Tenniel. Human-verified counts from the LOC 1885 scan.",
+  "version": "1",
+  "status": "ready",
   "license": "Public domain",
   "coverImage": "cover.webp",
   "spreads": [
@@ -1337,5 +1341,9 @@
     }
   ],
   "illustrator": "John Tenniel",
-  "source": "https://www.loc.gov/item/16005942/"
+  "source": {
+    "name": "Library of Congress",
+    "url": "https://www.loc.gov/item/16005942/",
+    "rights": "Public domain; free to use and reuse."
+  }
 }

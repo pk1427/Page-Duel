@@ -26,8 +26,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--id", required=True, help="Book slug")
     parser.add_argument("--title", required=True)
     parser.add_argument("--author", required=True)
+    parser.add_argument("--year", type=int)
+    parser.add_argument("--description")
+    parser.add_argument("--version", default="1", help="Content-pack version (default: 1)")
     parser.add_argument("--illustrator")
     parser.add_argument("--source")
+    parser.add_argument("--source-name", default="Source")
+    parser.add_argument("--rights")
     parser.add_argument("--license", default="Public domain")
     parser.add_argument("--cover", type=int, default=1, help="1-based PDF cover page")
     parser.add_argument("--first-left", type=int, required=True, help="1-based first left page")
@@ -77,12 +82,18 @@ def main() -> int:
             left_image, right_image = f"pages/p{left_label:03d}.webp", f"pages/p{right_label:03d}.webp"
             render_page(document, left_pdf, output / left_image, args.width, args.quality)
             render_page(document, right_pdf, output / right_image, args.width, args.quality)
-            spreads.append({"id": f"s{index // 2 + 1:03d}", "left": {"page": left_label, "image": left_image, "people": None}, "right": {"page": right_label, "image": right_image, "people": None}, "flags": []})
-        book = {"id": args.id, "title": args.title, "author": args.author, "license": args.license, "coverImage": "cover.webp", "spreads": spreads}
+            spreads.append({"id": f"s{index // 2 + 1:03d}", "left": {"page": left_label, "sourcePage": left_pdf, "printedPage": left_label, "image": left_image, "people": None}, "right": {"page": right_label, "sourcePage": right_pdf, "printedPage": right_label, "image": right_image, "people": None}, "flags": []})
+        book = {"id": args.id, "title": args.title, "author": args.author, "license": args.license, "version": args.version, "status": "draft", "coverImage": "cover.webp", "spreads": spreads}
+        if args.year:
+            book["year"] = args.year
+        if args.description:
+            book["description"] = args.description
         if args.illustrator:
             book["illustrator"] = args.illustrator
         if args.source:
-            book["source"] = args.source
+            book["source"] = {"name": args.source_name, "url": args.source}
+            if args.rights:
+                book["source"]["rights"] = args.rights
         book_path.write_text(json.dumps(book, indent=2) + "\n", encoding="utf-8")
         shutil.copyfile(Path(__file__).with_name("counter.html"), output / "counter.html")
     size = sum(path.stat().st_size for path in output.rglob("*.webp"))

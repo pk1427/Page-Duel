@@ -43,7 +43,12 @@ export default function BooksScreen() {
                   {index === 0 ? "Featured" : "Ready to play"}
                 </Badge>
                 <Text style={styles.bookTitle}>{book.title}</Text>
-                {book.author && <Text style={styles.author}>{book.author}</Text>}
+                {book.author && (
+                  <Text style={styles.author}>
+                    {book.author}
+                    {book.year ? ` · ${book.year}` : ""}
+                  </Text>
+                )}
                 <Text style={styles.spreadCount}>
                   {eligibleSpreads(toPlayableBook(book)).length} playable spreads
                 </Text>

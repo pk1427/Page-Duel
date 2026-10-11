@@ -37,11 +37,13 @@ describe("book catalog and content validation", () => {
     expect(bookCatalog.listBooks().map((book) => book.id)).toEqual([
       "placeholder-book",
       "alice-loc-1885",
+      "tales-of-punjab-1894",
     ]);
     expect(bookCatalog.getBook("alice-loc-1885")).toBe(aliceContentPack);
     expect(bookCatalog.listPlayableBooks().map((book) => book.id)).toEqual([
       "placeholder-book",
       "alice-loc-1885",
+      "tales-of-punjab-1894",
     ]);
     const alice = bookCatalog.getPlayableBook("alice-loc-1885")!;
     expect(alice.spreads).toHaveLength(95);

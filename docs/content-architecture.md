@@ -1,66 +1,93 @@
-# Book content architecture
+# Book People content platform
 
-Book People separates book preparation from gameplay:
+Book People is local-first: adding a book is primarily a content operation. Game core receives a
+generic, fully counted `Book`; it has no knowledge of PDFs, sources, asset hosts, or the catalog.
 
 ```text
-SOURCE
-  ↓
-INGESTION
-  ↓
-CONTENT PACK
-  ↓
-VALIDATION
-  ↓
-BOOK CATALOG
-  ↓
-GAME CORE
-  ↓
-EXPO APP
+rights-checked source → extract → draft pack → human annotation → validate → final pack
+→ catalog registration → runtime asset delivery → generic game core
 ```
 
-## Game core
+## Canonical content-pack contract
 
-`packages/game-core` is a pure, deterministic TypeScript state machine. It accepts a generic
-`Book` in `startGame` and uses only spread IDs, page image references, people counts, and
-exclusion flags. It has no source, PDF, network, React, or Expo dependencies.
+Each pack has this portable shape. Its JSON contains only relative asset paths; large WebP files
+may live outside Git.
 
-## Content packs and catalog
-
-`packages/book-data` owns `BookContent`: metadata, lifecycle status, page references, spreads,
-and annotation values. Counts may be `null` while a pack is a `draft`; only fully counted `ready`
-or `published` packs can be converted to the game-core `Book` type.
-
-The catalog retains both ready content and drafts. `listPlayableBooks()` exposes only validated
-ready/published packs, so an incomplete Alice pack can be tracked without entering a game.
-The current catalog contains the ready Practice Book and metadata-only draft Alice.
-
-`resolvePageAsset` is the content-side seam for page delivery. Canonical content stores relative
-references such as `pages/p002.webp`; the Expo app provides an environment-specific base URL at
-runtime. Development defaults Alice to `http://localhost:8000` for the local review server.
-Release/native builds set `EXPO_PUBLIC_ALICE_ASSET_BASE_URL`, while web production may serve the
-same relative assets from its own origin. Local source files are never imported into game-core or
-committed.
-
-## Validation
-
-Content validation checks book and spread IDs, title/version, page references, duplicate pages,
-valid counts, and whether a ready/published pack has any uncounted pages. Game-core performs its
-own final gameplay validation after receiving a playable `Book`.
-
-## Future ingestion
-
-Source adapters may normalize Library of Congress, Internet Archive, or other permitted sources
-into draft content packs. Human annotation and validation happen before publication. Source APIs
-and ingestion are build/preparation concerns, never runtime dependencies of gameplay.
-
-## Human-count completion check
-
-Human annotation is authoritative in V1. Run the non-mutating report before creating a ready
-content pack:
-
-```sh
-python3 tools/book-prep/content-status.py .local/book-people-alice-loc/alice-loc-1885/book.json
+```text
+content/<book-id>/
+  book.json
+  cover.webp
+  pages/
+    p001.webp
 ```
 
-It reports counted/remaining spreads, excluded and ambiguous flags, and existing preparation
-validation errors. A non-zero exit and `Status: INCOMPLETE` mean the book must remain draft.
+`book.json` contains `id`, `title`, optional `author`, `year`, `description`, `source`, `version`,
+`status`, `coverImage`, and `spreads`. A source records its publisher/archive name, stable URL, and
+rights note. A spread has a unique `id`, `left` and `right` pages, optional `flags` (`excluded` or
+`ambiguous`), and optional annotation `notes`. A page has a unique numeric `page`, optional
+`sourcePage` (1-based PDF page), optional `printedPage`, a relative `image`, and `people`.
+
+`people` is `null` only during `draft`. Excluded draft pages may remain null; finalization turns
+those remaining null values into zero. `ready` and `published` packs have integers on every page.
+No pack may contain an absolute filesystem path, a localhost URL, a URL of any kind, or `..` path
+segments. Canonical examples are `cover.webp` and `pages/p002.webp`.
+
+`packages/book-data` validates metadata, statuses, IDs, paths, counts, and optional local asset
+manifests. It reports the eligible-spread count plus 5/10/15-round availability. Game core then
+performs its own gameplay validation when `toPlayableBook` creates its input.
+
+## Lifecycle and catalog
+
+`draft` packs are visible to preparation tooling but never to players. Valid `ready` and
+`published` packs are the only catalog entries returned by `listPlayableBooks()`. Catalog registration
+is data configuration in `packages/book-data/src/index.ts`, not a game-code change.
+
+The shipped catalog keeps the ready Practice Book and Alice's Adventures in Wonderland. Alice's
+95 human-counted spreads and 34 eligible spreads are unchanged. The Practice Book stays an
+in-memory deterministic development pack.
+
+## Asset delivery
+
+The Expo app resolves the canonical relative image reference at runtime. It checks, in order:
+
+1. `EXPO_PUBLIC_BOOK_ASSET_BASE_URL_<BOOK_ID>` (for example
+   `EXPO_PUBLIC_BOOK_ASSET_BASE_URL_ALICE_LOC_1885`),
+2. `EXPO_PUBLIC_BOOK_ASSET_BASE_URL`,
+3. the local review server default, `http://localhost:8000`.
+
+This supports local HTTP serving, static hosting, object storage, or a CDN without modifying a
+book pack or game core. Production must set a deployed base URL. The local WebP review workspace
+remains ignored under `.local/`; it is not a release asset strategy.
+
+## Add Book #2
+
+1. Choose an illustrated source and record a stable source URL and explicit rights/access evidence.
+2. Download the source PDF outside the committed content package.
+3. Run `extract.py` to create a draft with real scanned WebP pages and source/printed page mapping.
+4. Serve the folder locally and use `counter.html` for human annotation. Do not use automatic
+   detection for authoritative counts.
+5. Run `content-status.py` while counting, then `validate.py` after all normal spreads are counted.
+6. Run `validate.py --write-final`; it creates `book.final.json` with relative paths and only
+   integer counts.
+7. Validate the final pack and add its JSON data to `packages/book-data`; register it in the
+   catalog only as `ready` or `published`.
+8. Configure its development or production asset base, run book-data/game-core tests, and verify
+   a 5, 10, and 15 round game in Expo.
+
+The reference is Alice: Library of Congress LCCN 16005942, the 1885 J. W. Lovell Company edition,
+which LOC identifies as public domain and free to use and reuse. The generated local review pack
+is `.local/book-people-alice-loc/alice-loc-1885/`; its finalized data is represented by
+`packages/book-data/src/alice.final.json`.
+
+## Second-book candidate
+
+The next candidate is _The Adventures of Pinocchio_ (Library of Congress LCCN 04022857, Ginn and
+Company, 1904). The LOC record provides a PDF, 232 images, and states that its books are public
+domain and free to use and reuse. It has numerous original drawings by Charles Copeland, but it is
+not yet catalogued or playable: illustration density and the required 30 eligible spreads remain
+human-annotation questions. Its direct source PDF is:
+
+`https://tile.loc.gov/storage-services/public/gdcmassbookdig/adventuresofpino00coll_4/adventuresofpino00coll_4.pdf`
+
+This candidate is intentionally kept out of the player catalog until the full human-counted final
+pack has passed validation.

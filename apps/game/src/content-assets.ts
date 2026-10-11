@@ -1,15 +1,22 @@
 import { resolvePageAsset, type BookContent } from "@book-people/book-data";
 
-const aliceLocalDevelopmentBaseUrl = "http://localhost:8000";
+const localDevelopmentAssetBaseUrl = "http://localhost:8000";
 
 /**
  * Runtime delivery configuration, intentionally separate from canonical content paths.
- * Development defaults to the local review server. Native/release builds must set
- * EXPO_PUBLIC_ALICE_ASSET_BASE_URL to their deployed content host.
+ * Development defaults to the local review server. Release builds set a generic
+ * base or an optional per-book override; canonical book JSON never carries hosts.
  */
 function assetBaseUrlFor(book: BookContent): string | undefined {
-  if (book.id !== "alice-loc-1885") return undefined;
-  return process.env.EXPO_PUBLIC_ALICE_ASSET_BASE_URL ?? aliceLocalDevelopmentBaseUrl;
+  const perBookKey = `EXPO_PUBLIC_BOOK_ASSET_BASE_URL_${book.id
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "_")}`;
+  const environment = process.env as Record<string, string | undefined>;
+  return (
+    environment[perBookKey] ??
+    environment.EXPO_PUBLIC_BOOK_ASSET_BASE_URL ??
+    localDevelopmentAssetBaseUrl
+  );
 }
 
 export function resolveContentAsset(

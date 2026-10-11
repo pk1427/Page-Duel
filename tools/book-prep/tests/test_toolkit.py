@@ -1,20 +1,36 @@
 from __future__ import annotations
-import json, os, subprocess, sys, tempfile, unittest
+import json, os, shutil, subprocess, sys, tempfile, unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 EXTRACT, VALIDATE = ROOT / "tools/book-prep/extract.py", ROOT / "tools/book-prep/validate.py"
 
 class ToolkitTest(unittest.TestCase):
-    def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory(); self.root = Path(self.tmp.name); self.pdf = self.root / "book.pdf"
+    @classmethod
+    def setUpClass(cls):
+        cls.fixture = tempfile.TemporaryDirectory()
+        cls.fixture_root = Path(cls.fixture.name)
+        cls.pdf = cls.fixture_root / "book.pdf"
         import fitz
         doc = fitz.open()
         for i in range(42):
             page = doc.new_page(); page.draw_rect((40, 40, 200 + i, 200))
-        doc.save(self.pdf); doc.close()
-        self.command = [sys.executable, str(EXTRACT), str(self.pdf), "--id", "demo", "--title", "Demo", "--author", "A", "--first-left", "1", "--out", str(self.root / "out")]
-        self.run_command(self.command, 0); self.path = self.root / "out/demo/book.json"
+        doc.save(cls.pdf); doc.close()
+        command = [sys.executable, str(EXTRACT), str(cls.pdf), "--id", "demo", "--title", "Demo", "--author", "A", "--first-left", "1", "--width", "64", "--quality", "50", "--out", str(cls.fixture_root / "out")]
+        result = subprocess.run(command, text=True, capture_output=True)
+        if result.returncode:
+            raise RuntimeError(result.stdout + result.stderr)
+        cls.template = cls.fixture_root / "out/demo"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.fixture.cleanup()
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(); self.root = Path(self.tmp.name)
+        shutil.copytree(self.template, self.root / "out/demo")
+        self.command = [sys.executable, str(EXTRACT), str(self.pdf), "--id", "demo", "--title", "Demo", "--author", "A", "--first-left", "1", "--width", "64", "--quality", "50", "--out", str(self.root / "out")]
+        self.path = self.root / "out/demo/book.json"
 
     def tearDown(self): self.tmp.cleanup()
     def run_command(self, command, code, env=None):
@@ -24,7 +40,7 @@ class ToolkitTest(unittest.TestCase):
     def write(self, data): self.path.write_text(json.dumps(data))
 
     def test_extract_writes_working_shape(self):
-        data = self.data(); self.assertEqual(len(data["spreads"]), 21); self.assertTrue((self.path.parent / "cover.webp").is_file()); self.assertTrue((self.path.parent / "pages/p001.webp").is_file()); self.assertTrue(all(x[side]["people"] is None for x in data["spreads"] for side in ("left", "right")))
+        data = self.data(); self.assertEqual(len(data["spreads"]), 21); self.assertEqual(data["status"], "draft"); self.assertEqual(data["version"], "1"); self.assertTrue((self.path.parent / "cover.webp").is_file()); self.assertTrue((self.path.parent / "pages/p001.webp").is_file()); self.assertEqual(data["spreads"][0]["left"]["sourcePage"], 1); self.assertTrue(all(x[side]["people"] is None for x in data["spreads"] for side in ("left", "right")))
     def test_extract_refuses_overwrite_and_preserves_bytes(self):
         original = self.path.read_bytes(); self.run_command(self.command, 1); self.assertEqual(self.path.read_bytes(), original)
     def test_extract_force_overwrites(self):
@@ -39,8 +55,8 @@ class ToolkitTest(unittest.TestCase):
     def test_validate_valid_book_passes(self):
         self.make_valid(); self.run_command([sys.executable, str(VALIDATE), str(self.path)], 0)
     def test_write_final_converts_excluded_nulls_to_zero(self):
-        data = self.make_valid(); self.run_command([sys.executable, str(VALIDATE), str(self.path), "--write-final", "--base-url", "https://cdn.example/book"], 0)
-        final = json.loads(self.path.with_name("book.final.json").read_text()); self.assertEqual(final["id"], data["id"]); self.assertEqual(len(final["spreads"]), len(data["spreads"])); self.assertTrue(final["coverImage"].startswith("https://cdn.example/book/")); self.assertTrue(all(isinstance(s[x]["people"], int) for s in final["spreads"] for x in ("left", "right")))
+        data = self.make_valid(); self.run_command([sys.executable, str(VALIDATE), str(self.path), "--write-final"], 0)
+        final = json.loads(self.path.with_name("book.final.json").read_text()); self.assertEqual(final["id"], data["id"]); self.assertEqual(final["status"], "ready"); self.assertEqual(len(final["spreads"]), len(data["spreads"])); self.assertEqual(final["coverImage"], "cover.webp"); self.assertTrue(all(isinstance(s[x]["people"], int) for s in final["spreads"] for x in ("left", "right")))
         self.assertEqual(final["spreads"][0]["left"]["people"], 0)
 
     def invalid(self, mutate):
@@ -56,17 +72,21 @@ class ToolkitTest(unittest.TestCase):
         data = self.make_valid(); data["spreads"][1]["left"]["people"] = data["spreads"][1]["right"]["people"] = 0; self.write(data)
         result = self.run_command([sys.executable, str(VALIDATE), str(self.path)], 1); self.assertIn("fewer than 20 eligible", result.stdout)
     def test_excluded_null_passes(self): self.make_valid(); self.run_command([sys.executable, str(VALIDATE), str(self.path)], 0)
-    def test_final_preserves_excluded_entered_integer_and_base_url_forms(self):
+    def test_final_preserves_excluded_entered_integer_and_relative_paths(self):
         data = self.make_valid(); data["spreads"][0]["left"]["people"] = 7; self.write(data)
-        for url in ("https://cdn.example/book", "https://cdn.example/book/"):
-            self.run_command([sys.executable, str(VALIDATE), str(self.path), "--write-final", "--base-url", url], 0)
-            final = json.loads(self.path.with_name("book.final.json").read_text()); self.assertEqual(final["spreads"][0]["left"]["people"], 7); self.assertEqual(final["spreads"][0]["right"]["people"], 0); self.assertTrue(final["coverImage"].startswith("https://cdn.example/book/"))
+        self.run_command([sys.executable, str(VALIDATE), str(self.path), "--write-final"], 0)
+        final = json.loads(self.path.with_name("book.final.json").read_text()); self.assertEqual(final["spreads"][0]["left"]["people"], 7); self.assertEqual(final["spreads"][0]["right"]["people"], 0); self.assertTrue(final["spreads"][1]["left"]["image"].startswith("pages/"))
     def test_write_final_refuses_validation_errors(self):
         self.invalid(lambda d: d["spreads"][1]["left"].__setitem__("people", None))
-        result = subprocess.run([sys.executable, str(VALIDATE), str(self.path), "--write-final", "--base-url", "https://cdn.example"], text=True, capture_output=True); self.assertEqual(result.returncode, 1); self.assertFalse(self.path.with_name("book.final.json").exists())
+        result = subprocess.run([sys.executable, str(VALIDATE), str(self.path), "--write-final"], text=True, capture_output=True); self.assertEqual(result.returncode, 1); self.assertFalse(self.path.with_name("book.final.json").exists())
     def test_end_to_end_final_is_accepted_by_game_core(self):
-        self.make_valid(); self.run_command([sys.executable, str(VALIDATE), str(self.path), "--write-final", "--base-url", "https://cdn.example/book"], 0)
+        self.make_valid(); self.run_command([sys.executable, str(VALIDATE), str(self.path), "--write-final"], 0)
         environment = {**os.environ, "BOOK_PREP_FINAL": str(self.path.with_name("book.final.json"))}
-        self.run_command(["pnpm", "--filter", "@book-people/game-core", "exec", "vitest", "run", "--root", str(ROOT), "tools/book-prep/tests/game-core-compat.test.ts"], 0, environment)
+        vitest = ROOT / "packages/game-core/node_modules/.bin/vitest"
+        self.run_command([str(vitest), "run", "--root", str(ROOT), "tools/book-prep/tests/game-core-compat.test.ts"], 0, environment)
+
+    def test_absolute_and_localhost_asset_paths_fail(self):
+        self.invalid(lambda d: d["spreads"][1]["left"].__setitem__("image", "/Users/example/page.webp"))
+        self.invalid(lambda d: d["spreads"][1]["left"].__setitem__("image", "http://localhost:8000/page.webp"))
 
 if __name__ == "__main__": unittest.main()

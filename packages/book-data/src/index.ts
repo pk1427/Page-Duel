@@ -1,6 +1,7 @@
 import type { Spread } from "@book-people/game-core";
 import { createBookCatalog, toPlayableBook, type BookContent } from "./content";
 import aliceFinal from "./alice.final.json";
+import punjabFinal from "./tales-of-punjab.final.json";
 
 export * from "./content";
 
@@ -31,14 +32,17 @@ export const placeholderBook = toPlayableBook(placeholderContentPack);
  * Exact final human-annotated data generated from the local Alice review workspace.
  * Canonical asset paths remain relative; WebP assets deliberately remain outside Git.
  */
-export const aliceContentPack: BookContent = {
-  ...aliceFinal,
-  year: 1885,
-  description: "Illustrated by John Tenniel. Human-verified counts from the LOC 1885 scan.",
-  version: "1",
-  status: "ready",
-  source: { name: "Library of Congress", url: aliceFinal.source },
-};
+export const aliceContentPack = aliceFinal as BookContent;
+
+/**
+ * Exact final human-annotated data generated from the local Punjab review workspace.
+ * Canonical asset paths remain relative; WebP assets deliberately remain outside Git.
+ */
+export const punjabContentPack = punjabFinal as BookContent;
 
 /** The catalog retains content lifecycle state while exposing ready/published books for play. */
-export const bookCatalog = createBookCatalog([placeholderContentPack, aliceContentPack]);
+export const bookCatalog = createBookCatalog([
+  placeholderContentPack,
+  aliceContentPack,
+  punjabContentPack,
+]);

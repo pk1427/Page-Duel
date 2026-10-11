@@ -16,12 +16,31 @@ def is_count(value: Any) -> bool:
 
 
 def relative_missing(book_dir: Path, value: Any) -> bool:
-    return isinstance(value, str) and not value.startswith(("http://", "https://", "/")) and not (book_dir / value).is_file()
+    return isinstance(value, str) and is_relative_asset_path(value) and not (book_dir / value).is_file()
+
+
+def is_relative_asset_path(value: Any) -> bool:
+    if not isinstance(value, str) or not value or value.startswith(("/", "\\")):
+        return False
+    if ":" in value or "\\" in value:
+        return False
+    return ".." not in Path(value).parts
 
 
 def validate(book: dict[str, Any], book_dir: Path) -> tuple[list[str], list[str], list[dict[str, Any]]]:
     errors, warnings, eligible = [], [], []
+    if not isinstance(book.get("id"), str) or not book["id"].strip():
+        errors.append("missing book id")
+    if not isinstance(book.get("title"), str) or not book["title"].strip():
+        errors.append("missing title")
+    if not isinstance(book.get("version"), str) or not book["version"].strip():
+        errors.append("missing content version")
+    if book.get("status") not in ("draft", "ready", "published"):
+        errors.append("invalid content status")
+    if not isinstance(book.get("spreads"), list):
+        return errors + ["spreads must be an array"], warnings, eligible
     seen: set[Any] = set()
+    pages: set[Any] = set()
     for spread in book.get("spreads", []):
         spread_id = spread.get("id")
         if spread_id in seen:
@@ -31,6 +50,13 @@ def validate(book: dict[str, Any], book_dir: Path) -> tuple[list[str], list[str]
         valid_counts = True
         for side_name in ("left", "right"):
             side = spread.get(side_name, {})
+            page = side.get("page")
+            if not isinstance(page, int) or isinstance(page, bool) or page < 0:
+                errors.append(f"{spread_id} {side_name}: page must be a non-negative integer")
+            elif page in pages:
+                errors.append(f"duplicate page id: {page}")
+            else:
+                pages.add(page)
             people = side.get("people")
             if people is None:
                 if not excluded:
@@ -39,12 +65,22 @@ def validate(book: dict[str, Any], book_dir: Path) -> tuple[list[str], list[str]
             elif not is_count(people):
                 errors.append(f"{spread_id} {side_name}: people must be an integer >= 0")
                 valid_counts = False
-            if relative_missing(book_dir, side.get("image")):
+            if not is_relative_asset_path(side.get("image")):
+                errors.append(f"{spread_id} {side_name}: image must be a relative asset path")
+            elif relative_missing(book_dir, side.get("image")):
                 errors.append(f"{spread_id} {side_name}: missing image {side.get('image')}")
         if not excluded and valid_counts and not (spread["left"]["people"] == 0 and spread["right"]["people"] == 0):
             eligible.append(spread)
-    if relative_missing(book_dir, book.get("coverImage")):
+    if not is_relative_asset_path(book.get("coverImage")):
+        errors.append("cover image must be a relative asset path")
+    elif relative_missing(book_dir, book.get("coverImage")):
         errors.append(f"missing cover image {book.get('coverImage')}")
+    if book.get("status") in ("ready", "published") and any(
+        side.get("people") is None
+        for spread in book["spreads"]
+        for side in (spread.get("left", {}), spread.get("right", {}))
+    ):
+        errors.append("ready or published content cannot contain uncounted pages")
     if len(eligible) < 20:
         errors.append(f"fewer than 20 eligible spreads ({len(eligible)})")
     return errors, warnings, eligible
@@ -65,15 +101,11 @@ def print_stats(eligible: list[dict[str, Any]]) -> None:
     if zero_share > .5: print("WARNING: more than 50% of pages have zero people")
 
 
-def prefix(value: str, base: str) -> str:
-    return value if value.startswith(("http://", "https://", "/")) else base + value
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("book", type=Path)
     parser.add_argument("--write-final", action="store_true")
-    parser.add_argument("--base-url", default="")
+    parser.add_argument("--base-url", default="", help="Deprecated: runtime hosting is configured by the app")
     args = parser.parse_args()
     try: book = json.loads(args.book.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc: print(f"Cannot read book: {exc}"); return 1
@@ -82,17 +114,14 @@ def main() -> int:
     for error in errors: print(f"ERROR: {error}")
     if errors: return 1
     if args.write_final:
-        if not args.base_url: print("ERROR: --base-url is required with --write-final"); return 1
-        base = args.base_url if args.base_url.endswith("/") else args.base_url + "/"
         final = copy.deepcopy(book)
-        final["coverImage"] = prefix(final["coverImage"], base)
+        final["status"] = "ready"
         for spread in final["spreads"]:
             excluded = "excluded" in spread.get("flags", [])
             for side in (spread["left"], spread["right"]):
                 if side["people"] is None and excluded: side["people"] = 0
-                side["image"] = prefix(side["image"], base)
         args.book.with_name("book.final.json").write_text(json.dumps(final, indent=2) + "\n", encoding="utf-8")
-        print("Wrote book.final.json")
+        print("Wrote book.final.json with canonical relative asset paths")
     return 0
 
 

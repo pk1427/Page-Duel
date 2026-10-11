@@ -1,0 +1,2756 @@
+{
+  "id": "tales-of-punjab-1894",
+  "title": "Tales of the Punjab",
+  "author": "Flora Annie Steel",
+  "license": "Public domain",
+  "version": "1",
+  "status": "ready",
+  "coverImage": "cover.webp",
+  "spreads": [
+    {
+      "id": "s001",
+      "left": {
+        "page": 0,
+        "sourcePage": 24,
+        "printedPage": null,
+        "image": "pages/p000.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 1,
+        "sourcePage": 25,
+        "printedPage": 1,
+        "image": "pages/p001.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s002",
+      "left": {
+        "page": 2,
+        "sourcePage": 26,
+        "printedPage": 2,
+        "image": "pages/p002.webp",
+        "people": 2
+      },
+      "right": {
+        "page": 3,
+        "sourcePage": 27,
+        "printedPage": 3,
+        "image": "pages/p003.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s003",
+      "left": {
+        "page": 4,
+        "sourcePage": 28,
+        "printedPage": 4,
+        "image": "pages/p004.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 5,
+        "sourcePage": 29,
+        "printedPage": 5,
+        "image": "pages/p005.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s004",
+      "left": {
+        "page": 6,
+        "sourcePage": 30,
+        "printedPage": 6,
+        "image": "pages/p006.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 7,
+        "sourcePage": 31,
+        "printedPage": 7,
+        "image": "pages/p007.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s005",
+      "left": {
+        "page": 8,
+        "sourcePage": 32,
+        "printedPage": 8,
+        "image": "pages/p008.webp",
+        "people": 3
+      },
+      "right": {
+        "page": 9,
+        "sourcePage": 33,
+        "printedPage": 9,
+        "image": "pages/p009.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s006",
+      "left": {
+        "page": 10,
+        "sourcePage": 34,
+        "printedPage": 10,
+        "image": "pages/p010.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 11,
+        "sourcePage": 35,
+        "printedPage": 11,
+        "image": "pages/p011.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s007",
+      "left": {
+        "page": 12,
+        "sourcePage": 36,
+        "printedPage": 12,
+        "image": "pages/p012.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 13,
+        "sourcePage": 37,
+        "printedPage": 13,
+        "image": "pages/p013.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s008",
+      "left": {
+        "page": 14,
+        "sourcePage": 38,
+        "printedPage": 14,
+        "image": "pages/p014.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 15,
+        "sourcePage": 39,
+        "printedPage": 15,
+        "image": "pages/p015.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s009",
+      "left": {
+        "page": 16,
+        "sourcePage": 40,
+        "printedPage": 16,
+        "image": "pages/p016.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 17,
+        "sourcePage": 41,
+        "printedPage": 17,
+        "image": "pages/p017.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s010",
+      "left": {
+        "page": 18,
+        "sourcePage": 42,
+        "printedPage": 18,
+        "image": "pages/p018.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 19,
+        "sourcePage": 43,
+        "printedPage": 19,
+        "image": "pages/p019.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s011",
+      "left": {
+        "page": 20,
+        "sourcePage": 44,
+        "printedPage": 20,
+        "image": "pages/p020.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 21,
+        "sourcePage": 45,
+        "printedPage": 21,
+        "image": "pages/p021.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s012",
+      "left": {
+        "page": 22,
+        "sourcePage": 46,
+        "printedPage": 22,
+        "image": "pages/p022.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 23,
+        "sourcePage": 47,
+        "printedPage": 23,
+        "image": "pages/p023.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s013",
+      "left": {
+        "page": 24,
+        "sourcePage": 48,
+        "printedPage": 24,
+        "image": "pages/p024.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 25,
+        "sourcePage": 49,
+        "printedPage": 25,
+        "image": "pages/p025.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s014",
+      "left": {
+        "page": 26,
+        "sourcePage": 50,
+        "printedPage": 26,
+        "image": "pages/p026.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 27,
+        "sourcePage": 51,
+        "printedPage": 27,
+        "image": "pages/p027.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s015",
+      "left": {
+        "page": 28,
+        "sourcePage": 52,
+        "printedPage": 28,
+        "image": "pages/p028.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 29,
+        "sourcePage": 53,
+        "printedPage": 29,
+        "image": "pages/p029.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s016",
+      "left": {
+        "page": 30,
+        "sourcePage": 54,
+        "printedPage": 30,
+        "image": "pages/p030.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 31,
+        "sourcePage": 55,
+        "printedPage": 31,
+        "image": "pages/p031.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s017",
+      "left": {
+        "page": 32,
+        "sourcePage": 56,
+        "printedPage": 32,
+        "image": "pages/p032.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 33,
+        "sourcePage": 57,
+        "printedPage": 33,
+        "image": "pages/p033.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s018",
+      "left": {
+        "page": 34,
+        "sourcePage": 58,
+        "printedPage": 34,
+        "image": "pages/p034.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 35,
+        "sourcePage": 59,
+        "printedPage": 35,
+        "image": "pages/p035.webp",
+        "people": 3
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s019",
+      "left": {
+        "page": 36,
+        "sourcePage": 60,
+        "printedPage": 36,
+        "image": "pages/p036.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 37,
+        "sourcePage": 61,
+        "printedPage": 37,
+        "image": "pages/p037.webp",
+        "people": 2
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s020",
+      "left": {
+        "page": 38,
+        "sourcePage": 62,
+        "printedPage": 38,
+        "image": "pages/p038.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 39,
+        "sourcePage": 63,
+        "printedPage": 39,
+        "image": "pages/p039.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s021",
+      "left": {
+        "page": 40,
+        "sourcePage": 64,
+        "printedPage": 40,
+        "image": "pages/p040.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 41,
+        "sourcePage": 65,
+        "printedPage": 41,
+        "image": "pages/p041.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s022",
+      "left": {
+        "page": 42,
+        "sourcePage": 66,
+        "printedPage": 42,
+        "image": "pages/p042.webp",
+        "people": 1
+      },
+      "right": {
+        "page": 43,
+        "sourcePage": 67,
+        "printedPage": 43,
+        "image": "pages/p043.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s023",
+      "left": {
+        "page": 44,
+        "sourcePage": 68,
+        "printedPage": 44,
+        "image": "pages/p044.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 45,
+        "sourcePage": 69,
+        "printedPage": 45,
+        "image": "pages/p045.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s024",
+      "left": {
+        "page": 46,
+        "sourcePage": 70,
+        "printedPage": 46,
+        "image": "pages/p046.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 47,
+        "sourcePage": 71,
+        "printedPage": 47,
+        "image": "pages/p047.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s025",
+      "left": {
+        "page": 48,
+        "sourcePage": 72,
+        "printedPage": 48,
+        "image": "pages/p048.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 49,
+        "sourcePage": 73,
+        "printedPage": 49,
+        "image": "pages/p049.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s026",
+      "left": {
+        "page": 50,
+        "sourcePage": 74,
+        "printedPage": 50,
+        "image": "pages/p050.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 51,
+        "sourcePage": 75,
+        "printedPage": 51,
+        "image": "pages/p051.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s027",
+      "left": {
+        "page": 52,
+        "sourcePage": 76,
+        "printedPage": 52,
+        "image": "pages/p052.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 53,
+        "sourcePage": 77,
+        "printedPage": 53,
+        "image": "pages/p053.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s028",
+      "left": {
+        "page": 54,
+        "sourcePage": 78,
+        "printedPage": 54,
+        "image": "pages/p054.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 55,
+        "sourcePage": 79,
+        "printedPage": 55,
+        "image": "pages/p055.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s029",
+      "left": {
+        "page": 56,
+        "sourcePage": 80,
+        "printedPage": 56,
+        "image": "pages/p056.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 57,
+        "sourcePage": 81,
+        "printedPage": 57,
+        "image": "pages/p057.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s030",
+      "left": {
+        "page": 58,
+        "sourcePage": 82,
+        "printedPage": 58,
+        "image": "pages/p058.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 59,
+        "sourcePage": 83,
+        "printedPage": 59,
+        "image": "pages/p059.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s031",
+      "left": {
+        "page": 60,
+        "sourcePage": 84,
+        "printedPage": 60,
+        "image": "pages/p060.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 61,
+        "sourcePage": 85,
+        "printedPage": 61,
+        "image": "pages/p061.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s032",
+      "left": {
+        "page": 62,
+        "sourcePage": 86,
+        "printedPage": 62,
+        "image": "pages/p062.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 63,
+        "sourcePage": 87,
+        "printedPage": 63,
+        "image": "pages/p063.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s033",
+      "left": {
+        "page": 64,
+        "sourcePage": 88,
+        "printedPage": 64,
+        "image": "pages/p064.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 65,
+        "sourcePage": 89,
+        "printedPage": 65,
+        "image": "pages/p065.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s034",
+      "left": {
+        "page": 66,
+        "sourcePage": 90,
+        "printedPage": 66,
+        "image": "pages/p066.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 67,
+        "sourcePage": 91,
+        "printedPage": 67,
+        "image": "pages/p067.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s035",
+      "left": {
+        "page": 68,
+        "sourcePage": 92,
+        "printedPage": 68,
+        "image": "pages/p068.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 69,
+        "sourcePage": 93,
+        "printedPage": 69,
+        "image": "pages/p069.webp",
+        "people": 2
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s036",
+      "left": {
+        "page": 70,
+        "sourcePage": 94,
+        "printedPage": 70,
+        "image": "pages/p070.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 71,
+        "sourcePage": 95,
+        "printedPage": 71,
+        "image": "pages/p071.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s037",
+      "left": {
+        "page": 72,
+        "sourcePage": 96,
+        "printedPage": 72,
+        "image": "pages/p072.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 73,
+        "sourcePage": 97,
+        "printedPage": 73,
+        "image": "pages/p073.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s038",
+      "left": {
+        "page": 74,
+        "sourcePage": 98,
+        "printedPage": 74,
+        "image": "pages/p074.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 75,
+        "sourcePage": 99,
+        "printedPage": 75,
+        "image": "pages/p075.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s039",
+      "left": {
+        "page": 76,
+        "sourcePage": 100,
+        "printedPage": 76,
+        "image": "pages/p076.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 77,
+        "sourcePage": 101,
+        "printedPage": 77,
+        "image": "pages/p077.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s040",
+      "left": {
+        "page": 78,
+        "sourcePage": 102,
+        "printedPage": 78,
+        "image": "pages/p078.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 79,
+        "sourcePage": 103,
+        "printedPage": 79,
+        "image": "pages/p079.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s041",
+      "left": {
+        "page": 80,
+        "sourcePage": 104,
+        "printedPage": 80,
+        "image": "pages/p080.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 81,
+        "sourcePage": 105,
+        "printedPage": 81,
+        "image": "pages/p081.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s042",
+      "left": {
+        "page": 82,
+        "sourcePage": 106,
+        "printedPage": 82,
+        "image": "pages/p082.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 83,
+        "sourcePage": 107,
+        "printedPage": 83,
+        "image": "pages/p083.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s043",
+      "left": {
+        "page": 84,
+        "sourcePage": 108,
+        "printedPage": 84,
+        "image": "pages/p084.webp",
+        "people": 100
+      },
+      "right": {
+        "page": 85,
+        "sourcePage": 109,
+        "printedPage": 85,
+        "image": "pages/p085.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on BOTH pages (reviewed visually). Screening: class A (heuristic, NOT a count)."
+    },
+    {
+      "id": "s044",
+      "left": {
+        "page": 86,
+        "sourcePage": 110,
+        "printedPage": 86,
+        "image": "pages/p086.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 87,
+        "sourcePage": 111,
+        "printedPage": 87,
+        "image": "pages/p087.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s045",
+      "left": {
+        "page": 88,
+        "sourcePage": 112,
+        "printedPage": 88,
+        "image": "pages/p088.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 89,
+        "sourcePage": 113,
+        "printedPage": 89,
+        "image": "pages/p089.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s046",
+      "left": {
+        "page": 90,
+        "sourcePage": 114,
+        "printedPage": 90,
+        "image": "pages/p090.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 91,
+        "sourcePage": 115,
+        "printedPage": 91,
+        "image": "pages/p091.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s047",
+      "left": {
+        "page": 92,
+        "sourcePage": 116,
+        "printedPage": 92,
+        "image": "pages/p092.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 93,
+        "sourcePage": 117,
+        "printedPage": 93,
+        "image": "pages/p093.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s048",
+      "left": {
+        "page": 94,
+        "sourcePage": 118,
+        "printedPage": 94,
+        "image": "pages/p094.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 95,
+        "sourcePage": 119,
+        "printedPage": 95,
+        "image": "pages/p095.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s049",
+      "left": {
+        "page": 96,
+        "sourcePage": 120,
+        "printedPage": 96,
+        "image": "pages/p096.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 97,
+        "sourcePage": 121,
+        "printedPage": 97,
+        "image": "pages/p097.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s050",
+      "left": {
+        "page": 98,
+        "sourcePage": 122,
+        "printedPage": 98,
+        "image": "pages/p098.webp",
+        "people": 14
+      },
+      "right": {
+        "page": 99,
+        "sourcePage": 123,
+        "printedPage": 99,
+        "image": "pages/p099.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s051",
+      "left": {
+        "page": 100,
+        "sourcePage": 124,
+        "printedPage": 100,
+        "image": "pages/p100.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 101,
+        "sourcePage": 125,
+        "printedPage": 101,
+        "image": "pages/p101.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s052",
+      "left": {
+        "page": 102,
+        "sourcePage": 126,
+        "printedPage": 102,
+        "image": "pages/p102.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 103,
+        "sourcePage": 127,
+        "printedPage": 103,
+        "image": "pages/p103.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s053",
+      "left": {
+        "page": 104,
+        "sourcePage": 128,
+        "printedPage": 104,
+        "image": "pages/p104.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 105,
+        "sourcePage": 129,
+        "printedPage": 105,
+        "image": "pages/p105.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s054",
+      "left": {
+        "page": 106,
+        "sourcePage": 130,
+        "printedPage": 106,
+        "image": "pages/p106.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 107,
+        "sourcePage": 131,
+        "printedPage": 107,
+        "image": "pages/p107.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s055",
+      "left": {
+        "page": 108,
+        "sourcePage": 132,
+        "printedPage": 108,
+        "image": "pages/p108.webp",
+        "people": 2
+      },
+      "right": {
+        "page": 109,
+        "sourcePage": 133,
+        "printedPage": 109,
+        "image": "pages/p109.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s056",
+      "left": {
+        "page": 110,
+        "sourcePage": 134,
+        "printedPage": 110,
+        "image": "pages/p110.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 111,
+        "sourcePage": 135,
+        "printedPage": 111,
+        "image": "pages/p111.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s057",
+      "left": {
+        "page": 112,
+        "sourcePage": 136,
+        "printedPage": 112,
+        "image": "pages/p112.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 113,
+        "sourcePage": 137,
+        "printedPage": 113,
+        "image": "pages/p113.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s058",
+      "left": {
+        "page": 114,
+        "sourcePage": 138,
+        "printedPage": 114,
+        "image": "pages/p114.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 115,
+        "sourcePage": 139,
+        "printedPage": 115,
+        "image": "pages/p115.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s059",
+      "left": {
+        "page": 116,
+        "sourcePage": 140,
+        "printedPage": 116,
+        "image": "pages/p116.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 117,
+        "sourcePage": 141,
+        "printedPage": 117,
+        "image": "pages/p117.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s060",
+      "left": {
+        "page": 118,
+        "sourcePage": 142,
+        "printedPage": 118,
+        "image": "pages/p118.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 119,
+        "sourcePage": 143,
+        "printedPage": 119,
+        "image": "pages/p119.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s061",
+      "left": {
+        "page": 120,
+        "sourcePage": 144,
+        "printedPage": 120,
+        "image": "pages/p120.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 121,
+        "sourcePage": 145,
+        "printedPage": 121,
+        "image": "pages/p121.webp",
+        "people": 20
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on BOTH pages (reviewed visually). Screening: class A (heuristic, NOT a count)."
+    },
+    {
+      "id": "s062",
+      "left": {
+        "page": 122,
+        "sourcePage": 146,
+        "printedPage": 122,
+        "image": "pages/p122.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 123,
+        "sourcePage": 147,
+        "printedPage": 123,
+        "image": "pages/p123.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s063",
+      "left": {
+        "page": 124,
+        "sourcePage": 148,
+        "printedPage": 124,
+        "image": "pages/p124.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 125,
+        "sourcePage": 149,
+        "printedPage": 125,
+        "image": "pages/p125.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s064",
+      "left": {
+        "page": 126,
+        "sourcePage": 150,
+        "printedPage": 126,
+        "image": "pages/p126.webp",
+        "people": 2
+      },
+      "right": {
+        "page": 127,
+        "sourcePage": 151,
+        "printedPage": 127,
+        "image": "pages/p127.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s065",
+      "left": {
+        "page": 128,
+        "sourcePage": 152,
+        "printedPage": 128,
+        "image": "pages/p128.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 129,
+        "sourcePage": 153,
+        "printedPage": 129,
+        "image": "pages/p129.webp",
+        "people": 3
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s066",
+      "left": {
+        "page": 130,
+        "sourcePage": 154,
+        "printedPage": 130,
+        "image": "pages/p130.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 131,
+        "sourcePage": 155,
+        "printedPage": 131,
+        "image": "pages/p131.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s067",
+      "left": {
+        "page": 132,
+        "sourcePage": 156,
+        "printedPage": 132,
+        "image": "pages/p132.webp",
+        "people": 200
+      },
+      "right": {
+        "page": 133,
+        "sourcePage": 157,
+        "printedPage": 133,
+        "image": "pages/p133.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on BOTH pages (reviewed visually). Screening: class A (heuristic, NOT a count)."
+    },
+    {
+      "id": "s068",
+      "left": {
+        "page": 134,
+        "sourcePage": 158,
+        "printedPage": 134,
+        "image": "pages/p134.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 135,
+        "sourcePage": 159,
+        "printedPage": 135,
+        "image": "pages/p135.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s069",
+      "left": {
+        "page": 136,
+        "sourcePage": 160,
+        "printedPage": 136,
+        "image": "pages/p136.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 137,
+        "sourcePage": 161,
+        "printedPage": 137,
+        "image": "pages/p137.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s070",
+      "left": {
+        "page": 138,
+        "sourcePage": 162,
+        "printedPage": 138,
+        "image": "pages/p138.webp",
+        "people": 3
+      },
+      "right": {
+        "page": 139,
+        "sourcePage": 163,
+        "printedPage": 139,
+        "image": "pages/p139.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s071",
+      "left": {
+        "page": 140,
+        "sourcePage": 164,
+        "printedPage": 140,
+        "image": "pages/p140.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 141,
+        "sourcePage": 165,
+        "printedPage": 141,
+        "image": "pages/p141.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s072",
+      "left": {
+        "page": 142,
+        "sourcePage": 166,
+        "printedPage": 142,
+        "image": "pages/p142.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 143,
+        "sourcePage": 167,
+        "printedPage": 143,
+        "image": "pages/p143.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s073",
+      "left": {
+        "page": 144,
+        "sourcePage": 168,
+        "printedPage": 144,
+        "image": "pages/p144.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 145,
+        "sourcePage": 169,
+        "printedPage": 145,
+        "image": "pages/p145.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s074",
+      "left": {
+        "page": 146,
+        "sourcePage": 170,
+        "printedPage": 146,
+        "image": "pages/p146.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 147,
+        "sourcePage": 171,
+        "printedPage": 147,
+        "image": "pages/p147.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s075",
+      "left": {
+        "page": 148,
+        "sourcePage": 172,
+        "printedPage": 148,
+        "image": "pages/p148.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 149,
+        "sourcePage": 173,
+        "printedPage": 149,
+        "image": "pages/p149.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s076",
+      "left": {
+        "page": 150,
+        "sourcePage": 174,
+        "printedPage": 150,
+        "image": "pages/p150.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 151,
+        "sourcePage": 175,
+        "printedPage": 151,
+        "image": "pages/p151.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s077",
+      "left": {
+        "page": 152,
+        "sourcePage": 176,
+        "printedPage": 152,
+        "image": "pages/p152.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 153,
+        "sourcePage": 177,
+        "printedPage": 153,
+        "image": "pages/p153.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s078",
+      "left": {
+        "page": 154,
+        "sourcePage": 178,
+        "printedPage": 154,
+        "image": "pages/p154.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 155,
+        "sourcePage": 179,
+        "printedPage": 155,
+        "image": "pages/p155.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s079",
+      "left": {
+        "page": 156,
+        "sourcePage": 180,
+        "printedPage": 156,
+        "image": "pages/p156.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 157,
+        "sourcePage": 181,
+        "printedPage": 157,
+        "image": "pages/p157.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s080",
+      "left": {
+        "page": 158,
+        "sourcePage": 182,
+        "printedPage": 158,
+        "image": "pages/p158.webp",
+        "people": 4
+      },
+      "right": {
+        "page": 159,
+        "sourcePage": 183,
+        "printedPage": 159,
+        "image": "pages/p159.webp",
+        "people": 3
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s081",
+      "left": {
+        "page": 160,
+        "sourcePage": 184,
+        "printedPage": 160,
+        "image": "pages/p160.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 161,
+        "sourcePage": 185,
+        "printedPage": 161,
+        "image": "pages/p161.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s082",
+      "left": {
+        "page": 162,
+        "sourcePage": 186,
+        "printedPage": 162,
+        "image": "pages/p162.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 163,
+        "sourcePage": 187,
+        "printedPage": 163,
+        "image": "pages/p163.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s083",
+      "left": {
+        "page": 164,
+        "sourcePage": 188,
+        "printedPage": 164,
+        "image": "pages/p164.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 165,
+        "sourcePage": 189,
+        "printedPage": 165,
+        "image": "pages/p165.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s084",
+      "left": {
+        "page": 166,
+        "sourcePage": 190,
+        "printedPage": 166,
+        "image": "pages/p166.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 167,
+        "sourcePage": 191,
+        "printedPage": 167,
+        "image": "pages/p167.webp",
+        "people": 2
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s085",
+      "left": {
+        "page": 168,
+        "sourcePage": 192,
+        "printedPage": 168,
+        "image": "pages/p168.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 169,
+        "sourcePage": 193,
+        "printedPage": 169,
+        "image": "pages/p169.webp",
+        "people": 2
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s086",
+      "left": {
+        "page": 170,
+        "sourcePage": 194,
+        "printedPage": 170,
+        "image": "pages/p170.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 171,
+        "sourcePage": 195,
+        "printedPage": 171,
+        "image": "pages/p171.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s087",
+      "left": {
+        "page": 172,
+        "sourcePage": 196,
+        "printedPage": 172,
+        "image": "pages/p172.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 173,
+        "sourcePage": 197,
+        "printedPage": 173,
+        "image": "pages/p173.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s088",
+      "left": {
+        "page": 174,
+        "sourcePage": 198,
+        "printedPage": 174,
+        "image": "pages/p174.webp",
+        "people": 2
+      },
+      "right": {
+        "page": 175,
+        "sourcePage": 199,
+        "printedPage": 175,
+        "image": "pages/p175.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s089",
+      "left": {
+        "page": 176,
+        "sourcePage": 200,
+        "printedPage": 176,
+        "image": "pages/p176.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 177,
+        "sourcePage": 201,
+        "printedPage": 177,
+        "image": "pages/p177.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s090",
+      "left": {
+        "page": 178,
+        "sourcePage": 202,
+        "printedPage": 178,
+        "image": "pages/p178.webp",
+        "people": 1
+      },
+      "right": {
+        "page": 179,
+        "sourcePage": 203,
+        "printedPage": 179,
+        "image": "pages/p179.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s091",
+      "left": {
+        "page": 180,
+        "sourcePage": 204,
+        "printedPage": 180,
+        "image": "pages/p180.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 181,
+        "sourcePage": 205,
+        "printedPage": 181,
+        "image": "pages/p181.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s092",
+      "left": {
+        "page": 182,
+        "sourcePage": 206,
+        "printedPage": 182,
+        "image": "pages/p182.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 183,
+        "sourcePage": 207,
+        "printedPage": 183,
+        "image": "pages/p183.webp",
+        "people": 4
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s093",
+      "left": {
+        "page": 184,
+        "sourcePage": 208,
+        "printedPage": 184,
+        "image": "pages/p184.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 185,
+        "sourcePage": 209,
+        "printedPage": 185,
+        "image": "pages/p185.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s094",
+      "left": {
+        "page": 186,
+        "sourcePage": 210,
+        "printedPage": 186,
+        "image": "pages/p186.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 187,
+        "sourcePage": 211,
+        "printedPage": 187,
+        "image": "pages/p187.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s095",
+      "left": {
+        "page": 188,
+        "sourcePage": 212,
+        "printedPage": 188,
+        "image": "pages/p188.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 189,
+        "sourcePage": 213,
+        "printedPage": 189,
+        "image": "pages/p189.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s096",
+      "left": {
+        "page": 190,
+        "sourcePage": 214,
+        "printedPage": 190,
+        "image": "pages/p190.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 191,
+        "sourcePage": 215,
+        "printedPage": 191,
+        "image": "pages/p191.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s097",
+      "left": {
+        "page": 192,
+        "sourcePage": 216,
+        "printedPage": 192,
+        "image": "pages/p192.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 193,
+        "sourcePage": 217,
+        "printedPage": 193,
+        "image": "pages/p193.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s098",
+      "left": {
+        "page": 194,
+        "sourcePage": 218,
+        "printedPage": 194,
+        "image": "pages/p194.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 195,
+        "sourcePage": 219,
+        "printedPage": 195,
+        "image": "pages/p195.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s099",
+      "left": {
+        "page": 196,
+        "sourcePage": 220,
+        "printedPage": 196,
+        "image": "pages/p196.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 197,
+        "sourcePage": 221,
+        "printedPage": 197,
+        "image": "pages/p197.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s100",
+      "left": {
+        "page": 198,
+        "sourcePage": 222,
+        "printedPage": 198,
+        "image": "pages/p198.webp",
+        "people": 6
+      },
+      "right": {
+        "page": 199,
+        "sourcePage": 223,
+        "printedPage": 199,
+        "image": "pages/p199.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s101",
+      "left": {
+        "page": 200,
+        "sourcePage": 224,
+        "printedPage": 200,
+        "image": "pages/p200.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 201,
+        "sourcePage": 225,
+        "printedPage": 201,
+        "image": "pages/p201.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s102",
+      "left": {
+        "page": 202,
+        "sourcePage": 226,
+        "printedPage": 202,
+        "image": "pages/p202.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 203,
+        "sourcePage": 227,
+        "printedPage": 203,
+        "image": "pages/p203.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s103",
+      "left": {
+        "page": 204,
+        "sourcePage": 228,
+        "printedPage": 204,
+        "image": "pages/p204.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 205,
+        "sourcePage": 229,
+        "printedPage": 205,
+        "image": "pages/p205.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s104",
+      "left": {
+        "page": 206,
+        "sourcePage": 230,
+        "printedPage": 206,
+        "image": "pages/p206.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 207,
+        "sourcePage": 231,
+        "printedPage": 207,
+        "image": "pages/p207.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s105",
+      "left": {
+        "page": 208,
+        "sourcePage": 232,
+        "printedPage": 208,
+        "image": "pages/p208.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 209,
+        "sourcePage": 233,
+        "printedPage": 209,
+        "image": "pages/p209.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s106",
+      "left": {
+        "page": 210,
+        "sourcePage": 234,
+        "printedPage": 210,
+        "image": "pages/p210.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 211,
+        "sourcePage": 235,
+        "printedPage": 211,
+        "image": "pages/p211.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s107",
+      "left": {
+        "page": 212,
+        "sourcePage": 236,
+        "printedPage": 212,
+        "image": "pages/p212.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 213,
+        "sourcePage": 237,
+        "printedPage": 213,
+        "image": "pages/p213.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s108",
+      "left": {
+        "page": 214,
+        "sourcePage": 238,
+        "printedPage": 214,
+        "image": "pages/p214.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 215,
+        "sourcePage": 239,
+        "printedPage": 215,
+        "image": "pages/p215.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s109",
+      "left": {
+        "page": 216,
+        "sourcePage": 240,
+        "printedPage": 216,
+        "image": "pages/p216.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 217,
+        "sourcePage": 241,
+        "printedPage": 217,
+        "image": "pages/p217.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s110",
+      "left": {
+        "page": 218,
+        "sourcePage": 242,
+        "printedPage": 218,
+        "image": "pages/p218.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 219,
+        "sourcePage": 243,
+        "printedPage": 219,
+        "image": "pages/p219.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s111",
+      "left": {
+        "page": 220,
+        "sourcePage": 244,
+        "printedPage": 220,
+        "image": "pages/p220.webp",
+        "people": 6
+      },
+      "right": {
+        "page": 221,
+        "sourcePage": 245,
+        "printedPage": 221,
+        "image": "pages/p221.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s112",
+      "left": {
+        "page": 222,
+        "sourcePage": 246,
+        "printedPage": 222,
+        "image": "pages/p222.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 223,
+        "sourcePage": 247,
+        "printedPage": 223,
+        "image": "pages/p223.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s113",
+      "left": {
+        "page": 224,
+        "sourcePage": 248,
+        "printedPage": 224,
+        "image": "pages/p224.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 225,
+        "sourcePage": 249,
+        "printedPage": 225,
+        "image": "pages/p225.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s114",
+      "left": {
+        "page": 226,
+        "sourcePage": 250,
+        "printedPage": 226,
+        "image": "pages/p226.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 227,
+        "sourcePage": 251,
+        "printedPage": 227,
+        "image": "pages/p227.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s115",
+      "left": {
+        "page": 228,
+        "sourcePage": 252,
+        "printedPage": 228,
+        "image": "pages/p228.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 229,
+        "sourcePage": 253,
+        "printedPage": 229,
+        "image": "pages/p229.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s116",
+      "left": {
+        "page": 230,
+        "sourcePage": 254,
+        "printedPage": 230,
+        "image": "pages/p230.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 231,
+        "sourcePage": 255,
+        "printedPage": 231,
+        "image": "pages/p231.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s117",
+      "left": {
+        "page": 232,
+        "sourcePage": 256,
+        "printedPage": 232,
+        "image": "pages/p232.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 233,
+        "sourcePage": 257,
+        "printedPage": 233,
+        "image": "pages/p233.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s118",
+      "left": {
+        "page": 234,
+        "sourcePage": 258,
+        "printedPage": 234,
+        "image": "pages/p234.webp",
+        "people": 1
+      },
+      "right": {
+        "page": 235,
+        "sourcePage": 259,
+        "printedPage": 235,
+        "image": "pages/p235.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s119",
+      "left": {
+        "page": 236,
+        "sourcePage": 260,
+        "printedPage": 236,
+        "image": "pages/p236.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 237,
+        "sourcePage": 261,
+        "printedPage": 237,
+        "image": "pages/p237.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s120",
+      "left": {
+        "page": 238,
+        "sourcePage": 262,
+        "printedPage": 238,
+        "image": "pages/p238.webp",
+        "people": 2
+      },
+      "right": {
+        "page": 239,
+        "sourcePage": 263,
+        "printedPage": 239,
+        "image": "pages/p239.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s121",
+      "left": {
+        "page": 240,
+        "sourcePage": 264,
+        "printedPage": 240,
+        "image": "pages/p240.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 241,
+        "sourcePage": 265,
+        "printedPage": 241,
+        "image": "pages/p241.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s122",
+      "left": {
+        "page": 242,
+        "sourcePage": 266,
+        "printedPage": 242,
+        "image": "pages/p242.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 243,
+        "sourcePage": 267,
+        "printedPage": 243,
+        "image": "pages/p243.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s123",
+      "left": {
+        "page": 244,
+        "sourcePage": 268,
+        "printedPage": 244,
+        "image": "pages/p244.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 245,
+        "sourcePage": 269,
+        "printedPage": 245,
+        "image": "pages/p245.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s124",
+      "left": {
+        "page": 246,
+        "sourcePage": 270,
+        "printedPage": 246,
+        "image": "pages/p246.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 247,
+        "sourcePage": 271,
+        "printedPage": 247,
+        "image": "pages/p247.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s125",
+      "left": {
+        "page": 248,
+        "sourcePage": 272,
+        "printedPage": 248,
+        "image": "pages/p248.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 249,
+        "sourcePage": 273,
+        "printedPage": 249,
+        "image": "pages/p249.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s126",
+      "left": {
+        "page": 250,
+        "sourcePage": 274,
+        "printedPage": 250,
+        "image": "pages/p250.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 251,
+        "sourcePage": 275,
+        "printedPage": 251,
+        "image": "pages/p251.webp",
+        "people": 0
+      },
+      "flags": ["excluded"],
+      "notes": "Excluded: animal-only / ornamental illustration, no countable people (reviewed visually)."
+    },
+    {
+      "id": "s127",
+      "left": {
+        "page": 252,
+        "sourcePage": 276,
+        "printedPage": 252,
+        "image": "pages/p252.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 253,
+        "sourcePage": 277,
+        "printedPage": 253,
+        "image": "pages/p253.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s128",
+      "left": {
+        "page": 254,
+        "sourcePage": 278,
+        "printedPage": 254,
+        "image": "pages/p254.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 255,
+        "sourcePage": 279,
+        "printedPage": 255,
+        "image": "pages/p255.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s129",
+      "left": {
+        "page": 256,
+        "sourcePage": 280,
+        "printedPage": 256,
+        "image": "pages/p256.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 257,
+        "sourcePage": 281,
+        "printedPage": 257,
+        "image": "pages/p257.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s130",
+      "left": {
+        "page": 258,
+        "sourcePage": 282,
+        "printedPage": 258,
+        "image": "pages/p258.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 259,
+        "sourcePage": 283,
+        "printedPage": 259,
+        "image": "pages/p259.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s131",
+      "left": {
+        "page": 260,
+        "sourcePage": 284,
+        "printedPage": 260,
+        "image": "pages/p260.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 261,
+        "sourcePage": 285,
+        "printedPage": 261,
+        "image": "pages/p261.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s132",
+      "left": {
+        "page": 262,
+        "sourcePage": 286,
+        "printedPage": 262,
+        "image": "pages/p262.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 263,
+        "sourcePage": 287,
+        "printedPage": 263,
+        "image": "pages/p263.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s133",
+      "left": {
+        "page": 264,
+        "sourcePage": 288,
+        "printedPage": 264,
+        "image": "pages/p264.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 265,
+        "sourcePage": 289,
+        "printedPage": 265,
+        "image": "pages/p265.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s134",
+      "left": {
+        "page": 266,
+        "sourcePage": 290,
+        "printedPage": 266,
+        "image": "pages/p266.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 267,
+        "sourcePage": 291,
+        "printedPage": 267,
+        "image": "pages/p267.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s135",
+      "left": {
+        "page": 268,
+        "sourcePage": 292,
+        "printedPage": 268,
+        "image": "pages/p268.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 269,
+        "sourcePage": 293,
+        "printedPage": 269,
+        "image": "pages/p269.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s136",
+      "left": {
+        "page": 270,
+        "sourcePage": 294,
+        "printedPage": 270,
+        "image": "pages/p270.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 271,
+        "sourcePage": 295,
+        "printedPage": 271,
+        "image": "pages/p271.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s137",
+      "left": {
+        "page": 272,
+        "sourcePage": 296,
+        "printedPage": 272,
+        "image": "pages/p272.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 273,
+        "sourcePage": 297,
+        "printedPage": 273,
+        "image": "pages/p273.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s138",
+      "left": {
+        "page": 274,
+        "sourcePage": 298,
+        "printedPage": 274,
+        "image": "pages/p274.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 275,
+        "sourcePage": 299,
+        "printedPage": 275,
+        "image": "pages/p275.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s139",
+      "left": {
+        "page": 276,
+        "sourcePage": 300,
+        "printedPage": 276,
+        "image": "pages/p276.webp",
+        "people": 2
+      },
+      "right": {
+        "page": 277,
+        "sourcePage": 301,
+        "printedPage": 277,
+        "image": "pages/p277.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s140",
+      "left": {
+        "page": 278,
+        "sourcePage": 302,
+        "printedPage": 278,
+        "image": "pages/p278.webp",
+        "people": 2
+      },
+      "right": {
+        "page": 279,
+        "sourcePage": 303,
+        "printedPage": 279,
+        "image": "pages/p279.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: multi-person illustration on one page (reviewed visually). Screening: class B (heuristic, NOT a count)."
+    },
+    {
+      "id": "s141",
+      "left": {
+        "page": 280,
+        "sourcePage": 304,
+        "printedPage": 280,
+        "image": "pages/p280.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 281,
+        "sourcePage": 305,
+        "printedPage": 281,
+        "image": "pages/p281.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s142",
+      "left": {
+        "page": 282,
+        "sourcePage": 306,
+        "printedPage": 282,
+        "image": "pages/p282.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 283,
+        "sourcePage": 307,
+        "printedPage": 283,
+        "image": "pages/p283.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s143",
+      "left": {
+        "page": 284,
+        "sourcePage": 308,
+        "printedPage": 284,
+        "image": "pages/p284.webp",
+        "people": 2
+      },
+      "right": {
+        "page": 285,
+        "sourcePage": 309,
+        "printedPage": 285,
+        "image": "pages/p285.webp",
+        "people": 0
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s144",
+      "left": {
+        "page": 286,
+        "sourcePage": 310,
+        "printedPage": 286,
+        "image": "pages/p286.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 287,
+        "sourcePage": 311,
+        "printedPage": 287,
+        "image": "pages/p287.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s145",
+      "left": {
+        "page": 288,
+        "sourcePage": 312,
+        "printedPage": 288,
+        "image": "pages/p288.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 289,
+        "sourcePage": 313,
+        "printedPage": 289,
+        "image": "pages/p289.webp",
+        "people": 1
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    },
+    {
+      "id": "s146",
+      "left": {
+        "page": 290,
+        "sourcePage": 314,
+        "printedPage": 290,
+        "image": "pages/p290.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 291,
+        "sourcePage": 315,
+        "printedPage": 291,
+        "image": "pages/p291.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s147",
+      "left": {
+        "page": 292,
+        "sourcePage": 316,
+        "printedPage": 292,
+        "image": "pages/p292.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 293,
+        "sourcePage": 317,
+        "printedPage": 293,
+        "image": "pages/p293.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s148",
+      "left": {
+        "page": 294,
+        "sourcePage": 318,
+        "printedPage": 294,
+        "image": "pages/p294.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 295,
+        "sourcePage": 319,
+        "printedPage": 295,
+        "image": "pages/p295.webp",
+        "people": 0
+      },
+      "flags": ["excluded"]
+    },
+    {
+      "id": "s149",
+      "left": {
+        "page": 296,
+        "sourcePage": 320,
+        "printedPage": 296,
+        "image": "pages/p296.webp",
+        "people": 0
+      },
+      "right": {
+        "page": 297,
+        "sourcePage": 321,
+        "printedPage": 297,
+        "image": "pages/p297.webp",
+        "people": 2
+      },
+      "flags": [],
+      "notes": "Candidate: people illustration on one page, limited/single figure (reviewed visually). Screening: class C (heuristic, NOT a count)."
+    }
+  ],
+  "year": 1894,
+  "description": "Punjabi folk tales told by the people, with illustrations by J. Lockwood Kipling (Macmillan, 1894). Draft: illustrated spreads curated for human annotation; text-only spreads excluded.",
+  "illustrator": "J. Lockwood Kipling",
+  "source": {
+    "name": "Internet Archive",
+    "url": "https://archive.org/details/talesofpunjabtol00steeuoft",
+    "rights": "NOT_IN_COPYRIGHT (Internet Archive). Published 1894; public domain."
+  }
+}
