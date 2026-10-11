@@ -22,6 +22,13 @@ export const palette = {
   moss: "#3C594B",
   white: "#FFFCF6",
   danger: "#A83E32",
+  leather: "#5A4030",
+  leatherDeep: "#3A2A20",
+  gold: "#C9A227",
+  felt: "#33473D",
+  feltDeep: "#27382F",
+  leftPlayer: "#A94425",
+  rightPlayer: "#3C594B",
 } as const;
 
 export const space = { xxs: 6, xs: 10, sm: 16, md: 24, lg: 36, xl: 52 } as const;
@@ -45,6 +52,30 @@ export function Title({ children, style }: { children: ReactNode; style?: StyleP
 
 export function Body({ children, style }: { children: ReactNode; style?: StyleProp<TextStyle> }) {
   return <Text style={[styles.body, style]}>{children}</Text>;
+}
+
+export function Caption({
+  children,
+  style,
+}: {
+  children: ReactNode;
+  style?: StyleProp<TextStyle>;
+}) {
+  return <Text style={[styles.caption, style]}>{children}</Text>;
+}
+
+/** Color-coded owner chip: side "left" is Player 1, side "right" is Player 2. */
+export function PlayerTag({ side, name }: { side: "left" | "right"; name: string }) {
+  return (
+    <View style={styles.playerTag}>
+      <View
+        style={[styles.playerDot, side === "left" ? styles.playerDotLeft : styles.playerDotRight]}
+      />
+      <Text numberOfLines={1} style={styles.playerTagText}>
+        {name}
+      </Text>
+    </View>
+  );
 }
 
 export function Card({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
@@ -94,6 +125,7 @@ export function AppButton({
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
+        tone === "primary" && styles.buttonPrimary,
         tone === "secondary" && styles.buttonSecondary,
         tone === "quiet" && styles.buttonQuiet,
         disabled && styles.buttonDisabled,
@@ -144,6 +176,18 @@ const styles = StyleSheet.create({
     lineHeight: 43,
   },
   body: { color: palette.muted, fontSize: 17, lineHeight: 25 },
+  caption: { color: palette.muted, fontSize: 14, lineHeight: 20 },
+  playerTag: {
+    alignItems: "center",
+    alignSelf: "center",
+    flexDirection: "row",
+    gap: 7,
+    maxWidth: "100%",
+  },
+  playerDot: { borderRadius: radius.round, height: 12, width: 12 },
+  playerDotLeft: { backgroundColor: palette.leftPlayer },
+  playerDotRight: { backgroundColor: palette.rightPlayer },
+  playerTagText: { color: palette.ink, fontSize: 15, fontWeight: "800" },
   card: {
     backgroundColor: palette.white,
     borderColor: palette.line,
@@ -174,6 +218,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.sm,
   },
   buttonSecondary: { backgroundColor: palette.white, borderColor: palette.ink, borderWidth: 1 },
+  buttonPrimary: { borderBottomColor: "#8F3A1D", borderBottomWidth: 3 },
   buttonQuiet: { backgroundColor: "transparent", minHeight: 44 },
   buttonPressed: { opacity: 0.78, transform: [{ scale: 0.985 }] },
   buttonDisabled: { backgroundColor: "#CFC4B7", opacity: 0.7 },

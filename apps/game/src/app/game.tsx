@@ -1,17 +1,33 @@
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { flipSpread, scoreRound, type GameState } from "@book-people/game-core";
-import { resolveContentAsset } from "../content-assets";
 import { useGame } from "../game-store";
-import { AppButton, Badge, Body, Card, EmptyState, Screen, palette, radius, space } from "../ui";
+import { SpreadPageImage } from "../cover-image";
+import {
+  AppButton,
+  Badge,
+  Body,
+  Card,
+  EmptyState,
+  PlayerTag,
+  Screen,
+  palette,
+  radius,
+  space,
+} from "../ui";
 import { useRevealSequence } from "../useRevealSequence";
+
+/** Below this window width the two pages stack so scanned details stay readable. */
+const WIDE_BOOK_BREAKPOINT = 640;
 
 export default function GameScreen() {
   const { state, selectedBook, update } = useGame();
   const reveal = useRevealSequence(scoreRound);
   const scoredState = useRef<GameState | null>(null);
   const [resultRequested, setResultRequested] = useState(false);
+  const { width } = useWindowDimensions();
+  const stacked = width < WIDE_BOOK_BREAKPOINT;
 
   useEffect(() => {
     if (resultRequested && state === scoredState.current && state?.phase === "finished") {
@@ -35,6 +51,44 @@ export default function GameScreen() {
   const spread = state.currentSpread;
   const sides = spread ? ([spread.left, spread.right] as const) : null;
   const players = state.config.players;
+  const renderPage = (pageIndex: 0 | 1) => {
+    const page = sides?.[pageIndex];
+    if (!page) return null;
+    const side = pageIndex === 0 ? ("left" as const) : ("right" as const);
+    const isRevealed =
+      (pageIndex === 0 && (reveal.stage === "right" || reveal.stage === "scored")) ||
+      (pageIndex === 1 && reveal.stage === "scored");
+    return (
+      <View
+        style={[
+          styles.page,
+          stacked ? styles.stackedPage : side === "left" ? styles.leftPage : styles.rightPage,
+        ]}
+      >
+        <PlayerTag side={side} name={players[pageIndex] ?? ""} />
+        {page.image.startsWith("placeholder:") ? (
+          <View style={styles.placeholderPage}>
+            <Text style={styles.placeholderTitle}>A practice spread</Text>
+            <Text style={styles.people}>{"● ".repeat(Math.max(page.people, 1))}</Text>
+          </View>
+        ) : (
+          selectedBook && (
+            <SpreadPageImage
+              book={selectedBook}
+              image={page.image}
+              label={`${players[pageIndex]} page`}
+              recyclingKey={spread?.id ?? "spread"}
+              style={stacked ? styles.stackedImage : styles.image}
+            />
+          )
+        )}
+        <View style={styles.countBadge}>
+          <Text style={styles.count}>{isRevealed ? page.people : "?"}</Text>
+          <Text style={styles.countLabel}>{isRevealed ? "people" : "hidden"}</Text>
+        </View>
+      </View>
+    );
+  };
   const round = state.roundNumber || state.rounds.length + 1;
   const lastRound = state.rounds[state.rounds.length - 1];
   const banner =
@@ -72,10 +126,11 @@ export default function GameScreen() {
       </View>
       <View style={styles.scoreboard}>
         {players.map((player, index) => (
-          <Card key={player} style={styles.scoreCard}>
-            <Text numberOfLines={1} style={styles.playerName}>
-              {player}
-            </Text>
+          <Card
+            key={player}
+            style={[styles.scoreCard, index === 0 ? styles.leftCard : styles.rightCard]}
+          >
+            <PlayerTag side={index === 0 ? "left" : "right"} name={player} />
             <View style={styles.scoreLine}>
               <Text style={styles.peopleTotal}>{state.peopleTotals[index]}</Text>
               <Text style={styles.peopleLabel}>people</Text>
@@ -84,40 +139,27 @@ export default function GameScreen() {
           </Card>
         ))}
       </View>
-      <View style={styles.bookFrame}>
-        <View style={styles.book}>
-          {sides?.map((page, index) => {
-            const asset = selectedBook ? resolveContentAsset(selectedBook, page) : page.image;
-            const isRevealed =
-              (index === 0 && (reveal.stage === "right" || reveal.stage === "scored")) ||
-              (index === 1 && reveal.stage === "scored");
-            return (
-              <View
-                key={index}
-                style={[styles.page, index === 0 ? styles.leftPage : styles.rightPage]}
-              >
-                <Text numberOfLines={1} style={styles.pageOwner}>
-                  {players[index]}
-                </Text>
-                {asset.startsWith("placeholder:") ? (
-                  <View style={styles.placeholderPage}>
-                    <Text style={styles.placeholderTitle}>A practice spread</Text>
-                    <Text style={styles.people}>{"● ".repeat(Math.max(page.people, 1))}</Text>
-                  </View>
-                ) : (
-                  <Image
-                    accessibilityLabel={`${players[index]} page`}
-                    source={{ uri: asset }}
-                    style={styles.image}
-                  />
-                )}
-                <View style={styles.countBadge}>
-                  <Text style={styles.count}>{isRevealed ? page.people : "?"}</Text>
-                  <Text style={styles.countLabel}>{isRevealed ? "people" : "hidden"}</Text>
-                </View>
-              </View>
-            );
-          })}
+      <View style={styles.table}>
+        <View style={stacked ? styles.stackedBook : styles.openBook}>
+          {sides ? (
+            stacked ? (
+              <>
+                {renderPage(0)}
+                {renderPage(1)}
+              </>
+            ) : (
+              <>
+                {renderPage(0)}
+                <View style={styles.spine} />
+                {renderPage(1)}
+              </>
+            )
+          ) : (
+            <View style={styles.awaitingSpread}>
+              <Text style={styles.awaitingTitle}>A fresh spread awaits</Text>
+              <Text style={styles.awaitingCopy}>Flip the spread to open the book.</Text>
+            </View>
+          )}
         </View>
       </View>
       {banner ? (
@@ -160,34 +202,57 @@ const styles = StyleSheet.create({
   },
   scoreboard: { flexDirection: "row", flexWrap: "wrap", gap: space.xs },
   scoreCard: { flexBasis: 220, flexGrow: 1, gap: 2, padding: space.xs },
-  playerName: { color: palette.ink, fontSize: 17, fontWeight: "800" },
+  leftCard: { borderLeftColor: palette.leftPlayer, borderLeftWidth: 5 },
+  rightCard: { borderLeftColor: palette.rightPlayer, borderLeftWidth: 5 },
   scoreLine: { alignItems: "baseline", flexDirection: "row", gap: 4 },
   peopleTotal: { color: palette.plum, fontSize: 27, fontWeight: "800" },
   peopleLabel: { color: palette.muted, fontSize: 13, fontWeight: "700" },
   roundWins: { color: palette.moss, fontSize: 13, fontWeight: "800" },
-  bookFrame: {
+  table: {
     alignSelf: "center",
-    backgroundColor: "#B39A78",
-    borderColor: "#927958",
+    backgroundColor: palette.felt,
+    borderColor: palette.feltDeep,
     borderRadius: radius.large,
     borderWidth: 1,
     maxWidth: 900,
-    overflow: "hidden",
-    padding: 7,
+    padding: space.xs,
     width: "100%",
   },
-  book: { alignSelf: "center", flexDirection: "row", width: "100%" },
+  openBook: { alignItems: "stretch", flexDirection: "row" },
+  stackedBook: { flexDirection: "column", gap: space.xs },
   page: {
     alignItems: "center",
     backgroundColor: palette.paper,
     flex: 1,
     gap: space.xs,
-    minHeight: 310,
     padding: space.xs,
   },
-  leftPage: { borderRightColor: "#D3C2A7", borderRightWidth: 1 },
-  rightPage: { borderLeftColor: "#FFFDF8", borderLeftWidth: 1 },
-  pageOwner: { color: palette.ink, fontSize: 15, fontWeight: "800", textAlign: "center" },
+  leftPage: {
+    borderBottomLeftRadius: radius.medium,
+    borderRightColor: "#D3C2A7",
+    borderRightWidth: 1,
+    borderTopLeftRadius: radius.medium,
+    minHeight: 320,
+  },
+  rightPage: {
+    borderBottomRightRadius: radius.medium,
+    borderLeftColor: "#FFFDF8",
+    borderLeftWidth: 1,
+    borderTopRightRadius: radius.medium,
+    minHeight: 320,
+  },
+  stackedPage: { borderRadius: radius.medium },
+  spine: { backgroundColor: palette.leatherDeep, width: 10, zIndex: 2 },
+  awaitingSpread: {
+    alignItems: "center",
+    backgroundColor: palette.paper,
+    borderRadius: radius.medium,
+    gap: 4,
+    padding: space.lg,
+    width: "100%",
+  },
+  awaitingTitle: { color: palette.ink, fontFamily: "serif", fontSize: 20, fontWeight: "800" },
+  awaitingCopy: { color: palette.muted, fontSize: 15 },
   placeholderPage: { alignItems: "center", flex: 1, justifyContent: "center", minHeight: 180 },
   placeholderTitle: {
     color: palette.muted,
@@ -202,7 +267,8 @@ const styles = StyleSheet.create({
     marginTop: space.sm,
     textAlign: "center",
   },
-  image: { aspectRatio: 0.69, flexGrow: 1, resizeMode: "contain", width: "100%" },
+  image: { alignSelf: "stretch", aspectRatio: 0.69, flexGrow: 1, width: "100%" },
+  stackedImage: { alignSelf: "stretch", height: 300, width: "100%" },
   countBadge: {
     alignItems: "center",
     backgroundColor: "#F0E4D1",

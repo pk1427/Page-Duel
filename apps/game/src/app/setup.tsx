@@ -1,8 +1,8 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { Image, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { RoundCount } from "@book-people/game-core";
-import { resolveContentAsset } from "../content-assets";
+import { BookCover } from "../cover-image";
 import { useGame } from "../game-store";
 import {
   AppButton,
@@ -48,24 +48,14 @@ export default function Setup() {
         <Body>Name the readers and choose how long the book stays open.</Body>
       </View>
       <Card style={s.book}>
-        {selectedBook.coverImage && !selectedBook.coverImage.startsWith("placeholder:") ? (
-          <Image
-            accessibilityLabel={`${selectedBook.title} cover`}
-            source={{ uri: resolveContentAsset(selectedBook, { image: selectedBook.coverImage }) }}
-            style={s.bookCover}
-          />
-        ) : (
-          <View style={s.bookFallback}>
-            <Text style={s.bookInitial}>{selectedBook.title.slice(0, 1)}</Text>
-          </View>
-        )}
+        <View style={s.spineEdge} />
+        <BookCover book={selectedBook} style={s.bookCover} />
         <View style={s.bookCopy}>
           <Badge tone="moss">Selected book</Badge>
           <Text style={s.bookTitle}>{selectedBook.title}</Text>
-          {selectedBook.author && (
+          {(selectedBook.author || selectedBook.year) && (
             <Text style={s.author}>
-              {selectedBook.author}
-              {selectedBook.year ? ` · ${selectedBook.year}` : ""}
+              {[selectedBook.author, selectedBook.year].filter(Boolean).join(" · ")}
             </Text>
           )}
         </View>
@@ -77,7 +67,7 @@ export default function Setup() {
         <Text style={s.label}>The readers</Text>
         <View style={s.players}>
           <View style={s.playerField}>
-            <Text style={s.playerTag}>Left page</Text>
+            <Text style={s.playerTagLeft}>Left page · Player 1</Text>
             <TextInput
               accessibilityLabel="Player 1 name"
               placeholder="Player 1"
@@ -88,7 +78,7 @@ export default function Setup() {
             />
           </View>
           <View style={s.playerField}>
-            <Text style={s.playerTag}>Right page</Text>
+            <Text style={s.playerTagRight}>Right page · Player 2</Text>
             <TextInput
               accessibilityLabel="Player 2 name"
               placeholder="Player 2"
@@ -123,8 +113,8 @@ export default function Setup() {
           {error}
         </Text>
       )}
-      <AppButton accessibilityLabel="Start game" onPress={begin}>
-        Start reading
+      <AppButton accessibilityLabel="Start Game" onPress={begin}>
+        Start Game
       </AppButton>
     </Screen>
   );
@@ -136,8 +126,15 @@ const s = StyleSheet.create({
   label: { color: palette.ink, fontSize: 18, fontWeight: "800" },
   players: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
   playerField: { flexBasis: 260, flexGrow: 1, gap: space.xxs },
-  playerTag: {
-    color: palette.muted,
+  playerTagLeft: {
+    color: palette.leftPlayer,
+    fontSize: 13,
+    fontWeight: "800",
+    letterSpacing: 0.7,
+    textTransform: "uppercase",
+  },
+  playerTagRight: {
+    color: palette.rightPlayer,
     fontSize: 13,
     fontWeight: "800",
     letterSpacing: 0.7,
@@ -159,27 +156,32 @@ const s = StyleSheet.create({
     backgroundColor: palette.white,
     borderColor: palette.line,
     borderRadius: radius.medium,
-    borderWidth: 1,
+    borderWidth: 2,
     minHeight: 78,
     minWidth: 94,
     justifyContent: "center",
   },
-  active: { backgroundColor: palette.plum, borderColor: palette.plum },
+  active: { backgroundColor: palette.plum, borderColor: palette.gold },
   choiceNumber: { color: palette.ink, fontSize: 25, fontWeight: "800" },
   choiceNumberActive: { color: palette.white },
   choiceCopy: { color: palette.muted, fontSize: 12, fontWeight: "800", textTransform: "uppercase" },
   choiceCopyActive: { color: "#EFD8D3" },
-  book: { alignItems: "center", flexDirection: "row", flexWrap: "wrap", gap: space.sm },
-  bookCover: { borderRadius: radius.small, height: 84, width: 56 },
-  bookFallback: {
+  book: {
     alignItems: "center",
-    backgroundColor: palette.plum,
-    borderRadius: radius.small,
-    height: 84,
-    justifyContent: "center",
-    width: 56,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: space.sm,
+    overflow: "hidden",
+    paddingLeft: space.xs,
   },
-  bookInitial: { color: palette.paper, fontFamily: "serif", fontSize: 28, fontWeight: "800" },
+  spineEdge: {
+    alignSelf: "stretch",
+    backgroundColor: palette.leather,
+    borderRadius: radius.small,
+    minHeight: 84,
+    width: 8,
+  },
+  bookCover: { height: 96, width: 64 },
   bookCopy: { flexGrow: 1, gap: 3, minWidth: 160 },
   bookTitle: { color: palette.ink, fontFamily: "serif", fontSize: 22, fontWeight: "800" },
   author: { color: palette.muted, fontSize: 14, fontStyle: "italic" },
