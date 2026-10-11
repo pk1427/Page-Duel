@@ -1,0 +1,7 @@
+-- Intentional seed file: Book People needs no seed data.
+--
+-- Profiles are created server-side by the on_auth_user_created trigger when
+-- real users sign up, and game history rows belong to those users. Seeding
+-- fake users, profiles, or games would pollute a personal-history product,
+-- so this file is deliberately data-free. It exists so `supabase db reset`
+-- has an explicit seed step instead of a missing-file warning.

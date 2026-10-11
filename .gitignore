@@ -4,3 +4,7 @@ dist
 .pnpm-store
 .venv
 .local/
+
+# Supabase local development state and generated secrets
+supabase/.branches/
+supabase/.temp/

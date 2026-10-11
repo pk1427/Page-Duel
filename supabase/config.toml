@@ -1,0 +1,9 @@
+# Minimal local-project seed for the Supabase CLI.
+#
+# If the installed CLI rejects this file, generate the canonical one instead:
+#   1. move this `supabase/` directory aside,
+#   2. run `supabase init` in the repo root,
+#   3. copy `migrations/` and `tests/` from the aside directory back in.
+# `supabase/migrations/` remains the source of truth for schema and policies either way.
+
+project_id = "book-people"
