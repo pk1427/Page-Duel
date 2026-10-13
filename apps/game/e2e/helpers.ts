@@ -90,6 +90,8 @@ export async function visibleText(page: Page): Promise<string> {
 /** Create an account through the real sign-up UI; ends on the Bookshelf. */
 export async function signUp(page: Page, email: string, password = E2E_PASSWORD): Promise<void> {
   await page.goto("/sign-up?next=/books");
+  // Wait for the sign-up form to be fully hydrated
+  await page.getByPlaceholder("you@example.com").waitFor({ state: "visible", timeout: 15_000 });
   await page.getByPlaceholder("you@example.com").fill(email);
   await page.getByPlaceholder("At least 6 characters").fill(password);
   await page.getByRole("button", { name: "Create account", exact: true }).click();
@@ -113,6 +115,22 @@ export async function signIn(
   // submit renders after the header in DOM order on every viewport.
   await page.getByRole("button", { name: "Sign in", exact: true }).last().click();
   await expectPath(page, "/books");
+}
+
+/** Sign out through the profile page. */
+export async function signOut(page: Page): Promise<void> {
+  await page.goto("/profile");
+  await page.getByRole("button", { name: "Sign out", exact: true }).click();
+  await expectPath(page, "/");
+  // Home page shows the brand in the top nav (desktop) or bottom bar (mobile)
+  await Promise.all([
+    expect(page.getByRole("button", { name: "Book People home" }))
+      .toBeVisible()
+      .catch(() => {}),
+    expect(page.getByRole("button", { name: "Home", exact: true }))
+      .toBeVisible()
+      .catch(() => {}),
+  ]);
 }
 
 export type MatchOptions = {

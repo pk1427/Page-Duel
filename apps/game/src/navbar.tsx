@@ -78,16 +78,24 @@ export function TopNav() {
           onPress={() => router.push("/how-to-play" as Href)}
         />
         {status === "signed-in" ? (
-          <Pressable
-            accessibilityLabel="Profile"
-            accessibilityRole="button"
-            onPress={() => router.push("/profile" as Href)}
-            style={({ hovered }) => [styles.avatarPress, hovered && styles.topLinkHovered]}
-          >
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{initialsFor(displayName, userEmail)}</Text>
-            </View>
-          </Pressable>
+          <>
+            <TopLink
+              label="History"
+              pathname="/history"
+              active={pathname === "/history"}
+              onPress={() => router.push("/history" as Href)}
+            />
+            <Pressable
+              accessibilityLabel="Profile"
+              accessibilityRole="button"
+              onPress={() => router.push("/profile" as Href)}
+              style={({ hovered }) => [styles.avatarPress, hovered && styles.topLinkHovered]}
+            >
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{initialsFor(displayName, userEmail)}</Text>
+              </View>
+            </Pressable>
+          </>
         ) : (
           <Pressable
             accessibilityLabel="Sign in"
@@ -118,6 +126,11 @@ export function BottomNav() {
       label: "How to Play",
       pathname: "/how-to-play",
       action: () => router.push("/how-to-play" as Href),
+    },
+    {
+      label: "History",
+      pathname: status === "signed-in" ? "/history" : "/sign-in",
+      action: () => router.push((status === "signed-in" ? "/history" : "/sign-in") as Href),
     },
     {
       label: "Profile",
