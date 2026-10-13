@@ -13,11 +13,20 @@ import {
   Screen,
   Title,
   palette,
-  radius,
   space,
 } from "../ui";
 
+import { RequireAuth } from "../require-auth";
+
 export default function Result() {
+  return (
+    <RequireAuth>
+      <ResultContent />
+    </RequireAuth>
+  );
+}
+
+function ResultContent() {
   const { state, start } = useGame();
   if (!state || state.phase !== "finished") {
     return (
@@ -73,6 +82,9 @@ export default function Result() {
         </AppButton>
         <AppButton onPress={() => router.replace("/books" as Href)} tone="secondary">
           Choose Another Book
+        </AppButton>
+        <AppButton onPress={() => router.replace("/" as Href)} tone="quiet">
+          Return Home
         </AppButton>
       </View>
     </Screen>

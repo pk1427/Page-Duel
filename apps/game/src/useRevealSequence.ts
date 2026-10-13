@@ -21,7 +21,7 @@ export function scheduleReveal(
 
 export function useRevealSequence(score: (state: GameState) => GameState) {
   const [stage, setStage] = useState<RevealStage>("idle");
-  const timers = useRef<Array<() => void>>([]);
+  const timers = useRef<(() => void)[]>([]);
   const clear = useCallback(() => {
     timers.current.forEach((stop) => stop());
     timers.current = [];

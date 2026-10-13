@@ -78,8 +78,26 @@ export function PlayerTag({ side, name }: { side: "left" | "right"; name: string
   );
 }
 
-export function Card({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
-  return <View style={[styles.card, style]}>{children}</View>;
+export function Card({
+  children,
+  style,
+  accessibilityRole,
+  accessibilityLiveRegion,
+}: {
+  children: ReactNode;
+  style?: StyleProp<ViewStyle>;
+  accessibilityRole?: "alert" | "none";
+  accessibilityLiveRegion?: "none" | "polite" | "assertive";
+}) {
+  return (
+    <View
+      accessibilityLiveRegion={accessibilityLiveRegion}
+      accessibilityRole={accessibilityRole}
+      style={[styles.card, style]}
+    >
+      {children}
+    </View>
+  );
 }
 
 export function Badge({

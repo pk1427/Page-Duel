@@ -48,8 +48,8 @@ export default function How() {
           </View>
         </View>
         <Caption style={s.exampleCaption}>
-          Example illustration — left page against right page. Your book's real scanned pages appear
-          here during a match.
+          Example illustration — left page against right page. Your book&apos;s real scanned pages
+          appear here during a match.
         </Caption>
       </Card>
       <View style={s.steps}>

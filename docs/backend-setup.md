@@ -138,17 +138,19 @@ Test files (`supabase/tests/`, pgTAP, each self-rolled-back):
 These tests use genuinely distinct identities (`owner@example.com`,
 `other@example.com`) plus the `anon` role — never a single-identity allow-check.
 
-## 5. Future environment variables (not needed until the auth phase)
+## 5. App environment variables (in use since the auth phase)
 
 | Variable                        | Value                                                   | Notes                                                       |
 | ------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------- |
 | `EXPO_PUBLIC_SUPABASE_URL`      | local: `http://127.0.0.1:54321` (from `supabase start`) | Build-time, same convention as the existing asset-base vars |
 | `EXPO_PUBLIC_SUPABASE_ANON_KEY` | local publishable key (from `supabase start`)           | Public by design; RLS enforces security, not key secrecy    |
 
-Do **not** create these yet — no app code reads them, and inventing values now only
-risks confusion. The secret/`service_role` key must **never** appear in the Expo app,
-its config, or the repo: it bypasses RLS entirely and is for server-side admin use
-only (which this product has none of).
+Both live in git-ignored `apps/game/.env.local` for development (never committed).
+For same-Wi-Fi testing from other devices, override the URL on the Expo command line
+with the Mac's LAN IP (shell env wins over `.env.local`). Without these vars the app
+reports auth as unconfigured and guest play is unaffected. The secret/`service_role`
+key must **never** appear in the Expo app, its config, or the repo: it bypasses RLS
+entirely and is for server-side admin use only (which this product has none of).
 
 ## 6. How RLS protects user-owned data
 

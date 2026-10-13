@@ -6,7 +6,17 @@ import { BookCover } from "../cover-image";
 import { useGame } from "../game-store";
 import { Badge, Body, Caption, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
 
+import { RequireAuth } from "../require-auth";
+
 export default function BooksScreen() {
+  return (
+    <RequireAuth>
+      <BooksContent />
+    </RequireAuth>
+  );
+}
+
+function BooksContent() {
   const { playableBooks, selectBook, error } = useGame();
   return (
     <Screen>

@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { flipSpread, scoreRound, type GameState } from "@book-people/game-core";
 import { useGame } from "../game-store";
+import { ExitMatchDialog } from "../exit-dialog";
 import { SpreadPageImage } from "../cover-image";
+import { RequireAuth } from "../require-auth";
 import {
   AppButton,
   Badge,
@@ -22,10 +24,21 @@ import { useRevealSequence } from "../useRevealSequence";
 const WIDE_BOOK_BREAKPOINT = 640;
 
 export default function GameScreen() {
+  return (
+    <RequireAuth>
+      <GameContent />
+    </RequireAuth>
+  );
+}
+
+function GameContent() {
   const { state, selectedBook, update } = useGame();
   const reveal = useRevealSequence(scoreRound);
   const scoredState = useRef<GameState | null>(null);
   const [resultRequested, setResultRequested] = useState(false);
+  const [exitOpen, setExitOpen] = useState(false);
+  // Guards against double-taps firing duplicate navigation.
+  const exiting = useRef(false);
   const { width } = useWindowDimensions();
   const stacked = width < WIDE_BOOK_BREAKPOINT;
 
@@ -113,6 +126,12 @@ export default function GameScreen() {
     reveal.reset();
   };
   const disabled = reveal.busy;
+  const confirmExit = () => {
+    if (exiting.current) return;
+    exiting.current = true;
+    setExitOpen(false);
+    router.replace("/books");
+  };
 
   return (
     <Screen>
@@ -181,6 +200,17 @@ export default function GameScreen() {
             : "Next round"
           : "Flip spread"}
       </AppButton>
+      <AppButton
+        accessibilityLabel="Exit match"
+        onPress={() => {
+          exiting.current = false;
+          setExitOpen(true);
+        }}
+        tone="quiet"
+      >
+        Exit match
+      </AppButton>
+      <ExitMatchDialog visible={exitOpen} onStay={() => setExitOpen(false)} onExit={confirmExit} />
     </Screen>
   );
 }

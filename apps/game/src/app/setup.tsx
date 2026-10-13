@@ -18,7 +18,17 @@ import {
   space,
 } from "../ui";
 
+import { RequireAuth } from "../require-auth";
+
 export default function Setup() {
+  return (
+    <RequireAuth>
+      <SetupContent />
+    </RequireAuth>
+  );
+}
+
+function SetupContent() {
   const [a, setA] = useState("");
   const [b, setB] = useState("");
   const [rounds, setRounds] = useState<RoundCount>(10);

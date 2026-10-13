@@ -38,11 +38,12 @@ export function BookCover({ book, style }: { book: BookContent; style?: StylePro
   );
 }
 
-function UnavailablePage({ label }: { label: string }) {
+function UnavailablePage({ label, detail }: { label: string; detail?: string }) {
   return (
     <View style={styles.unavailable}>
       <Text style={styles.unavailableTitle}>Page image unavailable</Text>
       <Text style={styles.unavailableCopy}>{label}</Text>
+      {__DEV__ && detail ? <Text style={styles.unavailableDetail}>{detail}</Text> : null}
     </View>
   );
 }
@@ -67,12 +68,15 @@ export function SpreadPageImage({
 }) {
   const [failed, setFailed] = useState(false);
   if (image.startsWith("placeholder:")) return null;
-  if (failed) return <UnavailablePage label={label} />;
+  // Resolved once so the dev fallback can report the exact failing URL.
+  // Asset URLs never carry credentials, so logging them is safe.
+  const uri = resolveContentAsset(book, { image });
+  if (failed) return <UnavailablePage label={label} detail={uri} />;
   return (
     <View style={[styles.pageSurface, style]}>
       <Image
         accessibilityLabel={label}
-        source={{ uri: resolveContentAsset(book, { image }) }}
+        source={{ uri }}
         contentFit="contain"
         transition={150}
         recyclingKey={recyclingKey}
@@ -114,4 +118,10 @@ const styles = StyleSheet.create({
   },
   unavailableTitle: { color: palette.ink, fontSize: 15, fontWeight: "800", textAlign: "center" },
   unavailableCopy: { color: palette.muted, fontSize: 13, textAlign: "center" },
+  unavailableDetail: {
+    color: palette.muted,
+    fontSize: 11,
+    marginTop: 4,
+    textAlign: "center",
+  },
 });

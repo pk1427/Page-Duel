@@ -2,6 +2,8 @@ import { router, type Href } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { BookCover } from "../cover-image";
 import { useGame } from "../game-store";
+import { playTarget } from "../auth-routing";
+import { useSession } from "../session-store";
 import {
   AppButton,
   Badge,
@@ -17,6 +19,7 @@ import {
 
 export default function Home() {
   const { playableBooks } = useGame();
+  const { status } = useSession();
   const leftBook = playableBooks.find((book) => book.id === "alice-loc-1885");
   const rightBook = playableBooks.find((book) => book.id === "tales-of-punjab-1894");
 
@@ -30,7 +33,7 @@ export default function Home() {
             Two players. One open book.{"\n"}More people on your page wins the round.
           </Body>
           <View style={s.actions}>
-            <AppButton onPress={() => router.push("/books" as Href)}>Play</AppButton>
+            <AppButton onPress={() => router.push(playTarget(status) as Href)}>Play</AppButton>
             <AppButton onPress={() => router.push("/how-to-play" as Href)} tone="quiet">
               How to Play
             </AppButton>
@@ -38,6 +41,11 @@ export default function Home() {
           <View style={s.promises}>
             <Badge tone="moss">Two players</Badge>
             <Badge tone="moss">Real illustrated books</Badge>
+            {status === "signed-in" ? (
+              <Badge tone="accent">Signed in — press Play</Badge>
+            ) : (
+              <Badge tone="neutral">Sign in to play</Badge>
+            )}
           </View>
         </View>
         <View style={s.shelf}>
@@ -61,8 +69,8 @@ export default function Home() {
             </View>
           </View>
           <Caption style={s.shelfCaption}>
-            Alice's Adventures in Wonderland meets Tales of the Punjab — count the people, take the
-            round.
+            Alice&apos;s Adventures in Wonderland meets Tales of the Punjab — count the people, take
+            the round.
           </Caption>
         </View>
       </View>
