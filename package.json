@@ -4,6 +4,7 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "test": "pnpm --filter @book-people/game-core test",
+    "test:e2e": "pnpm --filter game test:e2e",
     "typecheck": "pnpm -r run typecheck",
     "test:tools": ".venv/bin/python -m unittest tools/book-prep/tests/test_toolkit.py && node tools/book-prep/tests/counter-smoke.mjs",
     "format": "prettier --write .",
