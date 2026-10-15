@@ -22,7 +22,7 @@ import {
 import { RequireAuth } from "../require-auth";
 
 export default function Result() {
-  const { state, start, selectedBook } = useGame();
+  const { state, start, selectedBook, selectedBookVersionId } = useGame();
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export default function Result() {
       if (!state || state.phase !== "finished" || !selectedBook) return;
       setSaveStatus("saving");
       setSaveError(null);
-      const result = await saveMatch(state, selectedBook);
+      const result = await saveMatch(state, selectedBook, selectedBookVersionId);
       if (!active) return;
       if (result.ok) {
         setSaveStatus("saved");
@@ -48,13 +48,13 @@ export default function Result() {
     return () => {
       active = false;
     };
-  }, [state, selectedBook]);
+  }, [state, selectedBook, selectedBookVersionId]);
 
   const retrySave = async () => {
     if (!state || state.phase !== "finished" || !selectedBook) return;
     setSaveStatus("saving");
     setSaveError(null);
-    const result = await saveMatch(state, selectedBook);
+    const result = await saveMatch(state, selectedBook, selectedBookVersionId);
     if (result.ok) {
       setSaveStatus("saved");
     } else {

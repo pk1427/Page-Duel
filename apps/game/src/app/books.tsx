@@ -4,6 +4,8 @@ import { eligibleSpreads } from "@book-people/game-core";
 import { toPlayableBook } from "@book-people/book-data";
 import { BookCover } from "../cover-image";
 import { useGame } from "../game-store";
+import { getPlayableBookContent } from "../catalog";
+import type { CatalogBook } from "../catalog";
 import { Badge, Body, Caption, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
 
 import { RequireAuth } from "../require-auth";
@@ -26,41 +28,46 @@ function BooksContent() {
         <Body>Pick a volume off the shelf. Every match stays inside one book.</Body>
       </View>
       <View style={styles.shelf}>
-        {playableBooks.map((book, index) => (
-          <Pressable
-            key={book.id}
-            accessibilityLabel={`Choose ${book.title}`}
-            accessibilityRole="button"
-            onPress={() => {
-              selectBook(book.id);
-              router.push("/setup");
-            }}
-            style={({ pressed }) => [styles.pressableRow, pressed && styles.rowPressed]}
-          >
-            <Card style={[styles.row, index === 0 && styles.featuredRow]}>
-              <View style={styles.spineEdge} />
-              <BookCover book={book} style={styles.cover} />
-              <View style={styles.rowCopy}>
-                <Badge tone={index === 0 ? "accent" : "moss"}>
-                  {index === 0 ? "Featured" : "Ready to play"}
-                </Badge>
-                <Text style={styles.bookTitle}>{book.title}</Text>
-                {(book.author || book.year) && (
-                  <Text style={styles.author}>
-                    {[book.author, book.year].filter(Boolean).join(" · ")}
-                  </Text>
+        {playableBooks.map((book: CatalogBook, index) => {
+          const bookContent = getPlayableBookContent(book);
+          return (
+            <Pressable
+              key={book.id}
+              accessibilityLabel={`Choose ${book.title}`}
+              accessibilityRole="button"
+              onPress={() => {
+                selectBook(book.id);
+                router.push("/setup");
+              }}
+              style={({ pressed }) => [styles.pressableRow, pressed && styles.rowPressed]}
+            >
+              <Card style={[styles.row, index === 0 && styles.featuredRow]}>
+                <View style={styles.spineEdge} />
+                {bookContent ? (
+                  <BookCover book={bookContent} style={styles.cover} />
+                ) : (
+                  <View style={[styles.cover, styles.coverFallback]} />
                 )}
-                <Text style={styles.spreadCount}>
-                  {eligibleSpreads(toPlayableBook(book)).length} playable spreads
-                </Text>
-                <Text style={styles.choose}>Open this book →</Text>
-              </View>
-            </Card>
-          </Pressable>
-        ))}
+                <View style={styles.rowCopy}>
+                  <Badge tone={index === 0 ? "accent" : "moss"}>
+                    {index === 0 ? "Featured" : "Ready to play"}
+                  </Badge>
+                  <Text style={styles.bookTitle}>{book.title}</Text>
+                  {book.author && <Text style={styles.author}>{book.author}</Text>}
+                  {bookContent && (
+                    <Text style={styles.spreadCount}>
+                      {eligibleSpreads(toPlayableBook(bookContent)).length} playable spreads
+                    </Text>
+                  )}
+                  <Text style={styles.choose}>Open this book →</Text>
+                </View>
+              </Card>
+            </Pressable>
+          );
+        })}
         <View style={styles.shelfBoard} />
       </View>
-      <Caption>Three real volumes. More shelves arrive with future books.</Caption>
+      <Caption>Books from the catalog. More shelves arrive with future books.</Caption>
       {error && (
         <Text accessibilityRole="alert" style={styles.error}>
           {error}
@@ -92,6 +99,7 @@ const styles = StyleSheet.create({
     width: 8,
   },
   cover: { height: 148, width: 100 },
+  coverFallback: { backgroundColor: palette.leatherDeep, borderRadius: radius.small },
   rowCopy: { flex: 1, flexShrink: 1, gap: space.xxs, justifyContent: "center" },
   bookTitle: {
     color: palette.ink,

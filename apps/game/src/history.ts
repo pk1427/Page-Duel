@@ -8,6 +8,7 @@ export interface HistoryMatch {
   bookId: string;
   bookTitle: string;
   bookVersion: string | null;
+  bookVersionId: string | null;
   bookAuthor: string | null;
   player1Name: string;
   player2Name: string;
@@ -74,6 +75,7 @@ function toDbDecidingMethod(
 export async function saveMatch(
   state: GameState,
   bookContent: BookContent,
+  bookVersionId?: string | null,
 ): Promise<SaveMatchResult> {
   const client = getSupabase();
   if (!client) {
@@ -91,6 +93,7 @@ export async function saveMatch(
     user_id: (await client.auth.getUser()).data.user?.id,
     book_id: config.book.id,
     book_title: config.book.title,
+    book_version_id: bookVersionId ?? null,
     book_version: bookContent.version || null,
     book_author: bookContent.author || null,
     player1_name: config.players[0],
@@ -149,7 +152,7 @@ export async function getHistory(limit = 20, offset = 0): Promise<HistoryMatch[]
   const { data, error } = await client
     .from("game_sessions")
     .select(
-      "id, book_id, book_title, book_version, book_author, player1_name, player2_name, rounds_config, player1_people_total, player2_people_total, player1_round_wins, player2_round_wins, winner_player, deciding_method, game_seed, started_at, completed_at, created_at",
+      "id, book_id, book_title, book_version_id, book_version, book_author, player1_name, player2_name, rounds_config, player1_people_total, player2_people_total, player1_round_wins, player2_round_wins, winner_player, deciding_method, game_seed, started_at, completed_at, created_at",
     )
     .order("completed_at", { ascending: false })
     .range(offset, offset + limit - 1);
@@ -159,6 +162,7 @@ export async function getHistory(limit = 20, offset = 0): Promise<HistoryMatch[]
     id: row.id,
     bookId: row.book_id,
     bookTitle: row.book_title,
+    bookVersionId: row.book_version_id,
     bookVersion: row.book_version,
     bookAuthor: row.book_author,
     player1Name: row.player1_name,
@@ -188,7 +192,7 @@ export async function getMatchDetail(matchId: string): Promise<HistoryMatchDetai
   const { data: sessionData, error: sessionError } = await client
     .from("game_sessions")
     .select(
-      "id, book_id, book_title, book_version, book_author, player1_name, player2_name, rounds_config, player1_people_total, player2_people_total, player1_round_wins, player2_round_wins, winner_player, deciding_method, game_seed, started_at, completed_at, created_at",
+      "id, book_id, book_title, book_version_id, book_version, book_author, player1_name, player2_name, rounds_config, player1_people_total, player2_people_total, player1_round_wins, player2_round_wins, winner_player, deciding_method, game_seed, started_at, completed_at, created_at",
     )
     .eq("id", matchId)
     .single();
@@ -209,6 +213,7 @@ export async function getMatchDetail(matchId: string): Promise<HistoryMatchDetai
     id: sessionData.id,
     bookId: sessionData.book_id,
     bookTitle: sessionData.book_title,
+    bookVersionId: sessionData.book_version_id,
     bookVersion: sessionData.book_version,
     bookAuthor: sessionData.book_author,
     player1Name: sessionData.player1_name,

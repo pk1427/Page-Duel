@@ -2,6 +2,7 @@ import { router, type Href } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { BookCover } from "../cover-image";
 import { useGame } from "../game-store";
+import { getPlayableBookContent } from "../catalog";
 import { playTarget } from "../auth-routing";
 import { useSession } from "../session-store";
 import {
@@ -22,6 +23,8 @@ export default function Home() {
   const { status } = useSession();
   const leftBook = playableBooks.find((book) => book.id === "alice-loc-1885");
   const rightBook = playableBooks.find((book) => book.id === "tales-of-punjab-1894");
+  const leftBookContent = leftBook ? getPlayableBookContent(leftBook) : undefined;
+  const rightBookContent = rightBook ? getPlayableBookContent(rightBook) : undefined;
 
   return (
     <Screen style={s.page}>
@@ -51,8 +54,8 @@ export default function Home() {
         <View style={s.shelf}>
           <View accessible accessibilityLabel="An open storybook" style={s.bookStage}>
             <View style={[s.pageArt, s.leftPage]}>
-              {leftBook ? (
-                <BookCover book={leftBook} style={s.stageCover} />
+              {leftBookContent ? (
+                <BookCover book={leftBookContent} style={s.stageCover} />
               ) : (
                 <Text style={s.pageNumber}>I</Text>
               )}
@@ -60,8 +63,8 @@ export default function Home() {
             </View>
             <View style={s.spine} />
             <View style={[s.pageArt, s.rightPage]}>
-              {rightBook ? (
-                <BookCover book={rightBook} style={s.stageCover} />
+              {rightBookContent ? (
+                <BookCover book={rightBookContent} style={s.stageCover} />
               ) : (
                 <Text style={s.pageNumber}>II</Text>
               )}

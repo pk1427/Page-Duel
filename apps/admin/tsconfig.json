@@ -6,10 +6,21 @@
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@/*": ["src/*"],
-      "@book-people/book-data": ["../../packages/book-data/src"],
-      "@book-people/game-core": ["../../packages/game-core/src"]
+      "@/*": [
+        "src/*"
+      ],
+      "@book-people/book-data": [
+        "../../packages/book-data/src"
+      ],
+      "@book-people/game-core": [
+        "../../packages/game-core/src"
+      ]
     }
   },
-  "include": ["src/**/*", "app.json"]
+  "include": [
+    "src/**/*",
+    "app.json",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }
