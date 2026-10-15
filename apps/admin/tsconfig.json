@@ -1,0 +1,15 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@/*": ["src/*"],
+      "@book-people/book-data": ["../../packages/book-data/src"],
+      "@book-people/game-core": ["../../packages/game-core/src"]
+    }
+  },
+  "include": ["src/**/*", "app.json"]
+}
