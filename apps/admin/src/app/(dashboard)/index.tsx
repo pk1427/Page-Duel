@@ -107,7 +107,7 @@ export default function DashboardScreen() {
             <Eyebrow>Recent Books</Eyebrow>
             <Title>Latest Updates</Title>
           </View>
-          <AppButton variant="secondary" onPress={() => router.push("/admin/(dashboard)/books" as any)}>
+          <AppButton variant="secondary" onPress={() => router.push("/books" as any)}>
             View All
           </AppButton>
         </View>
@@ -116,7 +116,7 @@ export default function DashboardScreen() {
           <Card style={styles.emptyCard}>
             <Text style={styles.emptyText}>No books yet.</Text>
             <Caption>Create your first book to get started.</Caption>
-            <AppButton onPress={() => router.push("/admin/(dashboard)/books/new" as any)} style={[styles.emptyButton, { marginTop: space.md }]}>
+            <AppButton onPress={() => router.push("/books/new" as any)} style={[styles.emptyButton, { marginTop: space.md }]}>
               Create Book
             </AppButton>
           </Card>
@@ -125,7 +125,7 @@ export default function DashboardScreen() {
             {recentBooks.map((book) => (
               <Pressable
                 key={book.id}
-                onPress={() => router.push(`/admin/(dashboard)/books/${book.id}` as any)}
+                onPress={() => router.push(`/books/${book.id}` as any)}
                 style={({ pressed }) => [styles.bookRow, pressed && styles.bookRowPressed]}
               >
                 <View style={styles.bookCover}>
@@ -153,17 +153,17 @@ export default function DashboardScreen() {
         <View style={styles.quickActions}>
           <Eyebrow>Quick Actions</Eyebrow>
           <View style={styles.actionGrid}>
-            <Pressable onPress={() => router.push("/admin/(dashboard)/books/new" as any)} style={styles.actionCard}>
+            <Pressable onPress={() => router.push("/books/new" as any)} style={styles.actionCard}>
               <Text style={styles.actionIcon}>➕</Text>
               <Text style={styles.actionLabel}>New Book</Text>
               <Caption>Add a new book to the catalog</Caption>
             </Pressable>
-            <Pressable onPress={() => router.push("/admin/(dashboard)/books" as any)} style={styles.actionCard}>
+            <Pressable onPress={() => router.push("/books" as any)} style={styles.actionCard}>
               <Text style={styles.actionIcon}>📚</Text>
               <Text style={styles.actionLabel}>Manage Books</Text>
               <Caption>View and edit all books</Caption>
             </Pressable>
-            <Pressable onPress={() => router.push("/admin/(dashboard)/audit" as any)} style={styles.actionCard}>
+            <Pressable onPress={() => router.push("/audit" as any)} style={styles.actionCard}>
               <Text style={styles.actionIcon}>📋</Text>
               <Text style={styles.actionLabel}>Audit Log</Text>
               <Caption>Review admin activity</Caption>

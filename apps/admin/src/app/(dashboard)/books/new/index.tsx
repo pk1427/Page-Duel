@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, ScrollView, KeyboardAvoidingView, Platform, TextInput } from "react-native";
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform, Pressable, TextInput } from "react-native";
 import { router } from "expo-router";
 import { getSupabase } from "@/lib/supabase";
 import { useAdminSession } from "@/lib/admin-session";
@@ -73,7 +73,7 @@ export default function NewBookScreen() {
       });
 
       setSuccess(true);
-      setTimeout(() => router.push("/admin/(dashboard)/books" as any), 1000);
+      setTimeout(() => router.push("/books" as any), 1000);
     } catch (error) {
       console.error("Create book error:", error);
       setErrors({ form: "Failed to create book" });
@@ -215,10 +215,10 @@ export default function NewBookScreen() {
         </Card>
 
         <View style={styles.actions}>
-          <AppButton variant="secondary" onPress={() => router.back()} editable={!loading}>
+          <AppButton variant="secondary" onPress={() => router.back()} disabled={loading}>
             Cancel
           </AppButton>
-          <AppButton onPress={handleSubmit} editable={!loading} variant="primary">
+          <AppButton onPress={handleSubmit} disabled={loading} variant="primary">
             {loading ? "Creating…" : "Create Book"}
           </AppButton>
         </View>

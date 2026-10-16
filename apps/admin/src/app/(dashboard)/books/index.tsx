@@ -60,7 +60,7 @@ export default function BooksListScreen() {
   };
 
   const handleNewBook = () => {
-    router.push("/admin/(dashboard)/books/new" as any);
+    router.push("/books/new" as any);
   };
 
   if (loading) {
@@ -101,7 +101,7 @@ export default function BooksListScreen() {
             {books.map((book) => (
               <Pressable
                 key={book.id}
-                onPress={() => router.push(`/admin/(dashboard)/books/${book.id}` as any)}
+                onPress={() => router.push(`/books/${book.id}` as any)}
                 style={({ pressed }) => [styles.bookRow, pressed && styles.bookRowPressed]}
               >
                 <View style={styles.bookCover}>

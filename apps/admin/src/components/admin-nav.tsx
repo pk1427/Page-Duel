@@ -5,9 +5,9 @@ import { useAdminSession } from "@/lib/admin-session";
 import { palette, space, radius, Card, Caption, Eyebrow, Title, AppButton } from "@/components/ui";
 
 const NAV_ITEMS = [
-  { path: "/admin/(dashboard)/", label: "Dashboard", icon: "📊" },
-  { path: "/admin/(dashboard)/books", label: "Books", icon: "📚" },
-  { path: "/admin/(dashboard)/audit", label: "Audit Log", icon: "📋" },
+  { path: "/", label: "Dashboard", icon: "📊" },
+  { path: "/books", label: "Books", icon: "📚" },
+  { path: "/audit", label: "Audit Log", icon: "📋" },
 ] as const;
 
 export function AdminNav({ children }: { children: React.ReactNode }) {
@@ -18,7 +18,7 @@ export function AdminNav({ children }: { children: React.ReactNode }) {
 
   const handleSignOut = async () => {
     await signOut();
-    router.replace("/admin/sign-in" as any);
+    router.replace("/sign-in" as any);
   };
 
   const isActive = (path: string) => pathname === path || pathname.startsWith(path + "/");

@@ -6,7 +6,7 @@ import { Screen, Title, Body, Caption, AppButton, Eyebrow, Card, palette, space,
 import { StyleSheet, TextInput } from "react-native";
 
 export default function AdminSignInScreen() {
-  const { signIn, status, error, isAdmin } = useAdminSession();
+  const { signIn, error } = useAdminSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,8 +16,8 @@ export default function AdminSignInScreen() {
     setLoading(true);
     const result = await signIn(email, password);
     setLoading(false);
-    if (result.ok && isAdmin) {
-      router.replace("/admin/(dashboard)/" as any);
+    if (result.ok && result.isAdmin) {
+      router.replace("/" as any);
     }
   };
 

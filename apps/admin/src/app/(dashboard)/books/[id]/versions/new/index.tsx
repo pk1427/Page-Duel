@@ -104,7 +104,7 @@ export default function NewVersionScreen() {
       });
 
       Alert.alert("Success", "Version created successfully");
-      router.push(`/admin/(dashboard)/books/${id}` as any);
+      router.push(`/books/${id}` as any);
     } catch (error) {
       console.error("Create version error:", error);
       setErrors({ form: "Failed to create version" });

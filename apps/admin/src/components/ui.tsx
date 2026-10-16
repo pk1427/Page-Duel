@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, type ViewStyle, type TextStyle } from "react-native";
+import { StyleSheet, Text, View, type StyleProp, type ViewStyle, type TextStyle } from "react-native";
 
 export const palette = {
   ink: "#1a1a2e",
@@ -64,31 +64,31 @@ export const shadow = {
   },
 };
 
-export const Screen = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => (
+export const Screen = ({ children, style }: { children: React.ReactNode; style?: StyleProp<ViewStyle> }) => (
   <View style={[styles.screen, style]}>{children}</View>
 );
 
-export const Card = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => (
+export const Card = ({ children, style }: { children: React.ReactNode; style?: StyleProp<ViewStyle> }) => (
   <View style={[styles.card, style]}>{children}</View>
 );
 
-export const Title = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => (
+export const Title = ({ children, style }: { children: React.ReactNode; style?: StyleProp<TextStyle> }) => (
   <Text style={[styles.title, style]}>{children}</Text>
 );
 
-export const Subtitle = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => (
+export const Subtitle = ({ children, style }: { children: React.ReactNode; style?: StyleProp<TextStyle> }) => (
   <Text style={[styles.subtitle, style]}>{children}</Text>
 );
 
-export const Body = ({ children, style }: { children: React.ReactNode; style?: ViewStyle }) => (
+export const Body = ({ children, style }: { children: React.ReactNode; style?: StyleProp<TextStyle> }) => (
   <Text style={[styles.body, style]}>{children}</Text>
 );
 
-export const Caption = ({ children, style }: { children: React.ReactNode; style?: TextStyle }) => (
+export const Caption = ({ children, style }: { children: React.ReactNode; style?: StyleProp<TextStyle> }) => (
   <Text style={[styles.caption, style]}>{children}</Text>
 );
 
-export const Eyebrow = ({ children, style }: { children: React.ReactNode; style?: TextStyle }) => (
+export const Eyebrow = ({ children, style }: { children: React.ReactNode; style?: StyleProp<TextStyle> }) => (
   <Text style={[styles.eyebrow, style]}>{children}</Text>
 );
 
@@ -99,7 +99,7 @@ export const Badge = ({
 }: {
   children: React.ReactNode;
   tone?: "default" | "accent" | "moss" | "gold" | "danger" | "warning";
-  style?: ViewStyle;
+  style?: StyleProp<TextStyle>;
 }) => {
   const toneStyles = {
     default: { backgroundColor: palette.border, color: palette.ink },
@@ -126,7 +126,7 @@ export const AppButton = ({
   onPress?: () => void;
   variant?: "primary" | "secondary" | "danger" | "ghost";
   disabled?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
 }) => {
   const variantStyles = {

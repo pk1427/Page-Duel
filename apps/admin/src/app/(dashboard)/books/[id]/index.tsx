@@ -145,7 +145,7 @@ export default function BookDetailScreen() {
                 resource_id: id,
                 metadata: { slug: book?.slug, title: book?.title },
               });
-              router.push("/admin/(dashboard)/books" as any);
+              router.push("/books" as any);
             } catch (error) {
               console.error("Delete book error:", error);
               Alert.alert("Error", "Failed to delete book");
@@ -157,7 +157,7 @@ export default function BookDetailScreen() {
   };
 
   const handleNewVersion = () => {
-    router.push(`/admin/(dashboard)/books/${id}/versions/new` as any);
+    router.push(`/books/${id}/versions/new` as any);
   };
 
   if (loading) {
@@ -331,7 +331,7 @@ export default function BookDetailScreen() {
               {versions.map((version) => (
                 <Pressable
                   key={version.id}
-                  onPress={() => router.push(`/admin/(dashboard)/books/${id}/versions/${version.id}` as any)}
+                  onPress={() => router.push(`/books/${id}/versions/${version.id}` as any)}
                   style={({ pressed }) => [styles.versionRow, pressed && styles.versionRowPressed]}
                 >
                   <View style={styles.versionInfo}>

@@ -7,6 +7,7 @@ import { Screen, Title, Eyebrow, Body, Caption, Card, Badge, AppButton, palette,
 import { StyleSheet } from "react-native";
 import type { AdminBookVersion } from "@/types";
 import { validateContentPack, type BookContent } from "@book-people/book-data";
+import { secureBookPublish } from "@/lib/book-publish";
 
 export default function VersionDetailScreen() {
   const { id, versionId } = useLocalSearchParams<{ id: string; versionId: string }>();
@@ -51,18 +52,13 @@ export default function VersionDetailScreen() {
     setValidating(true);
     try {
       const content = version.content_json as unknown as BookContent;
-      const validation = validateContentPack(content);
-      setValidationResult({ ok: validation.ok, errors: validation.errors, warnings: [] });
-
-      // Update validation status in DB
-      const client = getSupabase();
-      if (client) {
-        await client.from("book_versions").update({
-          validation_status: validation.ok ? "validated" : "unvalidated",
-        }).eq("id", versionId);
-        // Refresh
-        fetchVersion();
-      }
+      // Local validation gives immediate UX feedback; only the Edge Function can
+      // mark a version validated after checking hosted objects.
+      const local = validateContentPack(content);
+      if (!local.ok) { setValidationResult({ ok: false, errors: [...local.errors], warnings: [] }); return; }
+      await secureBookPublish("validate", { bookId: id, versionId, manifest: content });
+      setValidationResult({ ok: true, errors: [], warnings: [] });
+      fetchVersion();
     } catch (error) {
       console.error("Validation error:", error);
       setValidationResult({ ok: false, errors: ["Validation failed: " + String(error)], warnings: [] });
@@ -94,41 +90,7 @@ export default function VersionDetailScreen() {
           onPress: async () => {
             setPublishing(true);
             try {
-              // Check if another version is already published for this book
-              const { data: existing } = await client
-                .from("book_versions")
-                .select("id, version_label")
-                .eq("book_id", id)
-                .eq("publication_status", "published")
-                .neq("id", versionId);
-
-              if (existing && existing.length > 0) {
-                Alert.alert(
-                  "Another Version Published",
-                  `Version ${existing[0].version_label} is already published. Only one published version per book is allowed. Unpublish the other version first.`,
-                  [{ text: "OK" }]
-                );
-                setPublishing(false);
-                return;
-              }
-
-              const { error } = await client.from("book_versions").update({
-                publication_status: "published",
-                published_at: new Date().toISOString(),
-              }).eq("id", versionId);
-
-              if (error) throw error;
-
-              // Update book status to published if not already
-              await client.from("books").update({ status: "published" }).eq("id", id);
-
-              await client.from("admin_audit_log").insert({
-                admin_user_id: (await client.auth.getUser()).data.user?.id,
-                action: "publish",
-                resource_type: "book_version",
-                resource_id: versionId,
-                metadata: { book_id: id, version_label: version.version_label },
-              });
+              await secureBookPublish("publish", { bookId: id, versionId, manifest: version.content_json });
 
               Alert.alert("Published", "Version is now live for players.");
               fetchVersion();
@@ -163,31 +125,7 @@ export default function VersionDetailScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              const { error } = await client.from("book_versions").update({
-                publication_status: "unpublished",
-                published_at: null,
-              }).eq("id", versionId);
-
-              if (error) throw error;
-
-              // Check if any other versions are published for this book
-              const { data: otherPublished } = await client
-                .from("book_versions")
-                .select("id")
-                .eq("book_id", id)
-                .eq("publication_status", "published");
-
-              if (!otherPublished || otherPublished.length === 0) {
-                await client.from("books").update({ status: "ready" }).eq("id", id);
-              }
-
-              await client.from("admin_audit_log").insert({
-                admin_user_id: (await client.auth.getUser()).data.user?.id,
-                action: "unpublish",
-                resource_type: "book_version",
-                resource_id: versionId,
-                metadata: { book_id: id, version_label: version.version_label },
-              });
+              await secureBookPublish("unpublish", { bookId: id, versionId, manifest: version.content_json ?? {} });
 
               Alert.alert("Unpublished", "Version is no longer visible to players.");
               fetchVersion();
@@ -224,7 +162,7 @@ export default function VersionDetailScreen() {
                 resource_id: versionId,
                 metadata: { book_id: id, version_label: version.version_label },
               });
-              router.push(`/admin/(dashboard)/books/${id}` as any);
+              router.push(`/books/${id}` as any);
             } catch (error) {
               console.error("Delete version error:", error);
               Alert.alert("Error", "Failed to delete version");
@@ -237,7 +175,7 @@ export default function VersionDetailScreen() {
 
   const handlePreview = () => {
     if (!version || !book) return;
-    router.push(`/admin/(dashboard)/books/${id}/versions/${versionId}/preview` as any);
+    router.push(`/books/${id}/versions/${versionId}/preview` as any);
   };
 
   if (loading) {
@@ -386,7 +324,7 @@ export default function VersionDetailScreen() {
         <Card style={styles.dangerCard}>
           <Eyebrow style={{ color: palette.danger }}>Danger Zone</Eyebrow>
           <Body>These actions are irreversible.</Body>
-          <AppButton variant="danger" onPress={handleDelete} style={[styles.deleteButton, { marginTop: space.md }]}>
+          <AppButton variant="danger" onPress={handleDelete} style={{ ...styles.deleteButton, marginTop: space.md }}>
             Delete Version Permanently
           </AppButton>
         </Card>

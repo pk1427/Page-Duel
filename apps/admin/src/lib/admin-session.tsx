@@ -7,7 +7,7 @@ type AdminSessionStore = {
   userEmail: string | null;
   isAdmin: boolean;
   error: string | null;
-  signIn: (email: string, password: string) => Promise<{ ok: boolean }>;
+  signIn: (email: string, password: string) => Promise<{ ok: boolean; isAdmin: boolean }>;
   signOut: () => Promise<void>;
 };
 
@@ -53,22 +53,23 @@ export function AdminSessionProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const applySession = useCallback(async (email: string | null | undefined) => {
+  const applySession = useCallback(async (email: string | null | undefined): Promise<boolean> => {
     if (!email) {
       setUserEmail(null);
       setIsAdmin(false);
       setStatus("signed-out");
-      return;
+      return false;
     }
     const client = getSupabase();
     if (!client) {
       setStatus("unconfigured");
-      return;
+      return false;
     }
     setUserEmail(email);
     const adminCheck = await checkAdminClaim(client);
     setIsAdmin(adminCheck);
     setStatus("signed-in");
+    return adminCheck;
   }, []);
 
   useEffect(() => {
@@ -104,7 +105,7 @@ export function AdminSessionProvider({ children }: { children: ReactNode }) {
       const client = getSupabase();
       if (!client) {
         setError("Sign-in is unavailable: no backend is configured.");
-        return { ok: false };
+        return { ok: false, isAdmin: false };
       }
       setError(null);
       const { data, error: signInError } = await client.auth.signInWithPassword({
@@ -113,13 +114,14 @@ export function AdminSessionProvider({ children }: { children: ReactNode }) {
       });
       if (signInError) {
         setError(friendlyError(signInError.message));
-        return { ok: false };
+        return { ok: false, isAdmin: false };
       }
       if (data.session?.user?.email) {
-        await applySession(data.session.user.email);
-        return { ok: true };
+        const admin = await applySession(data.session.user.email);
+        if (!admin) setError("This account is not authorized to access the admin dashboard.");
+        return { ok: true, isAdmin: admin };
       }
-      return { ok: false };
+      return { ok: false, isAdmin: false };
     },
     [applySession],
   );

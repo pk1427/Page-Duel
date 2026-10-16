@@ -14,7 +14,7 @@ export function RequireAdminAuth({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (status === "signed-out" || status === "signed-in") {
       if (!isAdmin) {
-        router.replace("/admin/sign-in" as Href);
+        router.replace("/sign-in" as Href);
       }
     }
   }, [status, isAdmin]);
@@ -44,7 +44,7 @@ export function RequireAdminAuth({ children }: { children: ReactNode }) {
         }
         action={
           status === "loading" ? undefined : (
-            <AppButton onPress={() => router.replace("/admin/sign-in" as Href)}>Sign in as admin</AppButton>
+            <AppButton onPress={() => router.replace("/sign-in" as Href)}>Sign in as admin</AppButton>
           )
         }
       />

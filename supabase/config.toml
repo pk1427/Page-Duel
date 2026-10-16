@@ -7,3 +7,7 @@
 # `supabase/migrations/` remains the source of truth for schema and policies either way.
 
 project_id = "book-people"
+
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/public/custom_access_token_hook"
