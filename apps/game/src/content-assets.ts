@@ -19,8 +19,16 @@ const configuredPerBookAssetBaseUrls: Record<string, string | undefined> = {
  * carries hosts. A release build must never try a developer's localhost.
  */
 function assetBaseUrlFor(book: BookContent): string | undefined {
+  const perBookKey = `EXPO_PUBLIC_BOOK_ASSET_BASE_URL_${book.id
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "_")}`;
+  const environment = process.env as Record<string, string | undefined>;
   return (
     configuredPerBookAssetBaseUrls[book.id] ??
+    // Keep the extensible runtime override for local tooling and tests. Web
+    // exports use the static published-book map above because Expo cannot
+    // substitute this computed lookup at bundle time.
+    environment[perBookKey] ??
     process.env.EXPO_PUBLIC_BOOK_ASSET_BASE_URL ??
     (isDevelopmentBuild ? localDevelopmentAssetBaseUrl : undefined)
   );
