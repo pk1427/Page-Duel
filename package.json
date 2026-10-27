@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "app:start": "pnpm --filter game start",
     "app:web": "pnpm --filter game web",
-    "app:export": "pnpm --filter game exec expo export --platform web && pnpm --filter game exec expo export --platform android"
+    "app:export": "pnpm --filter game exec expo export --platform web && pnpm --filter game exec expo export --platform android",
+    "release:verify-env": "node tools/release/verify-production-env.mjs"
   },
   "devDependencies": {
     "jsdom": "^30.1.1",
