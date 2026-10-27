@@ -35,6 +35,12 @@ zero, and preserves relative references such as `pages/p002.webp`. Do not bake a
 or a filesystem path into content. Configure the delivery host at runtime with
 `EXPO_PUBLIC_BOOK_ASSET_BASE_URL` or `EXPO_PUBLIC_BOOK_ASSET_BASE_URL_<BOOK_ID>`.
 
+For the complete local-to-Admin publishing sequence, see
+[`docs/local-book-ingestion.md`](../../docs/local-book-ingestion.md). Person
+counts are human-reviewed source data. This toolkit currently has no automatic
+AI count provider, and no suggested count is publishable without administrator
+approval.
+
 `extract.py` records both the source PDF page (`sourcePage`) and the derived printed label
 (`printedPage`) for every generated page. The command refuses to overwrite a working `book.json`
 without `--force`, protecting human annotation. The final JSON still needs the TypeScript
