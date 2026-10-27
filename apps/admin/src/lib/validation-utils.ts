@@ -5,4 +5,4 @@ export {
   calculateManifestSha256,
   uploadFile,
   type BookManifest,
-} from "@/app/(dashboard)/books/[id]/versions/[versionId]/publish-utils";
+} from "@/lib/publish-utils";

@@ -1,7 +1,7 @@
 -- Books and book_versions RLS + integrity tests. Run: supabase test db
 -- (Manual psql runs need: create extension if not exists pgtap;)
 begin;
-select plan(11);
+select plan(14);
 
 -- Test identities
 insert into auth.users (id, email)
@@ -26,25 +26,41 @@ values ('cccccccc-1111-1111-1111-111111111111', 'aaaaaaaa-1111-1111-1111-1111111
 insert into public.book_versions (id, book_id, version_label, manifest_sha256, content_json, validation_status, publication_status)
 values ('dddddddd-4444-4444-4444-444444444444', 'aaaaaaaa-1111-1111-1111-111111111111', '2', 'def456', '{"spreads":[]}', 'unvalidated', 'unpublished');
 
--- Anonymous clients hold no grant: denied before any policy runs.
+-- Anonymous clients can read published catalog content only (anon SELECT grant
+-- + RLS policy restricting to status='published'). No write grants.
 set local role anon;
-select throws_ok(
-  $$select * from public.books$$,
-  '42501',
-  null,
-  'anon cannot read books'
+select results_eq(
+  $$select slug from public.books where id = 'aaaaaaaa-1111-1111-1111-111111111111'$$,
+  array['alice-test'],
+  'anon sees the published test book'
 );
-select throws_ok(
-  $$select * from public.book_versions$$,
-  '42501',
-  null,
-  'anon cannot read book_versions'
+select results_eq(
+  $$select slug from public.books where id = 'bbbbbbbb-2222-2222-2222-222222222222'$$,
+  array[]::text[],
+  'anon cannot see draft books'
+);
+select results_eq(
+  $$select version_label from public.book_versions where book_id = 'aaaaaaaa-1111-1111-1111-111111111111'$$,
+  array['1'],
+  'anon sees only published book versions'
 );
 select throws_ok(
   $$insert into public.books (slug, title, status) values ('x', 'X', 'draft')$$,
   '42501',
   null,
   'anon cannot insert books'
+);
+select throws_ok(
+  $$update public.books set title = 'hacked' where slug = 'alice-test'$$,
+  '42501',
+  null,
+  'anon cannot update books'
+);
+select throws_ok(
+  $$delete from public.books where slug = 'alice-test'$$,
+  '42501',
+  null,
+  'anon cannot delete books'
 );
 
 -- Authenticated (non-admin) players:

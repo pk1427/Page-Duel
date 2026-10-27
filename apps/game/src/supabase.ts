@@ -3,11 +3,29 @@ import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const stagingMode = process.env.EXPO_PUBLIC_STAGING_MODE === "true";
+const supabaseUrl = stagingMode
+  ? process.env.EXPO_PUBLIC_STAGING_SUPABASE_URL
+  : process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = stagingMode
+  ? process.env.EXPO_PUBLIC_STAGING_SUPABASE_ANON_KEY
+  : process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 /** False when no backend is configured; auth screens explain the limitation. */
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+
+function hostnameFor(url: string | undefined): string | null {
+  if (!url) return null;
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return null;
+  }
+}
+
+/** Development-only UI guard: a staging launch must never bundle the local Supabase host. */
+export const hasWrongStagingEnvironment =
+  stagingMode && ["127.0.0.1", "localhost"].includes(hostnameFor(supabaseUrl) ?? "");
 
 type AuthStorage = {
   getItem: (key: string) => Promise<string | null>;

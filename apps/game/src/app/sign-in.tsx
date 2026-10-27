@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams, type Href } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { resolveNextParam } from "../auth-routing";
 import { useSession } from "../session-store";
 import {
@@ -17,10 +17,11 @@ import {
 } from "../ui";
 
 export default function SignIn() {
-  const { signIn, error, status } = useSession();
+  const { signIn, error, authDiagnostic, status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
   const { next } = useLocalSearchParams<{ next?: string | string[] }>();
   const destination = resolveNextParam(next);
 
@@ -82,11 +83,37 @@ export default function SignIn() {
             onChangeText={setPassword}
             style={s.input}
           />
+          <AppButton
+            onPress={() => router.push("/forgot-password" as Href)}
+            tone="quiet"
+          >
+            Forgot password?
+          </AppButton>
         </View>
         {error && (
-          <Text accessibilityRole="alert" style={s.error}>
-            {error}
-          </Text>
+          <View style={s.errorBlock}>
+            <Text accessibilityRole="alert" style={s.error}>
+              {error}
+            </Text>
+            {(__DEV__ || process.env.EXPO_PUBLIC_AUTH_DEBUG === "true") && authDiagnostic && (
+              <View>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Toggle technical sign-in details"
+                  onPress={() => setShowTechnicalDetails((visible) => !visible)}
+                >
+                  <Text style={s.technicalToggle}>
+                    {showTechnicalDetails ? "Hide technical details" : "Technical details"}
+                  </Text>
+                </Pressable>
+                {showTechnicalDetails && (
+                  <Text selectable style={s.technicalDetails}>
+                    {JSON.stringify(authDiagnostic)}
+                  </Text>
+                )}
+              </View>
+            )}
+          </View>
         )}
         <AppButton
           accessibilityLabel="Sign in"
@@ -129,5 +156,8 @@ const s = StyleSheet.create({
     minHeight: 54,
     paddingHorizontal: space.sm,
   },
+  errorBlock: { gap: space.xxs },
   error: { color: palette.danger, fontSize: 15, fontWeight: "700" },
+  technicalToggle: { color: palette.muted, fontSize: 13, textDecorationLine: "underline" },
+  technicalDetails: { color: palette.muted, fontFamily: "monospace", fontSize: 12, marginTop: space.xxs },
 });

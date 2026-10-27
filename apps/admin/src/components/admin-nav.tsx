@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   webContent: {
+    flex: 1,
     padding: space.xl,
     maxWidth: 1200,
     width: "100%",

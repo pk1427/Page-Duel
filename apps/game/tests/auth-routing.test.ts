@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isProtectedRoute, playTarget, resolveNextParam } from "../src/auth-routing";
+import { isProtectedRoute, playTarget, resolveNextParam, validatePassword, isValidEmail, MIN_PASSWORD_LENGTH } from "../src/auth-routing";
 
 describe("isProtectedRoute", () => {
   it("protects gameplay, setup, results, and profile routes", () => {
@@ -8,7 +8,7 @@ describe("isProtectedRoute", () => {
     }
   });
   it("leaves home, how-to-play, and auth routes public", () => {
-    for (const route of ["/", "/how-to-play", "/sign-in", "/sign-up", "", null, undefined]) {
+    for (const route of ["/", "/how-to-play", "/sign-in", "/sign-up", "/forgot-password", "/reset-password", "", null, undefined]) {
       expect(isProtectedRoute(route)).toBe(false);
     }
   });
@@ -41,5 +41,35 @@ describe("playTarget", () => {
     for (const status of ["loading", "signed-out", "unconfigured"] as const) {
       expect(playTarget(status)).toEqual({ pathname: "/sign-in", params: { next: "/books" } });
     }
+  });
+});
+
+describe("validatePassword", () => {
+  it("accepts passwords meeting the minimum length", () => {
+    expect(validatePassword("a".repeat(MIN_PASSWORD_LENGTH))).toBeNull();
+    expect(validatePassword("longerpassword")).toBeNull();
+  });
+  it("rejects passwords shorter than the minimum", () => {
+    expect(validatePassword("")).toBe(`Use a password of at least ${MIN_PASSWORD_LENGTH} characters.`);
+    expect(validatePassword("abc")).toBe(`Use a password of at least ${MIN_PASSWORD_LENGTH} characters.`);
+    expect(validatePassword("a".repeat(MIN_PASSWORD_LENGTH - 1))).toBe(
+      `Use a password of at least ${MIN_PASSWORD_LENGTH} characters.`,
+    );
+  });
+});
+
+describe("isValidEmail", () => {
+  it("accepts valid email addresses", () => {
+    expect(isValidEmail("user@example.com")).toBe(true);
+    expect(isValidEmail("  user@example.com  ")).toBe(true);
+    expect(isValidEmail("a.b+c@d.co")).toBe(true);
+  });
+  it("rejects invalid email addresses", () => {
+    expect(isValidEmail("")).toBe(false);
+    expect(isValidEmail("not-an-email")).toBe(false);
+    expect(isValidEmail("missing@domain")).toBe(false);
+    expect(isValidEmail("@example.com")).toBe(false);
+    expect(isValidEmail("user@")).toBe(false);
+    expect(isValidEmail("user @example.com")).toBe(false);
   });
 });

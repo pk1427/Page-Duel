@@ -8,7 +8,7 @@ This document describes the versioned asset hosting contract for Book People gam
 
 - **Bucket name**: `book-assets`
 - **Bucket ID**: `book-assets`
-- **Public**: `false` (objects are NOT publicly readable by default)
+- **Public**: `true` (published book gameplay assets are publicly readable over HTTPS)
 - **File size limit**: 10 MiB
 - **Allowed MIME types**: `image/webp`, `image/jpeg`, `image/png`, `application/json`
 
@@ -146,12 +146,12 @@ The upload tool never requires the service-role key to be bundled into the app.
 
 ## Security
 
-- The player app only performs **public asset reads** via HTTPS
+- The player app only performs **public asset reads** over HTTPS via the public Storage URL
 - No service-role key is present in the frontend bundle
-- Storage bucket is `public = false`
+- Storage bucket is `public = true`, but public reads are scoped to the `books/` prefix by RLS
 - Only authenticated users can read `books/` objects in the bucket
-- No INSERT/UPDATE/DELETE policies exist for authenticated users on storage.objects
-- Admin upload access uses a service-role key stored in environment variables only
+- No INSERT/UPDATE/DELETE policies exist for authenticated or anonymous users on storage.objects
+- Admin upload access uses a service-role key stored in function secrets only
 
 ## Phase 11 secure admin workflow
 

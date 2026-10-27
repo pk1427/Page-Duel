@@ -23,6 +23,24 @@ export function isProtectedRoute(pathname: string | null | undefined): boolean {
   return (PROTECTED_ROUTES as readonly string[]).includes(clean);
 }
 
+/** Minimum password length enforced by the app (Supabase default is 6). */
+export const MIN_PASSWORD_LENGTH = 6;
+
+/** Validate a new password meets the app's minimum requirements. */
+export function validatePassword(password: string): string | null {
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return `Use a password of at least ${MIN_PASSWORD_LENGTH} characters.`;
+  }
+  return null;
+}
+
+/** Validate an email address has a basic valid format. */
+export function isValidEmail(email: string): boolean {
+  const trimmed = email.trim();
+  if (!trimmed) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+}
+
 /** Resolve an untrusted `next` search param to a safe internal destination. */
 export function resolveNextParam(raw: string | string[] | undefined): ProtectedRoute {
   const first = Array.isArray(raw) ? raw[0] : raw;
