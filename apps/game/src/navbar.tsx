@@ -1,5 +1,6 @@
 import { router, usePathname, type Href } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useState, type ReactNode } from "react";
+import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { playTarget } from "./auth-routing";
 import { useSession } from "./session-store";
@@ -17,6 +18,35 @@ function usePlay() {
   return () => router.push(playTarget(status) as Href);
 }
 
+/** Pressable supports hover events, but its style callback exposes only pressed. */
+function HoverablePressable({
+  accessibilityLabel,
+  children,
+  hoverStyle,
+  onPress,
+  style,
+}: {
+  accessibilityLabel: string;
+  children: ReactNode;
+  hoverStyle: StyleProp<ViewStyle>;
+  onPress: () => void;
+  style: StyleProp<ViewStyle>;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <Pressable
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+      onHoverIn={() => setHovered(true)}
+      onHoverOut={() => setHovered(false)}
+      onPress={onPress}
+      style={({ pressed }) => [style, (hovered || pressed) && hoverStyle]}
+    >
+      {children}
+    </Pressable>
+  );
+}
+
 function TopLink({
   label,
   pathname,
@@ -29,14 +59,14 @@ function TopLink({
   onPress: () => void;
 }) {
   return (
-    <Pressable
+    <HoverablePressable
       accessibilityLabel={label}
-      accessibilityRole="button"
       onPress={onPress}
-      style={({ hovered }) => [styles.topLink, hovered && styles.topLinkHovered]}
+      style={styles.topLink}
+      hoverStyle={styles.topLinkHovered}
     >
       <Text style={[styles.topLinkText, active && styles.activeLink]}>{label}</Text>
-    </Pressable>
+    </HoverablePressable>
   );
 }
 
@@ -63,14 +93,14 @@ export function TopNav() {
           active={pathname === "/"}
           onPress={() => router.push("/" as Href)}
         />
-        <Pressable
+        <HoverablePressable
           accessibilityLabel="Play"
-          accessibilityRole="button"
           onPress={play}
-          style={({ hovered }) => [styles.topLink, hovered && styles.topLinkHovered]}
+          style={styles.topLink}
+          hoverStyle={styles.topLinkHovered}
         >
           <Text style={[styles.topLinkText, styles.playLink]}>Play</Text>
-        </Pressable>
+        </HoverablePressable>
         <TopLink
           label="How to Play"
           pathname="/how-to-play"
@@ -85,28 +115,28 @@ export function TopNav() {
               active={pathname === "/history"}
               onPress={() => router.push("/history" as Href)}
             />
-            <Pressable
+            <HoverablePressable
               accessibilityLabel="Profile"
-              accessibilityRole="button"
               onPress={() => router.push("/profile" as Href)}
-              style={({ hovered }) => [styles.avatarPress, hovered && styles.topLinkHovered]}
+              style={styles.avatarPress}
+              hoverStyle={styles.topLinkHovered}
             >
               <View style={styles.avatar}>
                 <Text style={styles.avatarText}>{initialsFor(displayName, userEmail)}</Text>
               </View>
-            </Pressable>
+            </HoverablePressable>
           </>
         ) : (
-          <Pressable
+          <HoverablePressable
             accessibilityLabel="Sign in"
-            accessibilityRole="button"
             onPress={() => router.push("/sign-in" as Href)}
-            style={({ hovered }) => [styles.topLink, hovered && styles.topLinkHovered]}
+            style={styles.topLink}
+            hoverStyle={styles.topLinkHovered}
           >
             <Text style={[styles.topLinkText, pathname === "/sign-in" && styles.activeLink]}>
               Sign in
             </Text>
-          </Pressable>
+          </HoverablePressable>
         )}
       </View>
     </View>
@@ -145,15 +175,15 @@ export function BottomNav() {
         const active =
           pathname === item.pathname || (item.label === "Play" && pathname === "/books");
         return (
-          <Pressable
+          <HoverablePressable
             key={item.label}
             accessibilityLabel={item.label}
-            accessibilityRole="button"
             onPress={item.action}
-            style={({ hovered }) => [styles.bottomItem, hovered && styles.bottomItemHovered]}
+            style={styles.bottomItem}
+            hoverStyle={styles.bottomItemHovered}
           >
             <Text style={[styles.bottomText, active && styles.activeLink]}>{item.label}</Text>
-          </Pressable>
+          </HoverablePressable>
         );
       })}
     </View>
