@@ -43,6 +43,8 @@ export default function NewBookScreen() {
     }
 
     try {
+      // A catalog record is not publishable content. Publishing is performed
+      // only by the secure version workflow after hosted validation.
       const { error } = await client.from("books").insert({
         slug: form.slug.trim(),
         title: form.title.trim(),
@@ -50,7 +52,7 @@ export default function NewBookScreen() {
         description: form.description.trim() || null,
         language: form.language || "en",
         cover_asset_path: form.cover_asset_path.trim() || null,
-        status: form.status,
+        status: "draft",
       });
 
       if (error) {
@@ -184,31 +186,9 @@ export default function NewBookScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Status</Text>
-              <View style={styles.statusButtons}>
-                {(["draft", "ready", "published"] as const).map((s) => (
-                  <Pressable
-                    key={s}
-                    onPress={() => setForm({ ...form, status: s })}
-                    style={({ pressed }) => [
-                      styles.statusButton,
-                      form.status === s && styles.statusButtonActive,
-                      pressed && styles.statusButtonPressed,
-                    ]}
-                  >
-                    <Text style={[
-                      styles.statusButtonText,
-                      form.status === s && styles.statusButtonTextActive,
-                      s === "published" && styles.statusPublished,
-                      s === "ready" && styles.statusReady,
-                      s === "draft" && styles.statusDraft,
-                    ]}>
-                      {s.charAt(0).toUpperCase() + s.slice(1)}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-              <Caption>Draft = invisible to players. Ready = validated but not published. Published = visible to players.</Caption>
+              <Text style={styles.label}>Initial status</Text>
+              <Badge tone="default">draft</Badge>
+              <Caption>New books always start as Draft. Create a version, upload its assets, validate it, then publish through the secure version workflow.</Caption>
             </View>
 
           </View>

@@ -178,6 +178,10 @@ export default function VersionDetailScreen() {
     router.push(`/books/${id}/versions/${versionId}/preview` as any);
   };
 
+  const handleUploadAssets = () => {
+    router.push(`/books/${id}/versions/${versionId}/upload` as any);
+  };
+
   if (loading) {
     return (
       <Screen>
@@ -224,6 +228,9 @@ export default function VersionDetailScreen() {
             </Badge>
           </View>
           <View style={styles.toolbarActions}>
+            <AppButton variant="secondary" onPress={handleUploadAssets}>
+              Upload Assets
+            </AppButton>
             <AppButton variant="secondary" onPress={handlePreview} disabled={!validationResult?.ok}>
               Preview
             </AppButton>

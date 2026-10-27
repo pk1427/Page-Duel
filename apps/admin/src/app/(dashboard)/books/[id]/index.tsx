@@ -359,6 +359,16 @@ export default function BookDetailScreen() {
           )}
         </Card>
 
+        <Card style={styles.preparationCard}>
+          <Eyebrow style={styles.sectionTitle}>Local preparation workflow</Eyebrow>
+          <Body>
+            Prepare a rights-cleared PDF on your computer, review every people count, then create a version and use Upload Assets.
+          </Body>
+          <Caption>
+            A book stays unavailable to players until its version passes hosted validation and is published through secure publishing.
+          </Caption>
+        </Card>
+
         <Card style={styles.dangerCard}>
           <Eyebrow style={{ color: palette.danger }}>Danger Zone</Eyebrow>
           <Body>These actions are irreversible.</Body>
@@ -493,6 +503,11 @@ const styles = StyleSheet.create({
   versionsCard: {
     padding: space.lg,
     marginBottom: space.md,
+  },
+  preparationCard: {
+    padding: space.lg,
+    marginBottom: space.md,
+    gap: space.sm,
   },
   emptyVersions: {
     alignItems: "center",
