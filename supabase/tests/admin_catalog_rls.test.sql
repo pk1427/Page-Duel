@@ -2,7 +2,7 @@
 -- Run: supabase test db
 
 begin;
-select plan(24);
+select plan(28);
 
 -- Test identities
 insert into auth.users (id, email)
@@ -159,6 +159,34 @@ select results_eq(
   $$select public.test_delete_book_admin()$$,
   array[1],
   'admin can delete books (1 row affected)'
+);
+
+-- Admin metadata is editable, but lifecycle and manifest state are owned by
+-- secure publishing, even if an admin tries to call PostgREST directly.
+select throws_ok(
+  $$update public.books set status = 'published' where id = 'eeeeeeee-2222-2222-2222-222222222222'$$,
+  'P0001',
+  'book publication status requires secure publishing',
+  'admin cannot directly publish a book'
+);
+select throws_ok(
+  $$update public.book_versions set validation_status = 'validated' where id = '22222222-2222-2222-2222-222222222222'$$,
+  'P0001',
+  'book version lifecycle and manifest changes require secure publishing',
+  'admin cannot directly mark a version validated'
+);
+select throws_ok(
+  $$update public.book_versions set content_json = '{"forged":true}' where id = '22222222-2222-2222-2222-222222222222'$$,
+  'P0001',
+  'book version lifecycle and manifest changes require secure publishing',
+  'admin cannot directly replace a version manifest'
+);
+select throws_ok(
+  $$insert into public.book_versions (book_id, version_label, manifest_sha256, content_json, validation_status, publication_status)
+    values ('eeeeeeee-2222-2222-2222-222222222222', 'forged', 'bad', '{}', 'validated', 'unpublished')$$,
+  'P0001',
+  'book version lifecycle transitions require secure publishing',
+  'admin cannot create a pre-validated version'
 );
 
 -- Another admin sees same data

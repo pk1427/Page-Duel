@@ -1,5 +1,4 @@
-import { getSupabase } from "./supabase";
-import { isSupabaseConfigured } from "./supabase";
+import { getSupabase, isSupabaseConfigured } from "./supabase";
 import { bookCatalog, type BookContent, validateContentPack } from "@book-people/book-data";
 
 export interface CatalogBook {

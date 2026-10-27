@@ -6,6 +6,7 @@ import { useAdminSession } from "@/lib/admin-session";
 import { Screen, Title, Eyebrow, Body, Caption, Card, Badge, AppButton, palette, space, radius } from "@/components/ui";
 import { StyleSheet } from "react-native";
 import type { AdminBook } from "@/types";
+import type { BookContent } from "@book-people/book-data";
 
 export default function NewVersionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -42,10 +43,12 @@ export default function NewVersionScreen() {
     if (!form.version_label.trim()) newErrors.version_label = "Version label is required";
     else if (!/^[a-zA-Z0-9._-]+$/.test(form.version_label)) newErrors.version_label = "Version label must contain only letters, numbers, dots, underscores, and hyphens";
 
-    if (form.content_json.trim()) {
+    if (!form.content_json.trim()) {
+      newErrors.content_json = "Content JSON is required";
+    } else {
       try {
         JSON.parse(form.content_json);
-      } catch (e) {
+      } catch {
         newErrors.content_json = "Invalid JSON";
       }
     }
@@ -60,28 +63,26 @@ export default function NewVersionScreen() {
     if (!client) { setSaving(false); return; }
 
     try {
-      let contentJson = null;
-      if (form.content_json.trim()) {
-        contentJson = JSON.parse(form.content_json);
-      }
+      const contentJson = JSON.parse(form.content_json) as BookContent;
 
-      // Validate content if provided
-      if (contentJson) {
-        const { validateContentPack } = await import("@book-people/book-data");
-        const validation = validateContentPack(contentJson);
-        if (!validation.ok) {
-          setErrors({ content_json: validation.errors.join("; ") });
-          setSaving(false);
-          return;
-        }
+      // Validate the manifest before creating the draft version. Hosted asset
+      // validation still happens later in the secure publishing function.
+      const { validateContentPack } = await import("@book-people/book-data");
+      const validation = validateContentPack(contentJson);
+      if (!validation.ok) {
+        setErrors({ content_json: validation.errors.join("; ") });
+        setSaving(false);
+        return;
       }
 
       const { error } = await client.from("book_versions").insert({
         book_id: id,
         version_label: form.version_label.trim(),
-        manifest_sha256: null,
+        manifest_sha256: "0".repeat(64),
         content_json: contentJson,
-        validation_status: contentJson ? "validated" : "unvalidated",
+        // Only the server-side publishing function may mark a version
+        // validated after it checks the hosted assets.
+        validation_status: "unvalidated",
         publication_status: "unpublished",
       });
 
@@ -172,7 +173,7 @@ export default function NewVersionScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Content JSON (optional)</Text>
+              <Text style={styles.label}>Content JSON *</Text>
               <TextInput
                 style={[styles.input, styles.textArea, errors.content_json && styles.inputError]}
                 value={form.content_json}
@@ -183,7 +184,7 @@ export default function NewVersionScreen() {
                 editable={!saving}
               />
               {errors.content_json && <Text style={styles.fieldError}>{errors.content_json}</Text>}
-              <Caption>Full book content manifest. Must match the book-data BookContent schema. Validation runs on save.</Caption>
+              <Caption>Full book content manifest. Must match the book-data BookContent schema. Hosted asset validation runs after upload.</Caption>
             </View>
 
           </View>

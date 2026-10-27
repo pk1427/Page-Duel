@@ -8,7 +8,7 @@ import { palette, radius } from "./ui";
 /** Resolve a book's cover to a remote URL, or null for the generated Practice Book. */
 function coverUri(book: BookContent): string | null {
   if (!book.coverImage || book.coverImage.startsWith("placeholder:")) return null;
-  return resolveContentAsset(book, { image: book.coverImage });
+  return resolveContentAsset(book, { image: book.coverImage }) ?? null;
 }
 
 function FallbackCover({ title, style }: { title: string; style?: StyleProp<ViewStyle> }) {
@@ -71,7 +71,7 @@ export function SpreadPageImage({
   // Resolved once so the dev fallback can report the exact failing URL.
   // Asset URLs never carry credentials, so logging them is safe.
   const uri = resolveContentAsset(book, { image });
-  if (failed) return <UnavailablePage label={label} detail={uri} />;
+  if (!uri || failed) return <UnavailablePage label={label} detail={uri} />;
   return (
     <View style={[styles.pageSurface, style]}>
       <Image

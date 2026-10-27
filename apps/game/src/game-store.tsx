@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { createSeed, startGame, type GameState, type RoundCount } from "@book-people/game-core";
 import { bookCatalog, toPlayableBook, type BookContent } from "@book-people/book-data";
 import { fetchCatalog, getPlayableBookContent, type CatalogBook } from "./catalog";
+import { isSupabaseConfigured } from "./supabase";
 
 function fallbackCatalogAsCatalogBooks(): readonly CatalogBook[] {
   return bookCatalog.listPlayableBooks().map((book) => ({
@@ -66,11 +67,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const effectiveBooks = catalogLoading
-    ? fallbackCatalogAsCatalogBooks()
-    : catalogBooks.length > 0
-      ? catalogBooks
-      : fallbackCatalogAsCatalogBooks();
+  // A configured backend is authoritative. Falling back to packaged books
+  // after a production catalog failure makes unavailable content look playable.
+  const effectiveBooks = isSupabaseConfigured
+    ? catalogLoading
+      ? []
+      : catalogBooks
+    : fallbackCatalogAsCatalogBooks();
 
   const selectedBook = selectedBookId
     ? (effectiveBooks.find((b) => b.id === selectedBookId || b.slug === selectedBookId) ??
@@ -79,11 +82,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const selectedBookContent = selectedBook ? getPlayableBookContent(selectedBook) : undefined;
 
-  useEffect(() => {
-    if (selectedBook && !selectedBookVersionId) {
-      setSelectedBookVersionId(selectedBook.versionId);
-    }
-  }, [selectedBook, selectedBookVersionId]);
+  const effectiveSelectedBookVersionId = selectedBookVersionId ?? selectedBook?.versionId ?? null;
 
   const store: GameStore = {
     state,
@@ -91,7 +90,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     catalogLoading,
     catalogError,
     selectedBookId,
-    selectedBookVersionId,
+    selectedBookVersionId: effectiveSelectedBookVersionId,
     selectedBook: selectedBookContent,
     playableBooks: effectiveBooks,
     selectBook(bookId) {

@@ -19,7 +19,7 @@ export default function BooksScreen() {
 }
 
 function BooksContent() {
-  const { playableBooks, selectBook, error } = useGame();
+  const { playableBooks, selectBook, error, catalogLoading, catalogError } = useGame();
   return (
     <Screen>
       <View style={styles.heading}>
@@ -27,46 +27,59 @@ function BooksContent() {
         <Title>Choose a book</Title>
         <Body>Pick a volume off the shelf. Every match stays inside one book.</Body>
       </View>
-      <View style={styles.shelf}>
-        {playableBooks.map((book: CatalogBook, index) => {
-          const bookContent = getPlayableBookContent(book);
-          return (
-            <Pressable
-              key={book.id}
-              accessibilityLabel={`Choose ${book.title}`}
-              accessibilityRole="button"
-              onPress={() => {
-                selectBook(book.id);
-                router.push("/setup");
-              }}
-              style={({ pressed }) => [styles.pressableRow, pressed && styles.rowPressed]}
-            >
-              <Card style={[styles.row, index === 0 && styles.featuredRow]}>
-                <View style={styles.spineEdge} />
-                {bookContent ? (
-                  <BookCover book={bookContent} style={styles.cover} />
-                ) : (
-                  <View style={[styles.cover, styles.coverFallback]} />
-                )}
-                <View style={styles.rowCopy}>
-                  <Badge tone={index === 0 ? "accent" : "moss"}>
-                    {index === 0 ? "Featured" : "Ready to play"}
-                  </Badge>
-                  <Text style={styles.bookTitle}>{book.title}</Text>
-                  {book.author && <Text style={styles.author}>{book.author}</Text>}
-                  {bookContent && (
-                    <Text style={styles.spreadCount}>
-                      {eligibleSpreads(toPlayableBook(bookContent)).length} playable spreads
-                    </Text>
+      {catalogLoading ? (
+        <Card style={styles.catalogState}>
+          <Text style={styles.catalogStateText}>Loading your library…</Text>
+        </Card>
+      ) : catalogError ? (
+        <Card style={styles.catalogState}>
+          <Text accessibilityRole="alert" style={styles.error}>
+            Your library is temporarily unavailable.
+          </Text>
+          <Caption>Check your connection and try again later.</Caption>
+        </Card>
+      ) : (
+        <View style={styles.shelf}>
+          {playableBooks.map((book: CatalogBook, index) => {
+            const bookContent = getPlayableBookContent(book);
+            return (
+              <Pressable
+                key={book.id}
+                accessibilityLabel={`Choose ${book.title}`}
+                accessibilityRole="button"
+                onPress={() => {
+                  selectBook(book.id);
+                  router.push("/setup");
+                }}
+                style={({ pressed }) => [styles.pressableRow, pressed && styles.rowPressed]}
+              >
+                <Card style={[styles.row, index === 0 && styles.featuredRow]}>
+                  <View style={styles.spineEdge} />
+                  {bookContent ? (
+                    <BookCover book={bookContent} style={styles.cover} />
+                  ) : (
+                    <View style={[styles.cover, styles.coverFallback]} />
                   )}
-                  <Text style={styles.choose}>Open this book →</Text>
-                </View>
-              </Card>
-            </Pressable>
-          );
-        })}
-        <View style={styles.shelfBoard} />
-      </View>
+                  <View style={styles.rowCopy}>
+                    <Badge tone={index === 0 ? "accent" : "moss"}>
+                      {index === 0 ? "Featured" : "Ready to play"}
+                    </Badge>
+                    <Text style={styles.bookTitle}>{book.title}</Text>
+                    {book.author && <Text style={styles.author}>{book.author}</Text>}
+                    {bookContent && (
+                      <Text style={styles.spreadCount}>
+                        {eligibleSpreads(toPlayableBook(bookContent)).length} playable spreads
+                      </Text>
+                    )}
+                    <Text style={styles.choose}>Open this book →</Text>
+                  </View>
+                </Card>
+              </Pressable>
+            );
+          })}
+          <View style={styles.shelfBoard} />
+        </View>
+      )}
       <Caption>Books from the catalog. More shelves arrive with future books.</Caption>
       {error && (
         <Text accessibilityRole="alert" style={styles.error}>
@@ -79,6 +92,8 @@ function BooksContent() {
 
 const styles = StyleSheet.create({
   heading: { gap: space.xs, maxWidth: 620 },
+  catalogState: { gap: space.xs, minHeight: 120, justifyContent: "center" },
+  catalogStateText: { color: palette.muted, fontSize: 16, fontWeight: "700", textAlign: "center" },
   shelf: { gap: space.sm },
   pressableRow: { width: "100%" },
   rowPressed: { opacity: 0.85, transform: [{ scale: 0.995 }] },

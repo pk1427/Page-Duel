@@ -14,7 +14,10 @@ grant insert, update, delete on table public.books to authenticated;
 grant insert, update, delete on table public.book_versions to authenticated;
 
 set local role authenticated;
-set local request.jwt.claim = '{"sub": "aaaaaaaa-1111-1111-1111-111111111111", "admin": "true"}';
+-- This suite checks the database uniqueness constraint. Service-role context
+-- models the secure publishing function, which is the only lifecycle writer.
+set local request.jwt.claim = '{"sub": "aaaaaaaa-1111-1111-1111-111111111111", "role": "service_role", "admin": "true"}';
+set local request.jwt.claim.role = 'service_role';
 
 -- Insert a book
 insert into public.books (id, slug, title, status)
