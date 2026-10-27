@@ -1,14 +1,23 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { getSupabase, isSupabaseConfigured } from "./supabase";
 import { validateDisplayName } from "./auth-routing";
+import {
+  authDiagnosticFrom,
+  friendlyAuthError,
+  sessionStatusForEmail,
+  type AuthDiagnostic,
+} from "./auth-diagnostics";
 
 export type SessionStatus = "loading" | "signed-in" | "signed-out" | "unconfigured";
+
+export type { AuthDiagnostic } from "./auth-diagnostics";
 
 type SessionStore = {
   status: SessionStatus;
   userEmail: string | null;
   displayName: string | null;
   error: string | null;
+  authDiagnostic: AuthDiagnostic | null;
   signUp: (
     email: string,
     password: string,
@@ -20,19 +29,6 @@ type SessionStore = {
 
 const SessionContext = createContext<SessionStore | null>(null);
 
-function friendlyError(message: string): string {
-  if (/invalid login credentials/i.test(message)) {
-    return "That email and password did not match. Try again.";
-  }
-  if (/already registered|already exists/i.test(message)) {
-    return "That email already has an account. Try signing in instead.";
-  }
-  if (/password/i.test(message) && /short|length|characters/i.test(message)) {
-    return "Use a password of at least 6 characters.";
-  }
-  return message;
-}
-
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<SessionStatus>(
     isSupabaseConfigured ? "loading" : "unconfigured",
@@ -40,12 +36,13 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [authDiagnostic, setAuthDiagnostic] = useState<AuthDiagnostic | null>(null);
 
   const applySession = useCallback(async (email: string | null | undefined) => {
     if (!email) {
       setUserEmail(null);
       setDisplayName(null);
-      setStatus("signed-in");
+      setStatus(sessionStatusForEmail(email));
       return;
     }
     setUserEmail(email);
@@ -95,16 +92,38 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         return { ok: false };
       }
       setError(null);
-      const { data, error: signUpError } = await client.auth.signUp({
-        email: email.trim(),
-        password,
-      });
-      if (signUpError) {
-        setError(friendlyError(signUpError.message));
+      setAuthDiagnostic(null);
+      let data: unknown;
+      let signUpError: unknown;
+      try {
+        ({ data, error: signUpError } = await client.auth.signUp({
+          email: email.trim(),
+          password,
+        }));
+      } catch (thrown) {
+        const thrownMessage =
+          thrown && typeof thrown === "object" && "message" in thrown
+            ? String((thrown as { message?: string }).message)
+            : String(thrown);
+        setError(friendlyAuthError(thrownMessage));
+        setAuthDiagnostic(authDiagnosticFrom(thrown));
         return { ok: false };
       }
-      if (data.session?.user?.email) {
-        await applySession(data.session.user.email);
+      if (signUpError) {
+        const errorMessage =
+          signUpError && typeof signUpError === "object" && "message" in signUpError
+            ? String((signUpError as { message?: string }).message)
+            : String(signUpError);
+        setError(friendlyAuthError(errorMessage));
+        setAuthDiagnostic(authDiagnosticFrom(signUpError));
+        return { ok: false };
+      }
+      const signedUp = data as {
+        session?: { user?: { email?: string | null } | null } | undefined;
+        user?: { email?: string | null } | undefined;
+      } | null;
+      if (signedUp?.session?.user?.email) {
+        await applySession(signedUp.session.user.email);
         return { ok: true };
       }
       return { ok: true, needsConfirmation: true };
@@ -120,15 +139,27 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         return { ok: false };
       }
       setError(null);
-      const { data, error: signInError } = await client.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      });
-      if (signInError) {
-        setError(friendlyError(signInError.message));
+      setAuthDiagnostic(null);
+      let data: Awaited<ReturnType<typeof client.auth.signInWithPassword>>["data"];
+      let signInError: unknown;
+      try {
+        ({ data, error: signInError } = await client.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        }));
+      } catch (thrown) {
+        const diagnostic = authDiagnosticFrom(thrown);
+        setError(friendlyAuthError(diagnostic.message));
+        setAuthDiagnostic(diagnostic);
         return { ok: false };
       }
-      await applySession(data.session?.user?.email);
+      if (signInError) {
+        const diagnostic = authDiagnosticFrom(signInError);
+        setError(friendlyAuthError(diagnostic.message));
+        setAuthDiagnostic(diagnostic);
+        return { ok: false };
+      }
+      await applySession(data?.session?.user?.email);
       return { ok: true };
     },
     [applySession],
@@ -141,6 +172,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setUserEmail(null);
     setDisplayName(null);
     setError(null);
+    setAuthDiagnostic(null);
     setStatus("signed-out");
   }, []);
 
@@ -181,7 +213,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   return (
     <SessionContext.Provider
-      value={{ status, userEmail, displayName, error, signUp, signIn, signOut, updateDisplayName }}
+      value={{ status, userEmail, displayName, error, authDiagnostic, signUp, signIn, signOut, updateDisplayName }}
     >
       {children}
     </SessionContext.Provider>

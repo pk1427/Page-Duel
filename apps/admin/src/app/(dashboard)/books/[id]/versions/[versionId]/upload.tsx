@@ -5,7 +5,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Card, AppButton, Body, Eyebrow, Screen, Title, palette, space } from "@/components/ui";
 import { getSupabase } from "@/lib/supabase";
 import { secureBookPublish } from "@/lib/book-publish";
-import { collectAssetPaths, validateBookJson, type BookManifest } from "./publish-utils";
+import { collectAssetPaths, validateBookJson, type BookManifest } from "@/lib/publish-utils";
 import type { AdminBookVersion } from "@/types";
 
 type SelectedAsset = { path: string; dataBase64: string; sha256: string };

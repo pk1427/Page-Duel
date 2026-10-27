@@ -44,6 +44,8 @@
   "scripts": {
     "start": "expo start",
     "web": "expo start --web",
+    "staging": "sh ./staging.sh",
+    "staging:verify": "sh ./staging.sh --verify-only",
     "lint": "expo lint",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
