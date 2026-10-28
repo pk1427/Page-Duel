@@ -4,6 +4,7 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import { useSession } from "../session-store";
 import { RequireAuth } from "../require-auth";
 import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
+import { copy } from "../copy/en";
 
 export default function Profile() {
   return (
@@ -44,8 +45,8 @@ function ProfileContent() {
   return (
     <Screen>
       <View style={s.heading}>
-        <Eyebrow>Your shelf card</Eyebrow>
-        <Title>Profile</Title>
+        <Eyebrow>{copy.profile.eyebrow}</Eyebrow>
+        <Title>{copy.profile.title}</Title>
       </View>
       <Card style={s.card}>
         <View style={s.identity}>
@@ -58,13 +59,13 @@ function ProfileContent() {
           </View>
         </View>
         <View style={s.field}>
-          <Text style={s.label}>Display name</Text>
+          <Text style={s.label}>{copy.profile.displayName}</Text>
           <TextInput
-            accessibilityLabel="Display name"
+            accessibilityLabel={copy.profile.displayName}
             autoCapitalize="words"
             autoComplete="nickname"
             maxLength={40}
-            placeholder="Reader"
+            placeholder={copy.profile.displayNamePlaceholder}
             placeholderTextColor="#8B7D70"
             value={inputValue}
             onChangeText={(value) => {
@@ -80,13 +81,12 @@ function ProfileContent() {
             {error}
           </Text>
         )}
-        {saved && !error && <Text style={s.saved}>Saved to your shelf card.</Text>}
-        <AppButton accessibilityLabel="Save display name" disabled={busy || !dirty} onPress={save}>
-          Save name
+        {saved && !error && <Text style={s.saved}>{copy.profile.saved}</Text>}
+        <AppButton accessibilityLabel={copy.actions.saveName} disabled={busy || !dirty} onPress={save}>
+          {copy.actions.saveName}
         </AppButton>
         <Body style={s.note}>
-          This is the name on your account. The two in-game player names are chosen fresh for every
-          match.
+          {copy.profile.detail}
         </Body>
       </Card>
       <View style={s.actions}>
@@ -101,7 +101,7 @@ function ProfileContent() {
           }}
           tone="secondary"
         >
-          Sign out
+          {copy.actions.signOut}
         </AppButton>
       </View>
     </Screen>

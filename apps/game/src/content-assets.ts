@@ -2,6 +2,7 @@ import { resolvePageAsset, type BookContent } from "@book-people/book-data";
 
 const localDevelopmentAssetBaseUrl = "http://localhost:8000";
 const isDevelopmentBuild = process.env.NODE_ENV !== "production";
+const isStagingBuild = process.env.EXPO_PUBLIC_STAGING_MODE === "true";
 
 // Expo substitutes EXPO_PUBLIC variables in web bundles only when they are
 // referenced with static dot notation. Do not replace this map with a computed
@@ -12,6 +13,13 @@ const configuredPerBookAssetBaseUrls: Record<string, string | undefined> = {
   "tales-of-punjab-1894": process.env.EXPO_PUBLIC_BOOK_ASSET_BASE_URL_TALES_OF_PUNJAB_1894,
 };
 
+// The staging launcher maps these from .env.staging.local into names that
+// .env.local cannot overwrite. Keep the references static for Expo web export.
+const stagingPerBookAssetBaseUrls: Record<string, string | undefined> = {
+  "alice-loc-1885": process.env.EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL_ALICE_LOC_1885,
+  "tales-of-punjab-1894": process.env.EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL_TALES_OF_PUNJAB_1894,
+};
+
 /**
  * Runtime delivery configuration, intentionally separate from canonical content paths.
  * Development defaults to the local review server. Release builds must set a
@@ -19,6 +27,13 @@ const configuredPerBookAssetBaseUrls: Record<string, string | undefined> = {
  * carries hosts. A release build must never try a developer's localhost.
  */
 function assetBaseUrlFor(book: BookContent): string | undefined {
+  if (isStagingBuild) {
+    // Never fall through to .env.local in a staging build. A missing staging
+    // asset configuration should show an unavailable image, not fetch localhost.
+    return (
+      stagingPerBookAssetBaseUrls[book.id] ?? process.env.EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL
+    );
+  }
   const perBookKey = `EXPO_PUBLIC_BOOK_ASSET_BASE_URL_${book.id
     .toUpperCase()
     .replace(/[^A-Z0-9]/g, "_")}`;

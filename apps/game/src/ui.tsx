@@ -79,11 +79,13 @@ export function PlayerTag({ side, name }: { side: "left" | "right"; name: string
 }
 
 export function Card({
+  accessibilityLabel,
   children,
   style,
   accessibilityRole,
   accessibilityLiveRegion,
 }: {
+  accessibilityLabel?: string;
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   accessibilityRole?: "alert" | "none";
@@ -91,6 +93,7 @@ export function Card({
 }) {
   return (
     <View
+      accessibilityLabel={accessibilityLabel}
       accessibilityLiveRegion={accessibilityLiveRegion}
       accessibilityRole={accessibilityRole}
       style={[styles.card, style]}

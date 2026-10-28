@@ -5,6 +5,7 @@ import { RequireAuth } from "../../require-auth";
 import { getHistory, type HistoryMatch } from "../../history";
 import { BookCover } from "../../cover-image";
 import { reasonLabel } from "../../reason-label";
+import { copy, personLabel, roundWins } from "../../copy/en";
 import {
   AppButton,
   Badge,
@@ -63,7 +64,7 @@ function HistoryContent() {
       }
       setHasMore(newMatches.length === PAGE_SIZE);
     } catch {
-      setError("Could not load your match history. Pull to retry.");
+      setError(copy.history.loadFailed);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -93,23 +94,23 @@ function HistoryContent() {
   return (
     <Screen style={s.container}>
       <View style={s.header}>
-        <Eyebrow>Your shelf</Eyebrow>
-        <Title>Match History</Title>
-        <Caption>Completed games, newest first.</Caption>
+        <Eyebrow>{copy.history.eyebrow}</Eyebrow>
+        <Title>{copy.history.title}</Title>
+        <Caption>{copy.history.detail}</Caption>
       </View>
       {error && !matches.length && (
         <EmptyState
-          title="Could not load history"
+          title={copy.history.loadFailedTitle}
           detail={error}
-          action={<AppButton onPress={() => loadMatches(0, true)}>Retry</AppButton>}
+          action={<AppButton onPress={() => loadMatches(0, true)}>{copy.actions.retry}</AppButton>}
         />
       )}
       {matches.length === 0 && !loading && !error && (
         <EmptyState
-          title="No matches yet"
-          detail="Complete a game to see it here."
+          title={copy.empty.noHistoryTitle}
+          detail={copy.empty.noHistoryDetail}
           action={
-            <AppButton onPress={() => router.push("/books" as Href)}>Choose a book</AppButton>
+            <AppButton onPress={() => router.push("/books" as Href)}>{copy.actions.chooseBook}</AppButton>
           }
         />
       )}
@@ -130,7 +131,7 @@ function HistoryContent() {
           hasMore && !loading ? (
             <View style={s.loadMore}>
               <AppButton onPress={onLoadMore} tone="quiet">
-                Load more
+                {copy.actions.loadMore}
               </AppButton>
             </View>
           ) : null
@@ -159,15 +160,20 @@ function HistoryMatchCard({ match }: HistoryMatchCardProps) {
 
   const winnerText =
     match.winnerPlayer === null
-      ? "Draw"
+      ? copy.history.draw
       : match.winnerPlayer === 0
-        ? `${match.player1Name} wins`
-        : `${match.player2Name} wins`;
+        ? copy.history.wins(match.player1Name)
+        : copy.history.wins(match.player2Name);
 
   return (
     <Pressable
       testID={`history-match-${match.id}`}
-      accessibilityLabel={`${match.player1Name} vs ${match.player2Name}, ${winnerText}, ${dateStr}`}
+      accessibilityLabel={copy.history.matchAccessibility(
+        match.player1Name,
+        match.player2Name,
+        winnerText,
+        dateStr,
+      )}
       accessibilityRole="button"
       onPress={() => router.push(`/history/${match.id}` as Href)}
       style={s.card}
@@ -189,7 +195,7 @@ function HistoryMatchCard({ match }: HistoryMatchCardProps) {
               {match.bookTitle}
             </Text>
             <Caption style={s.bookMetaText}>
-              {match.player1Name} vs {match.player2Name} · {dateStr} at {timeStr}
+              {copy.history.matchMeta(match.player1Name, match.player2Name, dateStr, timeStr)}
             </Caption>
           </View>
         </View>
@@ -203,23 +209,25 @@ function HistoryMatchCard({ match }: HistoryMatchCardProps) {
           <Text style={s.playerName}>{match.player1Name}</Text>
           <View style={s.scoreRow}>
             <Text style={s.peopleTotal}>{match.player1PeopleTotal}</Text>
-            <Text style={s.peopleLabel}>people</Text>
+            <Text style={s.peopleLabel}>{personLabel(match.player1PeopleTotal)}</Text>
           </View>
-          <Caption style={s.roundWins}>{match.player1RoundWins} round wins</Caption>
+          <Caption style={s.roundWins}>{roundWins(match.player1RoundWins)}</Caption>
         </View>
         <View style={s.divider} />
         <View style={s.playerScore}>
           <Text style={s.playerName}>{match.player2Name}</Text>
           <View style={s.scoreRow}>
             <Text style={s.peopleTotal}>{match.player2PeopleTotal}</Text>
-            <Text style={s.peopleLabel}>people</Text>
+            <Text style={s.peopleLabel}>{personLabel(match.player2PeopleTotal)}</Text>
           </View>
-          <Caption style={s.roundWins}>{match.player2RoundWins} round wins</Caption>
+          <Caption style={s.roundWins}>{roundWins(match.player2RoundWins)}</Caption>
         </View>
       </View>
       <Caption style={s.roundsInfo}>
-        {match.roundsConfig} rounds configured ·{" "}
-        {match.roundsConfig + (match.decidingMethod === "sudden_death" ? 1 : 0)} rounds played
+        {copy.history.roundsSummary(
+          match.roundsConfig,
+          match.roundsConfig + (match.decidingMethod === "sudden_death" ? 1 : 0),
+        )}
       </Caption>
     </Pressable>
   );

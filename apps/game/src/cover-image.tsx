@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-na
 import type { BookContent } from "@book-people/book-data";
 import { resolveContentAsset } from "./content-assets";
 import { palette, radius } from "./ui";
+import { copy } from "./copy/en";
 
 /** Resolve a book's cover to a remote URL, or null for the generated Practice Book. */
 function coverUri(book: BookContent): string | null {
@@ -41,7 +42,7 @@ export function BookCover({ book, style }: { book: BookContent; style?: StylePro
 function UnavailablePage({ label, detail }: { label: string; detail?: string }) {
   return (
     <View style={styles.unavailable}>
-      <Text style={styles.unavailableTitle}>Page image unavailable</Text>
+      <Text style={styles.unavailableTitle}>{copy.errors.unavailableImage}</Text>
       <Text style={styles.unavailableCopy}>{label}</Text>
       {__DEV__ && detail ? <Text style={styles.unavailableDetail}>{detail}</Text> : null}
     </View>

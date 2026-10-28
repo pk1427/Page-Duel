@@ -20,6 +20,7 @@ import {
 } from "../ui";
 
 import { RequireAuth } from "../require-auth";
+import { copy, personLabel, roundWins } from "../copy/en";
 
 export default function Result() {
   const { state, start, selectedBook, selectedBookVersionId } = useGame();
@@ -41,7 +42,7 @@ export default function Result() {
         setSaveStatus("saved");
       } else {
         setSaveStatus("failed");
-        setSaveError(result.error ?? "Could not save the match.");
+        setSaveError(result.error ?? copy.result.saveFailed);
       }
     }
     doSave();
@@ -59,7 +60,7 @@ export default function Result() {
       setSaveStatus("saved");
     } else {
       setSaveStatus("failed");
-      setSaveError(result.error ?? "Could not save the match.");
+      setSaveError(result.error ?? copy.result.saveFailed);
     }
   };
 
@@ -91,10 +92,10 @@ function ResultContent({ state, start, saveStatus, saveError, retrySave }: Resul
     return (
       <Screen>
         <EmptyState
-          title="No finished game yet"
-          detail="Complete a game to see its final totals and winner."
+          title={copy.result.noFinishedTitle}
+          detail={copy.result.noFinishedDetail}
           action={
-            <AppButton onPress={() => router.replace("/books" as Href)}>Choose a book</AppButton>
+            <AppButton onPress={() => router.replace("/books" as Href)}>{copy.actions.chooseBook}</AppButton>
           }
         />
       </Screen>
@@ -103,26 +104,26 @@ function ResultContent({ state, start, saveStatus, saveError, retrySave }: Resul
 
   const r = getResult(state);
   const names = state.config.players;
-  const winner = r.winner === null ? "It's a draw" : `${names[r.winner]} wins`;
+  const winner = r.winner === null ? copy.result.drawTitle : copy.result.winnerTitle(names[r.winner]);
 
   return (
     <Screen>
       <View style={s.hero}>
-        <Eyebrow>Final page</Eyebrow>
+        <Eyebrow>{copy.result.eyebrow}</Eyebrow>
         <Title style={s.winner}>{winner}</Title>
         <Badge tone="moss">
-          {r.reason === "draw" ? reasonLabel(r.reason) : `Decided by ${reasonLabel(r.reason)}`}
+          {r.reason === "draw" ? reasonLabel(r.reason) : copy.result.decidedBy(reasonLabel(r.reason))}
         </Badge>
         <Body style={s.reason}>
-          People totals decide first — then round wins, then sudden death.
+          {copy.result.tieOrder}
         </Body>
-        {saveStatus === "saving" && <Body style={s.saving}>Saving your match&hellip;</Body>}
-        {saveStatus === "saved" && <Body style={s.saved}>Match saved to your history.</Body>}
+        {saveStatus === "saving" && <Body style={s.saving}>{copy.result.saving}</Body>}
+        {saveStatus === "saved" && <Body style={s.saved}>{copy.result.saved}</Body>}
         {saveStatus === "failed" && (
           <View style={s.saveError}>
-            <Body style={s.errorText}>Could not save: {saveError}</Body>
+            <Body style={s.errorText}>{saveError ?? copy.result.saveFailed}</Body>
             <AppButton onPress={retrySave} tone="secondary" style={s.retryButton}>
-              Try again
+              {copy.actions.retry}
             </AppButton>
           </View>
         )}
@@ -130,13 +131,13 @@ function ResultContent({ state, start, saveStatus, saveError, retrySave }: Resul
       <View style={s.scores}>
         {names.map((name: string, index: number) => (
           <Card key={name} style={[s.playerCard, r.winner === index && s.winnerCard]}>
-            {r.winner === index && <Badge tone="accent">Winner</Badge>}
+            {r.winner === index && <Badge tone="accent">{copy.history.winner}</Badge>}
             <Text style={s.playerName}>{name}</Text>
             <View style={s.primaryScore}>
               <Text style={s.people}>{r.peopleTotals[index]}</Text>
-              <Text style={s.peopleLabel}>people</Text>
+              <Text style={s.peopleLabel}>{personLabel(r.peopleTotals[index])}</Text>
             </View>
-            <Text style={s.roundWins}>{r.roundWins[index]} round wins</Text>
+            <Text style={s.roundWins}>{roundWins(r.roundWins[index])}</Text>
           </Card>
         ))}
       </View>
@@ -147,16 +148,16 @@ function ResultContent({ state, start, saveStatus, saveError, retrySave }: Resul
             router.replace("/game");
           }}
         >
-          Play Again
+          {copy.actions.playAgain}
         </AppButton>
         <AppButton onPress={() => router.replace("/books" as Href)} tone="secondary">
-          Choose Another Book
+          {copy.actions.chooseAnotherBook}
         </AppButton>
         <AppButton onPress={() => router.replace("/" as Href)} tone="quiet">
-          Return Home
+          {copy.actions.backHome}
         </AppButton>
         <AppButton onPress={() => router.replace("/history" as Href)} tone="quiet">
-          View History
+          {copy.actions.viewHistory}
         </AppButton>
       </View>
     </Screen>

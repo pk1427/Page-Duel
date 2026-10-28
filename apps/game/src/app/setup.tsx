@@ -19,6 +19,7 @@ import {
 } from "../ui";
 
 import { RequireAuth } from "../require-auth";
+import { copy } from "../copy/en";
 
 export default function Setup() {
   return (
@@ -53,31 +54,38 @@ function SetupContent() {
   return (
     <Screen>
       <View style={s.heading}>
-        <Eyebrow>New game</Eyebrow>
-        <Title>Set the table</Title>
-        <Body>Name the readers and choose how long the book stays open.</Body>
+        <Eyebrow>{copy.setup.eyebrow}</Eyebrow>
+        <Title>{copy.setup.title}</Title>
+        <Body>{copy.setup.detail}</Body>
       </View>
-      <Card style={s.book}>
+      <Card accessibilityLabel={copy.setup.selectedBook} style={s.book}>
         <View style={s.spineEdge} />
         <BookCover book={selectedBook} style={s.bookCover} />
         <View style={s.bookCopy}>
-          <Badge tone="moss">Selected book</Badge>
-          <Text style={s.bookTitle}>{selectedBook.title}</Text>
+          <Badge tone="moss">{copy.setup.selectedBook}</Badge>
+          <Text numberOfLines={2} style={s.bookTitle}>
+            {selectedBook.title}
+          </Text>
           {(selectedBook.author || selectedBook.year) && (
             <Text style={s.author}>
               {[selectedBook.author, selectedBook.year].filter(Boolean).join(" · ")}
             </Text>
           )}
         </View>
-        <AppButton onPress={() => router.replace("/books")} tone="quiet">
-          Change
+        <AppButton
+          accessibilityLabel={copy.actions.changeBook}
+          onPress={() => router.replace("/books")}
+          style={s.changeAction}
+          tone="quiet"
+        >
+          {copy.actions.changeBook}
         </AppButton>
       </Card>
       <View style={s.section}>
-        <Text style={s.label}>The readers</Text>
+        <Text style={s.label}>{copy.setup.readers}</Text>
         <View style={s.players}>
           <View style={s.playerField}>
-            <Text style={s.playerTagLeft}>Left page · Player 1</Text>
+            <Text style={s.playerTagLeft}>{copy.setup.playerOne}</Text>
             <TextInput
               accessibilityLabel="Player 1 name"
               placeholder="Player 1"
@@ -88,7 +96,7 @@ function SetupContent() {
             />
           </View>
           <View style={s.playerField}>
-            <Text style={s.playerTagRight}>Right page · Player 2</Text>
+            <Text style={s.playerTagRight}>{copy.setup.playerTwo}</Text>
             <TextInput
               accessibilityLabel="Player 2 name"
               placeholder="Player 2"
@@ -101,12 +109,12 @@ function SetupContent() {
         </View>
       </View>
       <View style={s.section}>
-        <Text style={s.label}>How many rounds?</Text>
+        <Text style={s.label}>{copy.setup.gameLength}</Text>
         <View accessibilityRole="radiogroup" style={s.roundChoices}>
           {([5, 10, 15] as const).map((n) => (
             <Pressable
               key={n}
-              accessibilityLabel={`${n} rounds`}
+              accessibilityLabel={copy.setup.rounds(n)}
               accessibilityRole="radio"
               accessibilityState={{ selected: rounds === n }}
               onPress={() => setRounds(n)}
@@ -123,8 +131,8 @@ function SetupContent() {
           {error}
         </Text>
       )}
-      <AppButton accessibilityLabel="Start Game" onPress={begin}>
-        Start Game
+      <AppButton accessibilityLabel={copy.actions.startGame} onPress={begin}>
+        {copy.actions.startGame}
       </AppButton>
     </Screen>
   );
@@ -179,21 +187,27 @@ const s = StyleSheet.create({
   book: {
     alignItems: "center",
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: space.sm,
+    gap: space.xs,
     overflow: "hidden",
-    paddingLeft: space.xs,
+    padding: space.xs,
   },
   spineEdge: {
     alignSelf: "stretch",
     backgroundColor: palette.leather,
     borderRadius: radius.small,
-    minHeight: 84,
+    minHeight: 76,
     width: 8,
   },
-  bookCover: { height: 96, width: 64 },
-  bookCopy: { flexGrow: 1, gap: 3, minWidth: 160 },
-  bookTitle: { color: palette.ink, fontFamily: "serif", fontSize: 22, fontWeight: "800" },
+  bookCover: { height: 78, width: 52 },
+  bookCopy: { flex: 1, gap: 2, minWidth: 0 },
+  bookTitle: {
+    color: palette.ink,
+    fontFamily: "serif",
+    fontSize: 20,
+    lineHeight: 23,
+    fontWeight: "800",
+  },
   author: { color: palette.muted, fontSize: 14, fontStyle: "italic" },
+  changeAction: { flexShrink: 0, minWidth: 66, paddingHorizontal: space.xs },
   error: { color: palette.danger, fontSize: 15, fontWeight: "700" },
 });

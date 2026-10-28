@@ -3,17 +3,8 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { useSession } from "../session-store";
 import { isValidEmail } from "../auth-routing";
-import {
-  AppButton,
-  Body,
-  Card,
-  Eyebrow,
-  Screen,
-  Title,
-  palette,
-  radius,
-  space,
-} from "../ui";
+import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
+import { copy } from "../copy/en";
 
 function getResetRedirectUrl(): string {
   // Use the current origin + /reset-password so the link works in both
@@ -40,7 +31,7 @@ export default function ForgotPassword() {
   const submit = async () => {
     const trimmed = email.trim();
     if (!isValidEmail(trimmed)) {
-      setError("Please enter a valid email address.");
+      setError(copy.auth.invalidEmail);
       return;
     }
     setBusy(true);
@@ -48,7 +39,7 @@ export default function ForgotPassword() {
     try {
       const client = (await import("../supabase")).getSupabase();
       if (!client) {
-        setError("Password reset is unavailable: no backend is configured.");
+        setError(copy.auth.signInUnavailable);
         setBusy(false);
         return;
       }
@@ -58,11 +49,11 @@ export default function ForgotPassword() {
       if (resetError) {
         const msg = resetError.message?.toLowerCase() ?? "";
         if (msg.includes("rate") || msg.includes("too many")) {
-          setError("Too many requests. Please try again later.");
+          setError(copy.auth.rateLimited);
         } else if (msg.includes("network") || msg.includes("fetch")) {
-          setError("Unable to connect. Please check your internet connection.");
+          setError(copy.auth.noConnection);
         } else {
-          setError("Something went wrong. Please try again.");
+          setError(copy.auth.genericRetry);
         }
         setBusy(false);
         return;
@@ -71,9 +62,9 @@ export default function ForgotPassword() {
     } catch (thrown) {
       const msg = String((thrown as { message?: string })?.message ?? thrown).toLowerCase();
       if (msg.includes("network") || msg.includes("fetch")) {
-        setError("Unable to connect. Please check your internet connection.");
+        setError(copy.auth.noConnection);
       } else {
-        setError("Something went wrong. Please try again.");
+        setError(copy.auth.genericRetry);
       }
     } finally {
       setBusy(false);
@@ -86,14 +77,11 @@ export default function ForgotPassword() {
         <View style={s.heading}>
           <Eyebrow>Check your email</Eyebrow>
           <Title>Reset link sent</Title>
-          <Body>
-            If an account exists for {email.trim()}, we sent a password-reset link.
-            Check your inbox (and spam folder) and follow the link to choose a new password.
-          </Body>
+          <Body>{copy.auth.resetSent}</Body>
         </View>
         <Card style={s.form}>
           <AppButton onPress={() => router.replace("/sign-in" as Href)}>
-            Back to sign in
+            {copy.nav.signIn}
           </AppButton>
           <AppButton
             tone="quiet"
@@ -102,7 +90,7 @@ export default function ForgotPassword() {
               setError(null);
             }}
           >
-            Try a different email
+            {copy.actions.requestAnotherReset}
           </AppButton>
         </Card>
       </Screen>
@@ -112,22 +100,21 @@ export default function ForgotPassword() {
   return (
     <Screen>
       <View style={s.heading}>
-        <Eyebrow>Forgot your password?</Eyebrow>
+        <Eyebrow>Forgot your password</Eyebrow>
         <Title>Reset your password</Title>
         <Body>
-          Enter your account email and we&apos;ll send you a link to choose a new
-          password.
+          Enter your email address. We’ll send a reset link if there is an account for it.
         </Body>
       </View>
       <Card style={s.form}>
         <View style={s.field}>
-          <Text style={s.label}>Email</Text>
+          <Text style={s.label}>{copy.auth.email}</Text>
           <TextInput
-            accessibilityLabel="Email"
+            accessibilityLabel={copy.auth.email}
             autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
-            placeholder="you@example.com"
+            placeholder={copy.auth.emailPlaceholder}
             placeholderTextColor="#8B7D70"
             value={email}
             onChangeText={(t) => {
@@ -143,17 +130,14 @@ export default function ForgotPassword() {
           </Text>
         )}
         <AppButton
-          accessibilityLabel="Send reset link"
+          accessibilityLabel={copy.actions.sendResetLink}
           disabled={busy || !email.trim()}
           onPress={() => void submit()}
         >
-          {busy ? "Sending…" : "Send reset link"}
+          {busy ? "Sending" : copy.actions.sendResetLink}
         </AppButton>
-        <AppButton
-          onPress={() => router.replace("/sign-in" as Href)}
-          tone="quiet"
-        >
-          Back to sign in
+        <AppButton onPress={() => router.replace("/sign-in" as Href)} tone="quiet">
+          {copy.nav.signIn}
         </AppButton>
       </Card>
     </Screen>

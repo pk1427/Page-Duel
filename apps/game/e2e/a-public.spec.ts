@@ -24,7 +24,7 @@ test.describe("public pages and navigation", () => {
     if (isMobile) {
       // Mobile: bottom bar only — brand top bar must not render.
       await expect(page.getByRole("button", { name: "Book People home" })).toHaveCount(0);
-      for (const item of ["Home", "Play", "How to Play", "Profile"]) {
+      for (const item of ["Home", "Play", "How to play", "Profile"]) {
         await expect(page.getByRole("button", { name: item, exact: true }).first()).toBeVisible();
       }
       // Signed-out bottom bar routes Profile to sign-in, so no top-bar variant exists.
@@ -42,7 +42,7 @@ test.describe("public pages and navigation", () => {
     }
 
     // How to Play is public while signed out.
-    await page.getByRole("button", { name: "How to Play", exact: true }).first().click();
+    await page.getByRole("button", { name: "How to play", exact: true }).first().click();
     await page.waitForURL((url) => new URL(url).pathname === "/how-to-play");
     await expect(page.getByText("Two players, one open book.")).toBeVisible();
 

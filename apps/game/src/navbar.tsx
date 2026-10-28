@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { playTarget } from "./auth-routing";
 import { useSession } from "./session-store";
 import { palette, radius, space } from "./ui";
+import { copy } from "./copy/en";
 
 function initialsFor(displayName: string | null, email: string | null): string {
   const source = (displayName || email || "R").trim();
@@ -79,30 +80,30 @@ export function TopNav() {
   return (
     <View style={[styles.topBar, { paddingTop: Math.max(insets.top, space.xs) }]}>
       <Pressable
-        accessibilityLabel="Book People home"
+        accessibilityLabel={copy.nav.homeLabel}
         accessibilityRole="button"
         onPress={() => router.push("/" as Href)}
         style={styles.brandPress}
       >
-        <Text style={styles.brand}>Book People</Text>
+        <Text style={styles.brand}>{copy.brand}</Text>
       </Pressable>
       <View style={styles.topLinks}>
         <TopLink
-          label="Home"
+          label={copy.nav.home}
           pathname="/"
           active={pathname === "/"}
           onPress={() => router.push("/" as Href)}
         />
         <HoverablePressable
-          accessibilityLabel="Play"
+          accessibilityLabel={copy.nav.play}
           onPress={play}
           style={styles.topLink}
           hoverStyle={styles.topLinkHovered}
         >
-          <Text style={[styles.topLinkText, styles.playLink]}>Play</Text>
+          <Text style={[styles.topLinkText, styles.playLink]}>{copy.nav.play}</Text>
         </HoverablePressable>
         <TopLink
-          label="How to Play"
+          label={copy.nav.howToPlay}
           pathname="/how-to-play"
           active={pathname === "/how-to-play"}
           onPress={() => router.push("/how-to-play" as Href)}
@@ -110,13 +111,13 @@ export function TopNav() {
         {status === "signed-in" ? (
           <>
             <TopLink
-              label="History"
+              label={copy.nav.history}
               pathname="/history"
               active={pathname === "/history"}
               onPress={() => router.push("/history" as Href)}
             />
             <HoverablePressable
-              accessibilityLabel="Profile"
+              accessibilityLabel={copy.nav.profile}
               onPress={() => router.push("/profile" as Href)}
               style={styles.avatarPress}
               hoverStyle={styles.topLinkHovered}
@@ -128,13 +129,13 @@ export function TopNav() {
           </>
         ) : (
           <HoverablePressable
-            accessibilityLabel="Sign in"
+            accessibilityLabel={copy.nav.signIn}
             onPress={() => router.push("/sign-in" as Href)}
             style={styles.topLink}
             hoverStyle={styles.topLinkHovered}
           >
             <Text style={[styles.topLinkText, pathname === "/sign-in" && styles.activeLink]}>
-              Sign in
+              {copy.nav.signIn}
             </Text>
           </HoverablePressable>
         )}
@@ -150,20 +151,20 @@ export function BottomNav() {
   const play = usePlay();
 
   const items = [
-    { label: "Home", pathname: "/", action: () => router.push("/" as Href) },
-    { label: "Play", pathname: "/books", action: play },
+    { label: copy.nav.home, pathname: "/", action: () => router.push("/" as Href) },
+    { label: copy.nav.play, pathname: "/books", action: play },
     {
-      label: "How to Play",
+      label: copy.nav.howToPlay,
       pathname: "/how-to-play",
       action: () => router.push("/how-to-play" as Href),
     },
     {
-      label: "History",
+      label: copy.nav.history,
       pathname: status === "signed-in" ? "/history" : "/sign-in",
       action: () => router.push((status === "signed-in" ? "/history" : "/sign-in") as Href),
     },
     {
-      label: "Profile",
+      label: copy.nav.profile,
       pathname: status === "signed-in" ? "/profile" : "/sign-in",
       action: () => router.push((status === "signed-in" ? "/profile" : "/sign-in") as Href),
     },

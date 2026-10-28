@@ -19,9 +19,11 @@ import {
   space,
 } from "../ui";
 import { useRevealSequence } from "../useRevealSequence";
+import { copy, roundWins } from "../copy/en";
 
-/** Below this window width the two pages stack so scanned details stay readable. */
-const WIDE_BOOK_BREAKPOINT = 640;
+/** Only the narrowest handsets stack pages; typical phones retain an open-book view. */
+const STACKED_BOOK_BREAKPOINT = 330;
+const COMPACT_GAME_BREAKPOINT = 480;
 
 export default function GameScreen() {
   return (
@@ -40,7 +42,8 @@ function GameContent() {
   // Guards against double-taps firing duplicate navigation.
   const exiting = useRef(false);
   const { width } = useWindowDimensions();
-  const stacked = width < WIDE_BOOK_BREAKPOINT;
+  const stacked = width < STACKED_BOOK_BREAKPOINT;
+  const compact = width < COMPACT_GAME_BREAKPOINT;
 
   useEffect(() => {
     if (resultRequested && state === scoredState.current && state?.phase === "finished") {
@@ -53,9 +56,13 @@ function GameContent() {
     return (
       <Screen>
         <EmptyState
-          title="Your book is waiting"
-          detail="Choose a book and set up a match before revealing a spread."
-          action={<AppButton onPress={() => router.replace("/books")}>Choose a book</AppButton>}
+          title={copy.empty.noBooks}
+          detail=""
+          action={
+            <AppButton onPress={() => router.replace("/books")}>
+              {copy.actions.chooseBook}
+            </AppButton>
+          }
         />
       </Screen>
     );
@@ -81,7 +88,7 @@ function GameContent() {
         <PlayerTag side={side} name={players[pageIndex] ?? ""} />
         {page.image.startsWith("placeholder:") ? (
           <View style={styles.placeholderPage}>
-            <Text style={styles.placeholderTitle}>A practice spread</Text>
+            <Text style={styles.placeholderTitle}>{copy.game.practiceSpread}</Text>
             <Text style={styles.people}>{"● ".repeat(Math.max(page.people, 1))}</Text>
           </View>
         ) : (
@@ -89,7 +96,7 @@ function GameContent() {
             <SpreadPageImage
               book={selectedBook}
               image={page.image}
-              label={`${players[pageIndex]} page`}
+              label={copy.game.pageLabel(players[pageIndex] ?? "")}
               recyclingKey={spread?.id ?? "spread"}
               style={stacked ? styles.stackedImage : styles.image}
             />
@@ -97,7 +104,7 @@ function GameContent() {
         )}
         <View style={styles.countBadge}>
           <Text style={styles.count}>{isRevealed ? page.people : "?"}</Text>
-          <Text style={styles.countLabel}>{isRevealed ? "people" : "hidden"}</Text>
+          <Text style={styles.countLabel}>{isRevealed ? copy.game.people : copy.game.hidden}</Text>
         </View>
       </View>
     );
@@ -107,8 +114,8 @@ function GameContent() {
   const banner =
     reveal.stage === "scored" && lastRound
       ? lastRound.winner === null
-        ? "Draw"
-        : `${players[lastRound.winner]} wins the round`
+        ? copy.game.draw
+        : copy.game.wonRound(players[lastRound.winner])
       : null;
   const begin = () => {
     const next = flipSpread(state);
@@ -134,31 +141,39 @@ function GameContent() {
   };
 
   return (
-    <Screen>
+    <Screen style={compact ? styles.compactScreen : undefined}>
       <View style={styles.topline}>
         <Badge tone={round > state.config.rounds ? "accent" : "moss"}>
           {round > state.config.rounds
-            ? "Sudden death"
-            : `Round ${round} of ${state.config.rounds}`}
+            ? copy.game.suddenDeath
+            : copy.game.round(round, state.config.rounds)}
         </Badge>
         <Text style={styles.bookName}>{selectedBook?.title ?? "Book People"}</Text>
       </View>
       <View style={styles.scoreboard}>
         {players.map((player, index) => (
           <Card
+            accessibilityLabel={copy.game.scoreLabel(player)}
             key={player}
-            style={[styles.scoreCard, index === 0 ? styles.leftCard : styles.rightCard]}
+            style={[
+              styles.scoreCard,
+              compact && styles.compactScoreCard,
+              index === 0 ? styles.leftCard : styles.rightCard,
+            ]}
           >
             <PlayerTag side={index === 0 ? "left" : "right"} name={player} />
             <View style={styles.scoreLine}>
               <Text style={styles.peopleTotal}>{state.peopleTotals[index]}</Text>
-              <Text style={styles.peopleLabel}>people</Text>
+              <Text style={styles.peopleLabel}>{copy.game.people}</Text>
             </View>
-            <Text style={styles.roundWins}>{state.roundWins[index]} round wins</Text>
+            <Text style={styles.roundWins}>{roundWins(state.roundWins[index])}</Text>
           </Card>
         ))}
       </View>
-      <View style={styles.table}>
+      <View
+        accessibilityLabel={copy.game.openSpread}
+        style={[styles.table, compact && styles.compactTable]}
+      >
         <View style={stacked ? styles.stackedBook : styles.openBook}>
           {sides ? (
             stacked ? (
@@ -174,42 +189,51 @@ function GameContent() {
               </>
             )
           ) : (
-            <View style={styles.awaitingSpread}>
-              <Text style={styles.awaitingTitle}>A fresh spread awaits</Text>
-              <Text style={styles.awaitingCopy}>Flip the spread to open the book.</Text>
+            <View style={[styles.awaitingSpread, compact && styles.compactAwaitingSpread]}>
+              <Text style={styles.awaitingTitle}>{copy.game.awaitingTitle}</Text>
+              <Text style={styles.awaitingCopy}>{copy.game.awaitingDetail}</Text>
             </View>
           )}
         </View>
       </View>
       {banner ? (
-        <View accessibilityLiveRegion="polite" style={styles.banner}>
+        <View
+          accessibilityLiveRegion="polite"
+          style={[styles.banner, compact && styles.compactBanner]}
+        >
           <Text style={styles.bannerTitle}>{banner}</Text>
-          <Text style={styles.bannerCopy}>The totals above now include this spread.</Text>
+          <Text style={styles.bannerCopy}>{copy.game.totalsUpdated}</Text>
         </View>
       ) : (
-        <Body style={styles.prompt}>Turn the page to reveal this round’s counts.</Body>
+        <Body style={styles.prompt}>{copy.game.prompt}</Body>
       )}
-      <AppButton
-        accessibilityLabel={reveal.stage === "scored" ? "Continue game" : "Flip spread"}
-        disabled={disabled}
-        onPress={reveal.stage === "scored" ? continueGame : begin}
-      >
-        {reveal.stage === "scored"
-          ? state.phase === "finished"
-            ? "See result"
-            : "Next round"
-          : "Flip spread"}
-      </AppButton>
-      <AppButton
-        accessibilityLabel="Exit match"
-        onPress={() => {
-          exiting.current = false;
-          setExitOpen(true);
-        }}
-        tone="quiet"
-      >
-        Exit match
-      </AppButton>
+      <View style={styles.actions}>
+        <AppButton
+          accessibilityLabel={
+            reveal.stage === "scored" ? copy.actions.nextRound : copy.actions.flipPage
+          }
+          disabled={disabled}
+          onPress={reveal.stage === "scored" ? continueGame : begin}
+          style={styles.primaryAction}
+        >
+          {reveal.stage === "scored"
+            ? state.phase === "finished"
+              ? copy.actions.seeResult
+              : copy.actions.nextRound
+            : copy.actions.flipPage}
+        </AppButton>
+        <AppButton
+          accessibilityLabel={copy.actions.exitMatch}
+          onPress={() => {
+            exiting.current = false;
+            setExitOpen(true);
+          }}
+          style={styles.exitAction}
+          tone="quiet"
+        >
+          {copy.actions.exitMatch}
+        </AppButton>
+      </View>
       <ExitMatchDialog visible={exitOpen} onStay={() => setExitOpen(false)} onExit={confirmExit} />
     </Screen>
   );
@@ -230,8 +254,10 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontStyle: "italic",
   },
-  scoreboard: { flexDirection: "row", flexWrap: "wrap", gap: space.xs },
-  scoreCard: { flexBasis: 220, flexGrow: 1, gap: 2, padding: space.xs },
+  compactScreen: { gap: space.xs, paddingBottom: space.sm, paddingTop: space.sm },
+  scoreboard: { flexDirection: "row", gap: space.xs },
+  scoreCard: { flexBasis: 0, flexGrow: 1, gap: 2, minWidth: 0, padding: space.xs },
+  compactScoreCard: { paddingVertical: space.xxs },
   leftCard: { borderLeftColor: palette.leftPlayer, borderLeftWidth: 5 },
   rightCard: { borderLeftColor: palette.rightPlayer, borderLeftWidth: 5 },
   scoreLine: { alignItems: "baseline", flexDirection: "row", gap: 4 },
@@ -248,13 +274,14 @@ const styles = StyleSheet.create({
     padding: space.xs,
     width: "100%",
   },
+  compactTable: { padding: space.xxs },
   openBook: { alignItems: "stretch", flexDirection: "row" },
   stackedBook: { flexDirection: "column", gap: space.xs },
   page: {
     alignItems: "center",
     backgroundColor: palette.paper,
     flex: 1,
-    gap: space.xs,
+    gap: space.xxs,
     padding: space.xs,
   },
   leftPage: {
@@ -262,14 +289,14 @@ const styles = StyleSheet.create({
     borderRightColor: "#D3C2A7",
     borderRightWidth: 1,
     borderTopLeftRadius: radius.medium,
-    minHeight: 320,
+    minHeight: 0,
   },
   rightPage: {
     borderBottomRightRadius: radius.medium,
     borderLeftColor: "#FFFDF8",
     borderLeftWidth: 1,
     borderTopRightRadius: radius.medium,
-    minHeight: 320,
+    minHeight: 0,
   },
   stackedPage: { borderRadius: radius.medium },
   spine: { backgroundColor: palette.leatherDeep, width: 10, zIndex: 2 },
@@ -281,6 +308,7 @@ const styles = StyleSheet.create({
     padding: space.lg,
     width: "100%",
   },
+  compactAwaitingSpread: { minHeight: 170, padding: space.sm },
   awaitingTitle: { color: palette.ink, fontFamily: "serif", fontSize: 20, fontWeight: "800" },
   awaitingCopy: { color: palette.muted, fontSize: 15 },
   placeholderPage: { alignItems: "center", flex: 1, justifyContent: "center", minHeight: 180 },
@@ -297,26 +325,36 @@ const styles = StyleSheet.create({
     marginTop: space.sm,
     textAlign: "center",
   },
-  image: { alignSelf: "stretch", aspectRatio: 0.69, flexGrow: 1, width: "100%" },
+  image: { alignSelf: "stretch", aspectRatio: 0.69, width: "100%" },
   stackedImage: { alignSelf: "stretch", height: 300, width: "100%" },
   countBadge: {
     alignItems: "center",
     backgroundColor: "#F0E4D1",
     borderRadius: radius.round,
-    minWidth: 70,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
+    minWidth: 58,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
   },
-  count: { color: palette.plum, fontSize: 27, fontWeight: "800", lineHeight: 28 },
+  count: { color: palette.plum, fontSize: 23, fontWeight: "800", lineHeight: 25 },
   countLabel: { color: palette.muted, fontSize: 10, fontWeight: "800", textTransform: "uppercase" },
   banner: {
     alignItems: "center",
     backgroundColor: "#D9E7DB",
     borderRadius: radius.medium,
     gap: 3,
-    padding: space.sm,
+    padding: space.xs,
   },
-  bannerTitle: { color: palette.moss, fontSize: 20, fontWeight: "800", textAlign: "center" },
+  compactBanner: { paddingVertical: space.xxs },
+  bannerTitle: { color: palette.moss, fontSize: 18, fontWeight: "800", textAlign: "center" },
   bannerCopy: { color: palette.moss, fontSize: 14, textAlign: "center" },
-  prompt: { alignSelf: "center", fontStyle: "italic", textAlign: "center" },
+  prompt: {
+    alignSelf: "center",
+    fontSize: 15,
+    lineHeight: 20,
+    fontStyle: "italic",
+    textAlign: "center",
+  },
+  actions: { flexDirection: "row", gap: space.xs },
+  primaryAction: { flex: 1 },
+  exitAction: { minWidth: 104 },
 });

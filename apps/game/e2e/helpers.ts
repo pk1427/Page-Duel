@@ -151,7 +151,7 @@ export async function startMatch(page: Page, options: MatchOptions): Promise<voi
   await page.getByPlaceholder("Player 2").fill(player2);
   // exact:true matters: "5 rounds" is a substring of "15 rounds".
   await page.getByRole("radio", { name: `${rounds} rounds`, exact: true }).click();
-  await page.getByRole("button", { name: "Start Game", exact: true }).click();
+  await page.getByRole("button", { name: "Start game", exact: true }).click();
   await expectPath(page, "/game");
   await expect(page.getByText(`Round 1 of ${rounds}`)).toBeVisible();
 }
@@ -160,8 +160,8 @@ const REVEAL_MS = 800 + 800 + 600;
 
 /** Flip one spread and wait until the round is scored (Continue control appears). */
 export async function playOneRound(page: Page): Promise<string> {
-  await page.getByRole("button", { name: "Flip spread", exact: true }).click();
-  const continueButton = page.getByRole("button", { name: "Continue game", exact: true });
+  await page.getByRole("button", { name: "Flip the page", exact: true }).click();
+  const continueButton = page.getByRole("button", { name: "Next round", exact: true });
   await continueButton.waitFor({ state: "visible", timeout: REVEAL_MS + 15_000 });
   // Round banner text ("X wins the round" / "Draw") on the active screen.
   const body = await visibleText(page);
@@ -178,7 +178,7 @@ export async function playOneRound(page: Page): Promise<string> {
  * the app navigated to /result, otherwise "next".
  */
 export async function advanceFromScored(page: Page): Promise<"result" | "next"> {
-  await page.getByRole("button", { name: "Continue game", exact: true }).click();
+  await page.getByRole("button", { name: "Next round", exact: true }).click();
   try {
     await page.waitForURL((url) => new URL(url).pathname === "/result", { timeout: 8_000 });
     return "result";
@@ -192,7 +192,7 @@ export async function playFullMatch(page: Page, rounds: 5 | 10 | 15): Promise<vo
   const maxIterations = rounds + 6; // headroom for sudden-death rounds
   for (let i = 0; i < maxIterations; i++) {
     if (new URL(page.url()).pathname === "/result") return;
-    const flip = page.getByRole("button", { name: "Flip spread", exact: true });
+    const flip = page.getByRole("button", { name: "Flip the page", exact: true });
     if ((await flip.count()) > 0 && (await flip.isVisible())) {
       await playOneRound(page);
     }

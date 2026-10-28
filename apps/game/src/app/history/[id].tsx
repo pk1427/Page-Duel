@@ -18,6 +18,7 @@ import {
   palette,
   space,
 } from "../../ui";
+import { copy, people, personLabel, roundWins } from "../../copy/en";
 
 export default function HistoryDetail() {
   return (
@@ -58,10 +59,10 @@ function HistoryDetailContent() {
         if (data) {
           setMatch(data);
         } else {
-          setError("This match could not be found.");
+          setError(copy.errors.matchUnavailable);
         }
       } catch {
-        setError("Could not load match details. Pull to retry.");
+        setError(copy.history.loadFailed);
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -83,7 +84,7 @@ function HistoryDetailContent() {
   if (loading) {
     return (
       <Screen style={s.loading}>
-        <EmptyState title="Loading match..." detail="" />
+        <EmptyState title={copy.history.loading} detail="" />
       </Screen>
     );
   }
@@ -92,9 +93,9 @@ function HistoryDetailContent() {
     return (
       <Screen>
         <EmptyState
-          title={error || "Match not found"}
-          detail={match ? "" : "This match may have been removed."}
-          action={<AppButton onPress={onRefresh}>Retry</AppButton>}
+          title={error || copy.history.loadFailedTitle}
+          detail={match ? "" : copy.history.missingDetail}
+          action={<AppButton onPress={onRefresh}>{copy.actions.retry}</AppButton>}
         />
       </Screen>
     );
@@ -102,10 +103,10 @@ function HistoryDetailContent() {
 
   const winnerText =
     match.winnerPlayer === null
-      ? "Draw"
+      ? copy.history.draw
       : match.winnerPlayer === 0
-        ? `${match.player1Name} wins`
-        : `${match.player2Name} wins`;
+        ? copy.history.wins(match.player1Name)
+        : copy.history.wins(match.player2Name);
 
   const completedDate = new Date(match.completedAt);
   const dateStr = completedDate.toLocaleDateString(undefined, {
@@ -134,10 +135,10 @@ function HistoryDetailContent() {
       contentContainerStyle={s.container}
     >
       <View style={s.header}>
-        <Eyebrow>Final page</Eyebrow>
+        <Eyebrow>{copy.result.eyebrow}</Eyebrow>
         <Title style={s.title}>{match.bookTitle}</Title>
         <Caption style={s.meta}>
-          {dateStr} at {timeStr}
+          {copy.history.dateTime(dateStr, timeStr)}
         </Caption>
       </View>
 
@@ -145,32 +146,32 @@ function HistoryDetailContent() {
         <View style={s.resultHeader}>
           <Badge tone={match.winnerPlayer === null ? "moss" : "accent"}>{winnerText}</Badge>
           <Caption style={s.reason}>
-            Decided by {reasonLabel(toWinReason(match.decidingMethod))}
+            {copy.result.decidedBy(reasonLabel(toWinReason(match.decidingMethod)))}
           </Caption>
         </View>
         <Body style={s.reasonBody}>
-          People totals decide first — then round wins, then sudden death.
+          {copy.result.tieOrder}
         </Body>
       </Card>
 
       <View style={s.scores}>
         {playerNames.map((name, index) => (
           <Card key={name} style={[s.playerCard, match.winnerPlayer === index && s.winnerCard]}>
-            {match.winnerPlayer === index && <Badge tone="accent">Winner</Badge>}
+            {match.winnerPlayer === index && <Badge tone="accent">{copy.history.winner}</Badge>}
             <Text style={s.playerName}>{name}</Text>
             <View style={s.primaryScore}>
               <Text style={s.people}>{playerTotals[index]}</Text>
-              <Text style={s.peopleLabel}>people</Text>
+              <Text style={s.peopleLabel}>{personLabel(playerTotals[index])}</Text>
             </View>
-            <Text style={s.roundWins}>{playerRoundWins[index]} round wins</Text>
+            <Text style={s.roundWins}>{roundWins(playerRoundWins[index])}</Text>
           </Card>
         ))}
       </View>
 
       <View style={s.section}>
-        <Eyebrow>Round by round</Eyebrow>
+        <Eyebrow>{copy.history.roundByRound}</Eyebrow>
         {match.rounds.length === 0 ? (
-          <Body style={s.emptyRounds}>No round data available.</Body>
+          <Body style={s.emptyRounds}>{copy.history.noRoundData}</Body>
         ) : (
           <View style={s.roundsList}>
             {match.rounds.map((round) => (
@@ -190,7 +191,7 @@ function HistoryDetailContent() {
         tone="quiet"
         style={s.backButton}
       >
-        Back to history
+        {copy.actions.backToHistory}
       </AppButton>
     </ScrollView>
   );
@@ -207,31 +208,31 @@ function HistoryRoundCard({
 }) {
   const winnerText =
     round.winnerPlayer === null
-      ? "Draw"
+      ? copy.history.draw
       : round.winnerPlayer === 0
-        ? `${player1Name} wins`
-        : `${player2Name} wins`;
+        ? copy.history.wins(player1Name)
+        : copy.history.wins(player2Name);
 
   return (
     <Card style={s.roundCard}>
       <View style={s.roundHeader}>
-        <Text style={s.roundNumber}>Round {round.roundNumber}</Text>
+        <Text style={s.roundNumber}>{copy.history.roundNumber(round.roundNumber)}</Text>
         <Badge tone={round.roundType === "sudden_death" ? "accent" : "moss"}>
-          {round.roundType === "sudden_death" ? "Sudden death" : "Normal"}
+          {round.roundType === "sudden_death" ? copy.game.suddenDeath : copy.history.normalRound}
         </Badge>
       </View>
       <View style={s.spreadInfo}>
-        <Text style={s.spreadId}>Spread: {round.spreadId}</Text>
+        <Text style={s.spreadId}>{copy.history.spread(round.spreadId)}</Text>
       </View>
       <View style={s.roundScores}>
         <View style={s.playerRoundScore}>
           <Text style={s.playerName}>{player1Name}</Text>
-          <Text style={s.count}>{round.player1Count} people</Text>
+          <Text style={s.count}>{people(round.player1Count)}</Text>
         </View>
         <View style={s.divider} />
         <View style={s.playerRoundScore}>
           <Text style={s.playerName}>{player2Name}</Text>
-          <Text style={s.count}>{round.player2Count} people</Text>
+          <Text style={s.count}>{people(round.player2Count)}</Text>
         </View>
       </View>
       <Badge tone={round.winnerPlayer === null ? "moss" : "accent"}>{winnerText}</Badge>

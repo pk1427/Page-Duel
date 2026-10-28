@@ -81,7 +81,7 @@ test.describe("full match and gameplay scoring", () => {
     expect(winnerBadges).toBe(annTotal === bobTotal && annWins === bobWins ? 0 : 1);
 
     // Play Again starts a fresh match with the same players.
-    await page.getByRole("button", { name: "Play Again", exact: true }).click();
+    await page.getByRole("button", { name: "Play again", exact: true }).click();
     await expectPath(page, "/game");
     await expect(page.getByText("Round 1 of 5")).toBeVisible();
 

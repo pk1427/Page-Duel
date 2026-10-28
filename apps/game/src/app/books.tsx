@@ -9,6 +9,7 @@ import type { CatalogBook } from "../catalog";
 import { Badge, Body, Caption, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
 
 import { RequireAuth } from "../require-auth";
+import { copy } from "../copy/en";
 
 export default function BooksScreen() {
   return (
@@ -24,19 +25,19 @@ function BooksContent() {
     <Screen>
       <View style={styles.heading}>
         <Eyebrow>Your library</Eyebrow>
-        <Title>Choose a book</Title>
-        <Body>Pick a volume off the shelf. Every match stays inside one book.</Body>
+        <Title>{copy.actions.chooseBook}</Title>
+        <Body>Pick one book for this match.</Body>
       </View>
       {catalogLoading ? (
         <Card style={styles.catalogState}>
-          <Text style={styles.catalogStateText}>Loading your library…</Text>
+          <Text style={styles.catalogStateText}>Loading your library</Text>
         </Card>
       ) : catalogError ? (
         <Card style={styles.catalogState}>
           <Text accessibilityRole="alert" style={styles.error}>
-            Your library is temporarily unavailable.
+            {copy.errors.catalogUnavailable}
           </Text>
-          <Caption>Check your connection and try again later.</Caption>
+          <Caption>Try again when your connection is back.</Caption>
         </Card>
       ) : (
         <View style={styles.shelf}>
@@ -62,16 +63,16 @@ function BooksContent() {
                   )}
                   <View style={styles.rowCopy}>
                     <Badge tone={index === 0 ? "accent" : "moss"}>
-                      {index === 0 ? "Featured" : "Ready to play"}
+                      {index === 0 ? "Featured" : "Ready"}
                     </Badge>
                     <Text style={styles.bookTitle}>{book.title}</Text>
                     {book.author && <Text style={styles.author}>{book.author}</Text>}
                     {bookContent && (
                       <Text style={styles.spreadCount}>
-                        {eligibleSpreads(toPlayableBook(bookContent)).length} playable spreads
+                        {eligibleSpreads(toPlayableBook(bookContent)).length} spreads ready
                       </Text>
                     )}
-                    <Text style={styles.choose}>Open this book →</Text>
+                    <Text style={styles.choose}>Choose this book</Text>
                   </View>
                 </Card>
               </Pressable>
@@ -80,7 +81,7 @@ function BooksContent() {
           <View style={styles.shelfBoard} />
         </View>
       )}
-      <Caption>Books from the catalog. More shelves arrive with future books.</Caption>
+      <Caption>Only published books appear here.</Caption>
       {error && (
         <Text accessibilityRole="alert" style={styles.error}>
           {error}

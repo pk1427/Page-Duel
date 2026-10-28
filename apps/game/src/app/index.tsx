@@ -17,6 +17,7 @@ import {
   radius,
   space,
 } from "../ui";
+import { copy } from "../copy/en";
 
 export default function Home() {
   const { playableBooks } = useGame();
@@ -30,15 +31,15 @@ export default function Home() {
     <Screen style={s.page}>
       <View style={s.hero}>
         <View style={s.copyColumn}>
-          <Eyebrow>A two-player counting game</Eyebrow>
+          <Eyebrow>{copy.home.eyebrow}</Eyebrow>
           <Title style={s.display}>Book People</Title>
-          <Body style={s.lede}>
-            Two players. One open book.{"\n"}More people on your page wins the round.
-          </Body>
+          <Body style={s.lede}>{copy.home.howItWorks}</Body>
           <View style={s.actions}>
-            <AppButton onPress={() => router.push(playTarget(status) as Href)}>Play</AppButton>
+            <AppButton onPress={() => router.push(playTarget(status) as Href)}>
+              {copy.nav.play}
+            </AppButton>
             <AppButton onPress={() => router.push("/how-to-play" as Href)} tone="quiet">
-              How to Play
+              {copy.nav.howToPlay}
             </AppButton>
           </View>
           <View style={s.promises}>
@@ -52,14 +53,14 @@ export default function Home() {
           </View>
         </View>
         <View style={s.shelf}>
-          <View accessible accessibilityLabel="An open storybook" style={s.bookStage}>
+          <View accessible accessibilityLabel={copy.home.storybookLabel} style={s.bookStage}>
             <View style={[s.pageArt, s.leftPage]}>
               {leftBookContent ? (
                 <BookCover book={leftBookContent} style={s.stageCover} />
               ) : (
                 <Text style={s.pageNumber}>I</Text>
               )}
-              <Text style={s.pageOwner}>Left page · Player 1</Text>
+              <Text style={s.pageOwner}>{copy.home.leftPage}</Text>
             </View>
             <View style={s.spine} />
             <View style={[s.pageArt, s.rightPage]}>
@@ -68,7 +69,7 @@ export default function Home() {
               ) : (
                 <Text style={s.pageNumber}>II</Text>
               )}
-              <Text style={s.pageOwner}>Right page · Player 2</Text>
+              <Text style={s.pageOwner}>{copy.home.rightPage}</Text>
             </View>
           </View>
           <Caption style={s.shelfCaption}>

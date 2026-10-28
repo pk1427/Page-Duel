@@ -3,17 +3,8 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { getSupabase } from "../supabase";
 import { validatePassword } from "../auth-routing";
-import {
-  AppButton,
-  Body,
-  Card,
-  Eyebrow,
-  Screen,
-  Title,
-  palette,
-  radius,
-  space,
-} from "../ui";
+import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
+import { copy } from "../copy/en";
 
 type Status = "checking" | "ready" | "invalid" | "success" | "error";
 
@@ -87,13 +78,13 @@ export default function ResetPassword() {
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError("The passwords do not match. Please try again.");
+      setError(copy.errors.passwordMismatch);
       return;
     }
 
     const client = getSupabase();
     if (!client) {
-      setError("Password reset is unavailable: no backend is configured.");
+      setError(copy.auth.signInUnavailable);
       return;
     }
 
@@ -105,11 +96,11 @@ export default function ResetPassword() {
       if (updateError) {
         const msg = updateError.message?.toLowerCase() ?? "";
         if (msg.includes("weak") || msg.includes("password")) {
-          setError("Please choose a stronger password.");
+          setError(copy.auth.weakPassword);
         } else if (msg.includes("network") || msg.includes("fetch")) {
-          setError("Unable to connect. Please check your internet connection.");
+          setError(copy.auth.noConnection);
         } else {
-          setError("Something went wrong. Please try again.");
+          setError(copy.auth.genericRetry);
         }
         return;
       }
@@ -119,9 +110,9 @@ export default function ResetPassword() {
     } catch (thrown) {
       const msg = String((thrown as { message?: string })?.message ?? thrown).toLowerCase();
       if (msg.includes("network") || msg.includes("fetch")) {
-        setError("Unable to connect. Please check your internet connection.");
+        setError(copy.auth.noConnection);
       } else {
-        setError("Something went wrong. Please try again.");
+        setError(copy.auth.genericRetry);
       }
     } finally {
       setBusy(false);
@@ -132,9 +123,9 @@ export default function ResetPassword() {
     return (
       <Screen>
         <View style={s.heading}>
-          <Eyebrow>Reset password</Eyebrow>
-          <Title>Verifying link…</Title>
-          <Body>Checking your reset link, please wait.</Body>
+          <Eyebrow>{copy.resetPassword.eyebrow}</Eyebrow>
+          <Title>{copy.resetPassword.checkingTitle}</Title>
+          <Body>{copy.resetPassword.checkingDetail}</Body>
         </View>
       </Screen>
     );
@@ -144,22 +135,16 @@ export default function ResetPassword() {
     return (
       <Screen>
         <View style={s.heading}>
-          <Eyebrow>Reset password</Eyebrow>
-          <Title>Link expired or invalid</Title>
-          <Body>
-            This password-reset link is no longer valid. It may have expired or
-            already been used. Request a new one to continue.
-          </Body>
+          <Eyebrow>{copy.resetPassword.eyebrow}</Eyebrow>
+          <Title>{copy.resetPassword.invalidTitle}</Title>
+          <Body>{copy.resetPassword.invalidDetail}</Body>
         </View>
         <Card style={s.form}>
           <AppButton onPress={() => router.replace("/forgot-password" as Href)}>
-            Request a new link
+            {copy.resetPassword.requestNewLink}
           </AppButton>
-          <AppButton
-            onPress={() => router.replace("/sign-in" as Href)}
-            tone="quiet"
-          >
-            Back to sign in
+          <AppButton onPress={() => router.replace("/sign-in" as Href)} tone="quiet">
+            {copy.nav.signIn}
           </AppButton>
         </Card>
       </Screen>
@@ -170,13 +155,13 @@ export default function ResetPassword() {
     return (
       <Screen>
         <View style={s.heading}>
-          <Eyebrow>Reset password</Eyebrow>
-          <Title>Password updated</Title>
-          <Body>Your password has been changed. You can now sign in with your new password.</Body>
+          <Eyebrow>{copy.resetPassword.eyebrow}</Eyebrow>
+          <Title>{copy.resetPassword.successTitle}</Title>
+          <Body>{copy.resetPassword.successDetail}</Body>
         </View>
         <Card style={s.form}>
           <AppButton onPress={() => router.replace("/sign-in" as Href)}>
-            Back to sign in
+            {copy.nav.signIn}
           </AppButton>
         </Card>
       </Screen>
@@ -186,19 +171,19 @@ export default function ResetPassword() {
   return (
     <Screen>
       <View style={s.heading}>
-        <Eyebrow>Reset password</Eyebrow>
-        <Title>Choose a new password</Title>
-        <Body>Enter your new password below.</Body>
+        <Eyebrow>{copy.resetPassword.eyebrow}</Eyebrow>
+        <Title>{copy.resetPassword.chooseTitle}</Title>
+        <Body>{copy.resetPassword.chooseDetail}</Body>
       </View>
       <Card style={s.form}>
         <View style={s.field}>
-          <Text style={s.label}>New password</Text>
+          <Text style={s.label}>{copy.resetPassword.newPassword}</Text>
           <View style={s.passwordRow}>
             <TextInput
-              accessibilityLabel="New password"
+              accessibilityLabel={copy.resetPassword.newPassword}
               autoCapitalize="none"
               autoComplete="new-password"
-              placeholder="At least 6 characters"
+              placeholder={copy.auth.newPasswordPlaceholder}
               placeholderTextColor="#8B7D70"
               secureTextEntry={!showPassword}
               value={newPassword}
@@ -208,21 +193,18 @@ export default function ResetPassword() {
               }}
               style={[s.input, s.passwordInput]}
             />
-            <AppButton
-              onPress={() => setShowPassword((v) => !v)}
-              tone="quiet"
-            >
-              {showPassword ? "Hide" : "Show"}
+            <AppButton onPress={() => setShowPassword((v) => !v)} tone="quiet">
+              {showPassword ? copy.actions.hidePassword : copy.actions.showPassword}
             </AppButton>
           </View>
         </View>
         <View style={s.field}>
-          <Text style={s.label}>Confirm password</Text>
+          <Text style={s.label}>{copy.resetPassword.confirmPassword}</Text>
           <TextInput
-            accessibilityLabel="Confirm password"
+            accessibilityLabel={copy.resetPassword.confirmPassword}
             autoCapitalize="none"
             autoComplete="new-password"
-            placeholder="Repeat your password"
+            placeholder={copy.resetPassword.confirmPlaceholder}
             placeholderTextColor="#8B7D70"
             secureTextEntry={!showPassword}
             value={confirmPassword}
@@ -239,17 +221,14 @@ export default function ResetPassword() {
           </Text>
         )}
         <AppButton
-          accessibilityLabel="Update password"
+          accessibilityLabel={copy.actions.updatePassword}
           disabled={busy || !newPassword || !confirmPassword}
           onPress={() => void submit()}
         >
-          {busy ? "Updating…" : "Update password"}
+          {busy ? "Updating" : copy.actions.updatePassword}
         </AppButton>
-        <AppButton
-          onPress={() => router.replace("/sign-in" as Href)}
-          tone="quiet"
-        >
-          Back to sign in
+        <AppButton onPress={() => router.replace("/sign-in" as Href)} tone="quiet">
+          {copy.nav.signIn}
         </AppButton>
       </Card>
     </Screen>

@@ -2,6 +2,7 @@ import { router, type Href } from "expo-router";
 import { useEffect, type ReactNode } from "react";
 import { useSession } from "./session-store";
 import { AppButton, EmptyState, Screen } from "./ui";
+import { copy } from "./copy/en";
 
 /**
  * Route-level gate for screens that require authentication.
@@ -24,8 +25,12 @@ export function RequireAuth({ children }: { children: ReactNode }) {
       <Screen>
         <EmptyState
           title="Sign-in is unavailable"
-          detail="This build has no backend configured, so the game cannot start. Ask the host to configure Supabase and try again."
-          action={<AppButton onPress={() => router.replace("/" as Href)}>Back home</AppButton>}
+          detail={copy.auth.signInUnavailable}
+          action={
+            <AppButton onPress={() => router.replace("/" as Href)}>
+              {copy.actions.backHome}
+            </AppButton>
+          }
         />
       </Screen>
     );
@@ -34,15 +39,17 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   return (
     <Screen>
       <EmptyState
-        title={status === "loading" ? "Opening your book…" : "Sign in to play"}
+        title={status === "loading" ? "Checking your session" : "Sign in to play"}
         detail={
           status === "loading"
-            ? "Restoring your session."
-            : "Your match shelf lives behind your account."
+            ? "This will only take a moment."
+            : "Sign in to start a match and save its history."
         }
         action={
           status === "loading" ? undefined : (
-            <AppButton onPress={() => router.replace("/sign-in" as Href)}>Sign in</AppButton>
+            <AppButton onPress={() => router.replace("/sign-in" as Href)}>
+              {copy.nav.signIn}
+            </AppButton>
           )
         }
       />

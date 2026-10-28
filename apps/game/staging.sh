@@ -30,6 +30,9 @@ fi
 # must derive its client configuration only from the staging file.
 unset EXPO_PUBLIC_SUPABASE_URL EXPO_PUBLIC_SUPABASE_ANON_KEY
 unset EXPO_PUBLIC_STAGING_SUPABASE_URL EXPO_PUBLIC_STAGING_SUPABASE_ANON_KEY
+unset EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL
+unset EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL_ALICE_LOC_1885
+unset EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL_TALES_OF_PUNJAB_1894
 
 # Export staging vars so they win over .env.local (which holds the local URL).
 set -a
@@ -49,6 +52,9 @@ EXPO_PUBLIC_STAGING_MODE=true
 # staging bundle even if a CLI/plugin attempts to load local dotenv values.
 EXPO_PUBLIC_STAGING_SUPABASE_URL="$EXPO_PUBLIC_SUPABASE_URL"
 EXPO_PUBLIC_STAGING_SUPABASE_ANON_KEY="$EXPO_PUBLIC_SUPABASE_ANON_KEY"
+EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL="${EXPO_PUBLIC_BOOK_ASSET_BASE_URL:-}"
+EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL_ALICE_LOC_1885="${EXPO_PUBLIC_BOOK_ASSET_BASE_URL_ALICE_LOC_1885:-}"
+EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL_TALES_OF_PUNJAB_1894="${EXPO_PUBLIC_BOOK_ASSET_BASE_URL_TALES_OF_PUNJAB_1894:-}"
 set +a
 
 missing="0"
@@ -60,6 +66,19 @@ if [ -z "${EXPO_PUBLIC_SUPABASE_ANON_KEY:-}" ]; then
   echo "ERROR: EXPO_PUBLIC_SUPABASE_ANON_KEY is missing from $ENV_FILE" >&2
   missing="1"
 fi
+for asset_name in \
+  EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL_ALICE_LOC_1885 \
+  EXPO_PUBLIC_STAGING_BOOK_ASSET_BASE_URL_TALES_OF_PUNJAB_1894
+do
+  eval "asset_value=\${$asset_name:-}"
+  if [ -z "$asset_value" ]; then
+    echo "ERROR: $asset_name is missing from $ENV_FILE" >&2
+    missing="1"
+  elif [ "${asset_value#https://}" = "$asset_value" ]; then
+    echo "ERROR: $asset_name must use an HTTPS hosted asset URL" >&2
+    missing="1"
+  fi
+done
 if [ "$missing" = "1" ]; then
   exit 1
 fi

@@ -15,6 +15,7 @@ import {
   radius,
   space,
 } from "../ui";
+import { copy } from "../copy/en";
 
 export default function SignUp() {
   const { signUp, error, status } = useSession();
@@ -34,8 +35,12 @@ export default function SignUp() {
       <Screen>
         <EmptyState
           title="Sign-up is unavailable"
-          detail="This build has no backend configured, so the game cannot start."
-          action={<AppButton onPress={() => router.replace("/" as Href)}>Back home</AppButton>}
+          detail={copy.auth.signInUnavailable}
+          action={
+            <AppButton onPress={() => router.replace("/" as Href)}>
+              {copy.actions.backHome}
+            </AppButton>
+          }
         />
       </Screen>
     );
@@ -59,17 +64,17 @@ export default function SignUp() {
       <View style={s.heading}>
         <Eyebrow>Keep your games</Eyebrow>
         <Title>Create an account</Title>
-        <Body>One account holds your shelf of finished games. Playing stays free.</Body>
+        <Body>Use one account to keep your match history.</Body>
       </View>
       <Card style={s.form}>
         <View style={s.field}>
-          <Text style={s.label}>Email</Text>
+          <Text style={s.label}>{copy.auth.email}</Text>
           <TextInput
-            accessibilityLabel="Email"
+            accessibilityLabel={copy.auth.email}
             autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
-            placeholder="you@example.com"
+            placeholder={copy.auth.emailPlaceholder}
             placeholderTextColor="#8B7D70"
             value={email}
             onChangeText={setEmail}
@@ -77,12 +82,12 @@ export default function SignUp() {
           />
         </View>
         <View style={s.field}>
-          <Text style={s.label}>Password</Text>
+          <Text style={s.label}>{copy.auth.password}</Text>
           <TextInput
-            accessibilityLabel="Password"
+            accessibilityLabel={copy.auth.password}
             autoCapitalize="none"
             autoComplete="new-password"
-            placeholder="At least 6 characters"
+            placeholder={copy.auth.newPasswordPlaceholder}
             placeholderTextColor="#8B7D70"
             secureTextEntry
             value={password}
@@ -97,7 +102,7 @@ export default function SignUp() {
         )}
         {needsConfirmation && (
           <Text accessibilityRole="alert" style={s.notice}>
-            Account created. Check your email for the confirmation link, then sign in.
+            {copy.auth.confirmationSent}
           </Text>
         )}
         <AppButton
@@ -113,7 +118,7 @@ export default function SignUp() {
           }
           tone="quiet"
         >
-          Already have an account? Sign in
+          Sign in instead
         </AppButton>
       </Card>
     </Screen>

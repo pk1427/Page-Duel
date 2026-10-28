@@ -30,7 +30,7 @@ test.describe("exit confirmation and match abandonment", () => {
     // Record visible round progress and scores before exiting.
     const before = await visibleText(page);
     expect(before).toMatch(/round 1 of 5/i);
-    const stayButton = page.getByRole("button", { name: "Stay in Game", exact: true });
+    const stayButton = page.getByRole("button", { name: "Keep playing", exact: true });
     const exitConfirmButton = page.getByRole("button", { name: "Exit Match", exact: true });
 
     // Open the dialog and verify every required string.

@@ -12,28 +12,15 @@ import {
   radius,
   space,
 } from "../ui";
-
-const steps = [
-  ["1", "Choose a book", "Every round of the match comes from that one book."],
-  ["2", "Take a side", "Player 1 owns the left page. Player 2 owns the right page."],
-  ["3", "Flip the spread", "A fresh pair of scanned pages opens. Counts reveal on their own."],
-  ["4", "Compare counts", "More people on your page wins the round. Equal counts are a draw."],
-  ["5", "Finish the rounds", "Play through all 5, 10, or 15 rounds."],
-  [
-    "6",
-    "Totals decide",
-    "Most people across the match wins. Ties break on round wins, then sudden death.",
-  ],
-  ["7", "Go again", "Rematch with the same book or pick another off the shelf."],
-] as const;
+import { copy } from "../copy/en";
 
 export default function How() {
   return (
     <Screen>
       <View style={s.heading}>
-        <Eyebrow>Before you begin</Eyebrow>
-        <Title>How to play</Title>
-        <Body>Two players, one open book. The book does the talking.</Body>
+        <Eyebrow>{copy.howToPlay.eyebrow}</Eyebrow>
+        <Title>{copy.howToPlay.title}</Title>
+        <Body>{copy.howToPlay.detail}</Body>
       </View>
       <Card style={s.example}>
         <View style={s.examplePages}>
@@ -53,17 +40,17 @@ export default function How() {
         </Caption>
       </Card>
       <View style={s.steps}>
-        {steps.map(([number, heading, copy]) => (
-          <Card key={number} style={s.step}>
-            <Text style={s.number}>{number}</Text>
+        {copy.howToPlay.steps.map(([heading, detail], index) => (
+          <Card key={heading} style={s.step}>
+            <Text style={s.number}>{index + 1}</Text>
             <View style={s.stepCopy}>
               <Text style={s.stepHeading}>{heading}</Text>
-              <Text style={s.stepText}>{copy}</Text>
+              <Text style={s.stepText}>{detail}</Text>
             </View>
           </Card>
         ))}
       </View>
-      <AppButton onPress={() => router.replace("/books")}>Choose a book</AppButton>
+      <AppButton onPress={() => router.replace("/books")}>{copy.actions.chooseBook}</AppButton>
     </Screen>
   );
 }

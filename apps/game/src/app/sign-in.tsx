@@ -15,6 +15,7 @@ import {
   radius,
   space,
 } from "../ui";
+import { copy } from "../copy/en";
 
 export default function SignIn() {
   const { signIn, error, authDiagnostic, status } = useSession();
@@ -34,8 +35,12 @@ export default function SignIn() {
       <Screen>
         <EmptyState
           title="Sign-in is unavailable"
-          detail="This build has no backend configured, so the game cannot start."
-          action={<AppButton onPress={() => router.replace("/" as Href)}>Back home</AppButton>}
+          detail={copy.auth.signInUnavailable}
+          action={
+            <AppButton onPress={() => router.replace("/" as Href)}>
+              {copy.actions.backHome}
+            </AppButton>
+          }
         />
       </Screen>
     );
@@ -52,18 +57,18 @@ export default function SignIn() {
     <Screen>
       <View style={s.heading}>
         <Eyebrow>Welcome back</Eyebrow>
-        <Title>Sign in</Title>
-        <Body>Your shelf of finished games is waiting.</Body>
+        <Title>{copy.nav.signIn}</Title>
+        <Body>Pick up where you left off.</Body>
       </View>
       <Card style={s.form}>
         <View style={s.field}>
-          <Text style={s.label}>Email</Text>
+          <Text style={s.label}>{copy.auth.email}</Text>
           <TextInput
-            accessibilityLabel="Email"
+            accessibilityLabel={copy.auth.email}
             autoCapitalize="none"
             autoComplete="email"
             keyboardType="email-address"
-            placeholder="you@example.com"
+            placeholder={copy.auth.emailPlaceholder}
             placeholderTextColor="#8B7D70"
             value={email}
             onChangeText={setEmail}
@@ -71,23 +76,20 @@ export default function SignIn() {
           />
         </View>
         <View style={s.field}>
-          <Text style={s.label}>Password</Text>
+          <Text style={s.label}>{copy.auth.password}</Text>
           <TextInput
-            accessibilityLabel="Password"
+            accessibilityLabel={copy.auth.password}
             autoCapitalize="none"
             autoComplete="password"
-            placeholder="Your password"
+            placeholder={copy.auth.passwordPlaceholder}
             placeholderTextColor="#8B7D70"
             secureTextEntry
             value={password}
             onChangeText={setPassword}
             style={s.input}
           />
-          <AppButton
-            onPress={() => router.push("/forgot-password" as Href)}
-            tone="quiet"
-          >
-            Forgot password?
+          <AppButton onPress={() => router.push("/forgot-password" as Href)} tone="quiet">
+            Forgot password
           </AppButton>
         </View>
         {error && (
@@ -116,11 +118,11 @@ export default function SignIn() {
           </View>
         )}
         <AppButton
-          accessibilityLabel="Sign in"
+          accessibilityLabel={copy.nav.signIn}
           disabled={busy || !email.trim() || !password}
           onPress={submit}
         >
-          Sign in
+          {copy.nav.signIn}
         </AppButton>
         <AppButton
           onPress={() =>
@@ -128,7 +130,7 @@ export default function SignIn() {
           }
           tone="quiet"
         >
-          New here? Create an account
+          Create an account
         </AppButton>
       </Card>
     </Screen>
@@ -159,5 +161,10 @@ const s = StyleSheet.create({
   errorBlock: { gap: space.xxs },
   error: { color: palette.danger, fontSize: 15, fontWeight: "700" },
   technicalToggle: { color: palette.muted, fontSize: 13, textDecorationLine: "underline" },
-  technicalDetails: { color: palette.muted, fontFamily: "monospace", fontSize: 12, marginTop: space.xxs },
+  technicalDetails: {
+    color: palette.muted,
+    fontFamily: "monospace",
+    fontSize: 12,
+    marginTop: space.xxs,
+  },
 });

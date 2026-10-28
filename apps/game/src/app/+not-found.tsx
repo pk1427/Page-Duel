@@ -1,21 +1,22 @@
 import { router, type Href } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, space } from "../ui";
+import { copy } from "../copy/en";
 
 /** Friendly web and native fallback for an unknown Expo Router route. */
 export default function NotFoundScreen() {
   return (
     <Screen>
       <View style={s.heading}>
-        <Eyebrow>Page not found</Eyebrow>
-        <Title>That page isn&apos;t here.</Title>
-        <Body>Use the link below to return to Book People.</Body>
+        <Eyebrow>{copy.notFound.eyebrow}</Eyebrow>
+        <Title>{copy.notFound.title}</Title>
+        <Body>{copy.notFound.detail}</Body>
       </View>
       <Card style={s.card}>
-        <AppButton accessibilityLabel="Return home" onPress={() => router.replace("/" as Href)}>
-          Return home
+        <AppButton accessibilityLabel={copy.actions.backHome} onPress={() => router.replace("/" as Href)}>
+          {copy.actions.backHome}
         </AppButton>
-        <Text style={s.hint}>If you followed an old email link, request a new one.</Text>
+        <Text style={s.hint}>{copy.notFound.oldLink}</Text>
       </Card>
     </Screen>
   );

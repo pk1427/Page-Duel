@@ -1,5 +1,6 @@
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { AppButton, Card, Title, Body, palette, space } from "./ui";
+import { copy } from "./copy/en";
 
 export function ExitMatchDialog({
   visible,
@@ -20,20 +21,24 @@ export function ExitMatchDialog({
     >
       <View style={styles.backdrop}>
         <Pressable
-          accessibilityLabel="Dismiss exit dialog"
+          accessibilityLabel={copy.exit.dismiss}
           accessibilityRole="button"
           onPress={onStay}
           style={styles.backdropPress}
         />
         <Card accessibilityLiveRegion="polite" accessibilityRole="alert" style={styles.card}>
-          <Title style={styles.title}>Leave this match?</Title>
-          <Body>Your current match progress will be lost if you leave.</Body>
+          <Title style={styles.title}>{copy.exit.title}</Title>
+          <Body>{copy.exit.detail}</Body>
           <View style={styles.actions}>
-            <AppButton accessibilityLabel="Stay in Game" onPress={onStay}>
-              Stay in Game
+            <AppButton accessibilityLabel={copy.actions.stayInMatch} onPress={onStay}>
+              {copy.actions.stayInMatch}
             </AppButton>
-            <AppButton accessibilityLabel="Exit Match" onPress={onExit} style={styles.exitButton}>
-              Exit Match
+            <AppButton
+              accessibilityLabel={copy.actions.exitMatch}
+              onPress={onExit}
+              style={styles.exitButton}
+            >
+              {copy.actions.exitMatch}
             </AppButton>
           </View>
         </Card>
