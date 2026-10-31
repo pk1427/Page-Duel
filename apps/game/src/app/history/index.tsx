@@ -1,6 +1,6 @@
 import { router, type Href } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, View, RefreshControl, FlatList, Pressable } from "react-native";
+import { StyleSheet, Text, View, RefreshControl, FlatList, Pressable, useWindowDimensions } from "react-native";
 import { RequireAuth } from "../../require-auth";
 import { getHistory, type HistoryMatch } from "../../history";
 import { BookCover } from "../../cover-image";
@@ -43,6 +43,8 @@ export default function History() {
 }
 
 function HistoryContent() {
+  const { width } = useWindowDimensions();
+  const compact = width < 480;
   const [matches, setMatches] = useState<HistoryMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -87,7 +89,7 @@ function HistoryContent() {
     }
   };
 
-  const renderMatch = ({ item }: { item: HistoryMatch }) => <HistoryMatchCard match={item} />;
+  const renderMatch = ({ item }: { item: HistoryMatch }) => <HistoryMatchCard match={item} compact={compact} />;
 
   const keyExtractor = (item: HistoryMatch) => item.id;
 
@@ -144,9 +146,10 @@ function HistoryContent() {
 
 type HistoryMatchCardProps = {
   match: HistoryMatch;
+  compact: boolean;
 };
 
-function HistoryMatchCard({ match }: HistoryMatchCardProps) {
+function HistoryMatchCard({ match, compact }: HistoryMatchCardProps) {
   const completedDate = new Date(match.completedAt);
   const dateStr = completedDate.toLocaleDateString(undefined, {
     month: "short",
@@ -176,9 +179,9 @@ function HistoryMatchCard({ match }: HistoryMatchCardProps) {
       )}
       accessibilityRole="button"
       onPress={() => router.push(`/history/${match.id}` as Href)}
-      style={s.card}
+      style={[s.card, compact && s.cardCompact]}
     >
-      <View style={s.cardTop}>
+      <View style={[s.cardTop, compact && s.cardTopCompact]}>
         <View style={s.bookInfo}>
           <BookCover
             book={
@@ -199,12 +202,14 @@ function HistoryMatchCard({ match }: HistoryMatchCardProps) {
             </Caption>
           </View>
         </View>
-        <View style={s.resultBadge}>
+        <View style={[s.resultBadge, compact && s.resultBadgeCompact]}>
           <Badge tone={match.winnerPlayer === null ? "moss" : "accent"}>{winnerText}</Badge>
-          <Caption style={s.reasonText}>{reasonLabel(toWinReason(match.decidingMethod))}</Caption>
+          <Caption style={[s.reasonText, compact && s.reasonTextCompact]}>
+            {reasonLabel(toWinReason(match.decidingMethod))}
+          </Caption>
         </View>
       </View>
-      <View style={s.scores}>
+      <View style={[s.scores, compact && s.scoresCompact]}>
         <View style={s.playerScore}>
           <Text style={s.playerName}>{match.player1Name}</Text>
           <View style={s.scoreRow}>
@@ -213,7 +218,7 @@ function HistoryMatchCard({ match }: HistoryMatchCardProps) {
           </View>
           <Caption style={s.roundWins}>{roundWins(match.player1RoundWins)}</Caption>
         </View>
-        <View style={s.divider} />
+        <View style={[s.divider, compact && s.dividerCompact]} />
         <View style={s.playerScore}>
           <Text style={s.playerName}>{match.player2Name}</Text>
           <View style={s.scoreRow}>
@@ -246,17 +251,23 @@ const s = StyleSheet.create({
     padding: space[300],
     gap: space[200],
   },
-  cardTop: { alignItems: "center", flexDirection: "row", flexWrap: "wrap", gap: space.md },
+  cardCompact: { padding: space[200], gap: space[100] },
+  cardTop: { alignItems: "center", flexDirection: "row", flexWrap: "wrap", gap: space.md, justifyContent: "space-between" },
+  cardTopCompact: { flexDirection: "column", alignItems: "stretch", gap: space.sm },
   bookInfo: { flex: 1, flexDirection: "row", alignItems: "center", gap: space.sm, minWidth: 0 },
   cover: { width: 48, height: 48, borderRadius: radius.small, backgroundColor: palette.canvas },
   bookMeta: { flex: 1, gap: 2, minWidth: 0 },
   bookTitle: { color: palette.ink, fontFamily: "serif", fontSize: 17, fontWeight: "700" },
   bookMetaText: { color: palette.muted },
   resultBadge: { alignItems: "flex-end", flexGrow: 1, gap: space.xxs },
+  resultBadgeCompact: { alignItems: "flex-start", width: "100%" },
   reasonText: { color: palette.muted, textAlign: "right" },
+  reasonTextCompact: { textAlign: "left" },
   scores: { flexDirection: "row", gap: space.md, paddingTop: space.xs },
+  scoresCompact: { flexDirection: "column", gap: space.sm },
   playerScore: { flex: 1, gap: space.xxs },
   divider: { width: 1, backgroundColor: palette.line, marginVertical: space.xs },
+  dividerCompact: { width: "100%", height: 1, backgroundColor: palette.line, marginVertical: space.xs },
   playerName: { color: palette.ink, fontSize: 16, fontWeight: "700" },
   scoreRow: { flexDirection: "row", alignItems: "baseline", gap: 4 },
   peopleTotal: { color: palette.plum, fontSize: 24, fontWeight: "800" },

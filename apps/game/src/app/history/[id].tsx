@@ -1,6 +1,6 @@
 import { router, type Href } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text, View, ScrollView, RefreshControl } from "react-native";
+import { StyleSheet, Text, View, ScrollView, RefreshControl, useWindowDimensions } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { getMatchDetail, type HistoryMatchDetail } from "../../history";
 import { RequireAuth } from "../../require-auth";
@@ -44,6 +44,8 @@ function toWinReason(
 }
 
 function HistoryDetailContent() {
+  const { width } = useWindowDimensions();
+  const compact = width < 480;
   const { id } = useLocalSearchParams<{ id: string }>();
   const [match, setMatch] = useState<HistoryMatchDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -133,7 +135,7 @@ function HistoryDetailContent() {
           colors={[palette.accentDark]}
         />
       }
-      contentContainerStyle={s.container}
+      contentContainerStyle={[s.container, compact && s.containerCompact]}
     >
       <View style={s.header}>
         <Eyebrow>{copy.result.eyebrow}</Eyebrow>
@@ -144,7 +146,7 @@ function HistoryDetailContent() {
       </View>
 
       <Card style={s.resultCard}>
-        <View style={s.resultHeader}>
+        <View style={[s.resultHeader, compact && s.resultHeaderCompact]}>
           <Badge tone={match.winnerPlayer === null ? "moss" : "accent"}>{winnerText}</Badge>
           <Caption style={s.reason}>
             {copy.result.decidedBy(reasonLabel(toWinReason(match.decidingMethod)))}
@@ -155,7 +157,7 @@ function HistoryDetailContent() {
         </Body>
       </Card>
 
-      <View style={s.scores}>
+      <View style={[s.scores, compact && s.scoresCompact]}>
         {playerNames.map((name, index) => (
           <Card key={name} style={[s.playerCard, match.winnerPlayer === index && s.winnerCard]}>
             {match.winnerPlayer === index && <Badge tone="accent">{copy.history.winner}</Badge>}
@@ -181,6 +183,7 @@ function HistoryDetailContent() {
                 round={round}
                 player1Name={match.player1Name}
                 player2Name={match.player2Name}
+                compact={compact}
               />
             ))}
           </View>
@@ -202,10 +205,12 @@ function HistoryRoundCard({
   round,
   player1Name,
   player2Name,
+  compact,
 }: {
   round: HistoryMatchDetail["rounds"][0];
   player1Name: string;
   player2Name: string;
+  compact: boolean;
 }) {
   const winnerText =
     round.winnerPlayer === null
@@ -215,8 +220,8 @@ function HistoryRoundCard({
         : copy.history.wins(player2Name);
 
   return (
-    <Card style={s.roundCard}>
-      <View style={s.roundHeader}>
+    <Card style={[s.roundCard, compact && s.roundCardCompact]}>
+      <View style={[s.roundHeader, compact && s.roundHeaderCompact]}>
         <Text style={s.roundNumber}>{copy.history.roundNumber(round.roundNumber)}</Text>
         <Badge tone={round.roundType === "sudden_death" ? "accent" : "moss"}>
           {round.roundType === "sudden_death" ? copy.game.suddenDeath : copy.history.normalRound}
@@ -225,12 +230,12 @@ function HistoryRoundCard({
       <View style={s.spreadInfo}>
         <Text style={s.spreadId}>{copy.history.spread(round.spreadId)}</Text>
       </View>
-      <View style={s.roundScores}>
+      <View style={[s.roundScores, compact && s.roundScoresCompact]}>
         <View style={s.playerRoundScore}>
           <Text style={s.playerName}>{player1Name}</Text>
           <Text style={s.count}>{people(round.player1Count)}</Text>
         </View>
-        <View style={s.divider} />
+        <View style={[s.divider, compact && s.dividerCompact]} />
         <View style={s.playerRoundScore}>
           <Text style={s.playerName}>{player2Name}</Text>
           <Text style={s.count}>{people(round.player2Count)}</Text>
@@ -244,14 +249,17 @@ function HistoryRoundCard({
 const s = StyleSheet.create({
   loading: { flex: 1, justifyContent: "center", alignItems: "center" },
   container: { flexGrow: 1, paddingHorizontal: space.md, paddingBottom: space.xl, gap: space.lg },
+  containerCompact: { paddingHorizontal: space.sm, paddingBottom: space.lg, gap: space.md },
   header: { gap: space.xs, marginTop: space.lg, textAlign: "center" },
   title: { fontFamily: "serif", fontSize: 28 },
   meta: { color: palette.muted },
   resultCard: { gap: space.sm },
-  resultHeader: { flexDirection: "row", alignItems: "center", gap: space.sm, flexWrap: "wrap" },
+  resultHeader: { flexDirection: "row", alignItems: "center", gap: space.sm, flexWrap: "wrap", justifyContent: "center" },
+  resultHeaderCompact: { flexDirection: "column", alignItems: "center", gap: space.xs },
   reason: { color: palette.muted },
   reasonBody: { textAlign: "center" },
   scores: { flexDirection: "row", flexWrap: "wrap", gap: space.sm, justifyContent: "center" },
+  scoresCompact: { flexDirection: "column", gap: space.sm, alignItems: "stretch" },
   playerCard: {
     alignItems: "center",
     flexBasis: 250,
@@ -281,13 +289,17 @@ const s = StyleSheet.create({
   emptyRounds: { textAlign: "center", color: palette.muted },
   roundsList: { gap: space.sm },
   roundCard: { gap: space.sm },
-  roundHeader: { flexDirection: "row", alignItems: "center", gap: space.sm, flexWrap: "wrap" },
+  roundCardCompact: { gap: space.xs },
+  roundHeader: { flexDirection: "row", alignItems: "center", gap: space.sm, flexWrap: "wrap", justifyContent: "space-between" },
+  roundHeaderCompact: { flexDirection: "column", alignItems: "stretch", gap: space.xs },
   roundNumber: { color: palette.ink, fontSize: 17, fontWeight: "800" },
   spreadInfo: { flex: 1, textAlign: "right" },
   spreadId: { color: palette.muted, fontSize: 13, fontFamily: "monospace" },
   roundScores: { flexDirection: "row", gap: space.sm, marginTop: space.xs },
+  roundScoresCompact: { flexDirection: "column", gap: space.sm },
   playerRoundScore: { flex: 1, gap: space.xxs },
-  divider: { width: 1, backgroundColor: palette.line },
+  divider: { width: 1, backgroundColor: palette.line, marginVertical: space.xs },
+  dividerCompact: { width: "100%", height: 1, backgroundColor: palette.line, marginVertical: space.xs },
   count: { color: palette.plum, fontSize: 20, fontWeight: "800" },
   winnerBadge: { alignSelf: "center", marginTop: space.xs },
   backButton: { alignSelf: "center", marginTop: space.lg },
