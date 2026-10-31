@@ -1,10 +1,10 @@
 import { router, type Href } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSession } from "../session-store";
 import { RequireAuth } from "../require-auth";
 import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
-import { copy } from "../copy/en";
+import { copy, languageOptions, useLanguage } from "../copy";
 
 export default function Profile() {
   return (
@@ -22,6 +22,7 @@ function initialsFor(displayName: string | null, email: string | null): string {
 
 function ProfileContent() {
   const { userEmail, displayName, error, updateDisplayName, signOut } = useSession();
+  const { language, setLanguage } = useLanguage();
   const [name, setName] = useState("");
   const [hasEdited, setHasEdited] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -54,7 +55,7 @@ function ProfileContent() {
             <Text style={s.avatarText}>{initialsFor(displayName, userEmail)}</Text>
           </View>
           <View style={s.identityCopy}>
-            <Text style={s.name}>{displayName || "Reader"}</Text>
+            <Text style={s.name}>{displayName || copy.profile.displayNamePlaceholder}</Text>
             {userEmail && <Body>{userEmail}</Body>}
           </View>
         </View>
@@ -89,6 +90,27 @@ function ProfileContent() {
           {copy.profile.detail}
         </Body>
       </Card>
+      <Card style={s.languageCard}>
+        <Text style={s.label}>{copy.language.title}</Text>
+        <Body>{copy.language.detail}</Body>
+        <View accessibilityRole="radiogroup" style={s.languageOptions}>
+          {languageOptions.map((option) => {
+            const selected = option.value === language;
+            return (
+              <Pressable
+                key={option.value}
+                accessibilityLabel={option.label}
+                accessibilityRole="radio"
+                accessibilityState={{ selected }}
+                onPress={() => setLanguage(option.value)}
+                style={[s.languageOption, selected && s.languageOptionSelected]}
+              >
+                <Text style={[s.languageOptionText, selected && s.languageOptionTextSelected]}>{option.label}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      </Card>
       <View style={s.actions}>
         <AppButton
           onPress={() => {
@@ -110,7 +132,7 @@ function ProfileContent() {
 
 const s = StyleSheet.create({
   heading: { gap: space.xs, maxWidth: 620 },
-  card: { gap: space.sm, maxWidth: 520 },
+  card: { borderColor: palette.forest, gap: space[300], maxWidth: 520 },
   identity: { alignItems: "center", flexDirection: "row", gap: space.sm },
   avatar: {
     alignItems: "center",
@@ -145,4 +167,10 @@ const s = StyleSheet.create({
   saved: { color: palette.moss, fontSize: 15, fontWeight: "700" },
   note: { fontSize: 15 },
   actions: { maxWidth: 520 },
+  languageCard: { backgroundColor: palette.forestLight, borderColor: palette.forest, gap: space[200], maxWidth: 520 },
+  languageOptions: { flexDirection: "row", flexWrap: "wrap", gap: space.xxs },
+  languageOption: { borderColor: palette.line, borderRadius: radius.round, borderWidth: 1, paddingHorizontal: space.sm, paddingVertical: 9 },
+  languageOptionSelected: { backgroundColor: palette.forest, borderColor: palette.forest },
+  languageOptionText: { color: palette.ink, fontSize: 15, fontWeight: "700" },
+  languageOptionTextSelected: { color: palette.paper },
 });

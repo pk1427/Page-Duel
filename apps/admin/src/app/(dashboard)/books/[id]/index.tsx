@@ -86,6 +86,9 @@ export default function BookDetailScreen() {
     else if (!/^[a-z0-9-]+$/.test(form.slug))
       newErrors.slug = "Slug must be lowercase letters, numbers, and hyphens only";
     if (!form.title.trim()) newErrors.title = "Title is required";
+    if (!(["en", "hi", "mr"] as const).includes(form.language as "en" | "hi" | "mr")) {
+      newErrors.language = "Choose English (en), Hindi (hi), or Marathi (mr)";
+    }
     if (
       form.cover_asset_path &&
       (form.cover_asset_path.startsWith("/") ||
@@ -283,9 +286,11 @@ export default function BookDetailScreen() {
               <TextInput
                 style={styles.input}
                 value={form.language}
-                onChangeText={(v) => setForm({ ...form, language: v })}
+                onChangeText={(v) => setForm({ ...form, language: v.toLowerCase() })}
                 editable={!saving}
               />
+              {errors.language && <Text style={styles.fieldError}>{errors.language}</Text>}
+              <Caption>Content language: en for English, hi for Hindi, or mr for Marathi.</Caption>
             </View>
 
             <View style={styles.field}>

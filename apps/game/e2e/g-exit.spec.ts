@@ -31,13 +31,13 @@ test.describe("exit confirmation and match abandonment", () => {
     const before = await visibleText(page);
     expect(before).toMatch(/round 1 of 5/i);
     const stayButton = page.getByRole("button", { name: "Keep playing", exact: true });
-    const exitConfirmButton = page.getByRole("button", { name: "Exit Match", exact: true });
+    const exitConfirmButton = page.getByRole("button", { name: "Exit match", exact: true }).last();
 
     // Open the dialog and verify every required string.
     await page.getByRole("button", { name: "Exit match", exact: true }).click();
     await expect(page.getByText("Leave this match?")).toBeVisible();
     await expect(
-      page.getByText("Your current match progress will be lost if you leave."),
+      page.getByText("Leaving ends this match without saving its progress."),
     ).toBeVisible();
     await expect(stayButton).toBeVisible();
     await expect(exitConfirmButton).toBeVisible();
@@ -58,7 +58,7 @@ test.describe("exit confirmation and match abandonment", () => {
     expect(afterStay).toMatch(/round 1 of 5/i);
     for (const fragment of before
       .split("\n")
-      .filter((line) => /round wins|wins the round/.test(line))) {
+      .filter((line) => /round wins?|won the round/.test(line))) {
       expect(afterStay).toContain(fragment);
     }
 

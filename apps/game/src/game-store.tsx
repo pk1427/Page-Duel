@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { createSeed, startGame, type GameState, type RoundCount } from "@book-people/game-core";
 import { bookCatalog, toPlayableBook, type BookContent } from "@book-people/book-data";
-import { fetchCatalog, getPlayableBookContent, type CatalogBook } from "./catalog";
+import { fetchCatalog, filterCatalogByLanguage, getPlayableBookContent, type CatalogBook } from "./catalog";
 import { isSupabaseConfigured } from "./supabase";
+import { copy, useLanguage, type BookshelfLanguage } from "./copy";
 
 function fallbackCatalogAsCatalogBooks(): readonly CatalogBook[] {
   return bookCatalog.listPlayableBooks().map((book) => ({
@@ -16,6 +17,7 @@ function fallbackCatalogAsCatalogBooks(): readonly CatalogBook[] {
     versionId: `${book.id}:v1`,
     versionLabel: book.version,
     manifestSha256: null,
+    language: "en",
     content: book,
   }));
 }
@@ -29,6 +31,8 @@ type GameStore = {
   selectedBookVersionId: string | null;
   selectedBook: BookContent | undefined;
   playableBooks: readonly CatalogBook[];
+  bookshelfLanguage: BookshelfLanguage;
+  setBookshelfLanguage: (language: BookshelfLanguage) => void;
   selectBook: (bookId: string) => void;
   start: (players: [string, string], rounds: RoundCount) => void;
   update: (state: GameState) => void;
@@ -36,6 +40,7 @@ type GameStore = {
 const GameContext = createContext<GameStore | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
+  const { language } = useLanguage();
   const [state, setState] = useState<GameState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedBookId, setSelectedBookId] = useState<string | null>(
@@ -45,6 +50,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [catalogBooks, setCatalogBooks] = useState<readonly CatalogBook[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [catalogError, setCatalogError] = useState<string | null>(null);
+  const [bookshelfLanguage, setBookshelfLanguage] = useState<BookshelfLanguage>(language);
+
+  // An interface-language change intentionally resets the default shelf. It
+  // does not touch the selected book or an in-progress match.
+  useEffect(() => {
+    setBookshelfLanguage(language);
+  }, [language]);
 
   useEffect(() => {
     let active = true;
@@ -56,7 +68,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       })
       .catch((err) => {
         if (!active) return;
-        setCatalogError(err instanceof Error ? err.message : "Failed to load catalog");
+        setCatalogError(copy.errors.catalogUnavailable);
         setCatalogBooks([]);
       })
       .finally(() => {
@@ -75,6 +87,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       : catalogBooks
     : fallbackCatalogAsCatalogBooks();
 
+  const playableBooks = filterCatalogByLanguage(effectiveBooks, bookshelfLanguage);
+
   const selectedBook = selectedBookId
     ? (effectiveBooks.find((b) => b.id === selectedBookId || b.slug === selectedBookId) ??
       undefined)
@@ -92,11 +106,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
     selectedBookId,
     selectedBookVersionId: effectiveSelectedBookVersionId,
     selectedBook: selectedBookContent,
-    playableBooks: effectiveBooks,
+    playableBooks,
+    bookshelfLanguage,
+    setBookshelfLanguage,
     selectBook(bookId) {
       const book = effectiveBooks.find((b) => b.id === bookId || b.slug === bookId);
       if (!book || !getPlayableBookContent(book)) {
-        setError("That book is not ready to play yet.");
+        setError(copy.errors.bookNotReady);
         return;
       }
       setSelectedBookId(book.id);
@@ -109,12 +125,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
           ? effectiveBooks.find((b) => b.id === selectedBookId || b.slug === selectedBookId)
           : undefined;
         const content = book ? getPlayableBookContent(book) : undefined;
-        if (!content) throw new Error("Choose a ready book before starting a game.");
+        if (!content) throw new Error(copy.errors.startGame);
         const playableBook = toPlayableBook(content);
         setState(startGame({ players, book: playableBook, rounds, seed: createSeed() }));
         setError(null);
       } catch (cause) {
-        setError(cause instanceof Error ? cause.message : "Could not start game");
+        setError(cause instanceof Error ? cause.message : copy.errors.startGame);
       }
     },
     update: setState,

@@ -101,4 +101,4 @@ fi
 echo "Starting Expo web on http://localhost:$PORT against hosted Supabase staging (no local Supabase)..."
 # Environment variables are inlined into Metro transforms; clear the cache so a
 # previous local-development bundle can never retain its local Supabase URL.
-expo start --web --clear --port "$PORT" "$@"
+./node_modules/.bin/expo start --web --clear --port "$PORT" "$@"

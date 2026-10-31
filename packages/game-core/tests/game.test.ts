@@ -231,7 +231,18 @@ describe("game end and results", () => {
     phase: "finished",
     peopleTotals,
     roundWins,
-    rounds: suddenWinner === null ? [] : [{ roundNumber: 6, spreadId: "sudden", suddenDeath: true, counts: [3, 1], winner: suddenWinner }],
+    rounds:
+      suddenWinner === null
+        ? []
+        : [
+            {
+              roundNumber: 6,
+              spreadId: "sudden",
+              suddenDeath: true,
+              counts: [3, 1],
+              winner: suddenWinner,
+            },
+          ],
   });
 
   it("uses people totals before round wins", () => {
@@ -301,9 +312,18 @@ describe("game end and results", () => {
   });
 
   it("uses sudden death for a fully tied result and preserves a pool-exhausted draw", () => {
-    expect(getResult(finishedWith([20, 20], [2, 2], 0))).toMatchObject({ winner: 0, reason: "suddenDeath" });
-    expect(getResult(finishedWith([20, 20], [2, 2], 1))).toMatchObject({ winner: 1, reason: "suddenDeath" });
-    expect(getResult(finishedWith([20, 20], [2, 2]))).toMatchObject({ winner: null, reason: "draw" });
+    expect(getResult(finishedWith([20, 20], [2, 2], 0))).toMatchObject({
+      winner: 0,
+      reason: "suddenDeath",
+    });
+    expect(getResult(finishedWith([20, 20], [2, 2], 1))).toMatchObject({
+      winner: 1,
+      reason: "suddenDeath",
+    });
+    expect(getResult(finishedWith([20, 20], [2, 2]))).toMatchObject({
+      winner: null,
+      reason: "draw",
+    });
   });
 
   it("returns result totals without sharing mutable tuples with game state", () => {

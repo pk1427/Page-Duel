@@ -15,7 +15,9 @@ test.describe("public pages and navigation", () => {
 
     await page.goto("/");
     await expect(page.getByText("Book People").first()).toBeVisible();
-    await expect(page.getByText("More people on your page wins the round.")).toBeVisible();
+    await expect(
+      page.getByText("Choose a book. Count the people on your page. The higher count wins the round."),
+    ).toBeVisible();
     // Signed-out home offers sign-in, not a session badge.
     await expect(page.getByText("Sign in to play")).toBeVisible();
     // Full account email is never scattered on Home.
@@ -44,16 +46,16 @@ test.describe("public pages and navigation", () => {
     // How to Play is public while signed out.
     await page.getByRole("button", { name: "How to play", exact: true }).first().click();
     await page.waitForURL((url) => new URL(url).pathname === "/how-to-play");
-    await expect(page.getByText("Two players, one open book.")).toBeVisible();
+    await expect(page.getByText("Take one side of an open book and count the people you see.")).toBeVisible();
 
     // Play while signed out redirects to Sign In with a safe return.
     await page.goto("/");
     await page.getByRole("button", { name: "Play", exact: true }).first().click();
     await page.waitForURL((url) => new URL(url).pathname === "/sign-in");
     expect(new URL(page.url()).searchParams.get("next")).toBe("/books");
-    await expect(page.getByText("Your shelf of finished games is waiting.")).toBeVisible();
+    await expect(page.getByText("Pick up where you left off.")).toBeVisible();
     // The sign-in screen offers account creation.
-    await expect(page.getByRole("button", { name: "New here? Create an account" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Create an account", exact: true })).toBeVisible();
 
     expectNoAppErrors(ledger);
   });

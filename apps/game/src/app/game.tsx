@@ -19,7 +19,7 @@ import {
   space,
 } from "../ui";
 import { useRevealSequence } from "../useRevealSequence";
-import { copy, roundWins } from "../copy/en";
+import { copy, roundWins } from "../copy";
 
 /** Only the narrowest handsets stack pages; typical phones retain an open-book view. */
 const STACKED_BOOK_BREAKPOINT = 330;
@@ -148,7 +148,7 @@ function GameContent() {
             ? copy.game.suddenDeath
             : copy.game.round(round, state.config.rounds)}
         </Badge>
-        <Text style={styles.bookName}>{selectedBook?.title ?? "Book People"}</Text>
+        <Text style={styles.bookName}>{selectedBook?.title ?? copy.brand}</Text>
       </View>
       <View style={styles.scoreboard}>
         {players.map((player, index) => (

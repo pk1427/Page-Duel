@@ -19,8 +19,8 @@ test.describe("profile and display-name persistence", () => {
 
     // Change to a valid value and save.
     await nameField.fill("Ada Reader");
-    await page.getByRole("button", { name: "Save display name", exact: true }).click();
-    await expect(page.getByText("Saved to your shelf card.")).toBeVisible();
+    await page.getByRole("button", { name: "Save name", exact: true }).click();
+    await expect(page.getByText("Name saved.")).toBeVisible();
 
     // Reload: the updated name persists.
     await page.reload();
@@ -37,19 +37,19 @@ test.describe("profile and display-name persistence", () => {
     await page.goto("/profile");
     await expect(page.getByText("Ada Reader").first()).toBeVisible();
     await nameField.fill("");
-    await page.getByRole("button", { name: "Save display name", exact: true }).click();
-    await expect(page.getByRole("alert")).toContainText("Enter a display name.");
+    await page.getByRole("button", { name: "Save name", exact: true }).click();
+    await expect(page.getByRole("alert")).toContainText("Enter a display name, then try again.");
     await nameField.fill("   ");
-    await page.getByRole("button", { name: "Save display name", exact: true }).click();
-    await expect(page.getByRole("alert")).toContainText("Enter a display name.");
+    await page.getByRole("button", { name: "Save name", exact: true }).click();
+    await expect(page.getByRole("alert")).toContainText("Enter a display name, then try again.");
     await page.reload();
     await expect(page.getByText("Ada Reader").first()).toBeVisible({ timeout: 20_000 });
 
     // Over-limit: the UI caps input at 40 chars and never stores more than that.
     await nameField.fill("x".repeat(50));
     expect(await nameField.inputValue()).toHaveLength(40);
-    await page.getByRole("button", { name: "Save display name", exact: true }).click();
-    await expect(page.getByText("Saved to your shelf card.")).toBeVisible();
+    await page.getByRole("button", { name: "Save name", exact: true }).click();
+    await expect(page.getByText("Name saved.")).toBeVisible();
     await page.reload();
     expect(await nameField.inputValue()).toHaveLength(40);
 

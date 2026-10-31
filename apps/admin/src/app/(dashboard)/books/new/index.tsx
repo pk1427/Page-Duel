@@ -26,6 +26,9 @@ export default function NewBookScreen() {
     if (!form.slug.trim()) newErrors.slug = "Slug is required";
     else if (!/^[a-z0-9-]+$/.test(form.slug)) newErrors.slug = "Slug must be lowercase letters, numbers, and hyphens only";
     if (!form.title.trim()) newErrors.title = "Title is required";
+    if (!(["en", "hi", "mr"] as const).includes(form.language as "en" | "hi" | "mr")) {
+      newErrors.language = "Choose English (en), Hindi (hi), or Marathi (mr)";
+    }
     if (form.cover_asset_path && (form.cover_asset_path.startsWith("/") || form.cover_asset_path.includes("\\") || form.cover_asset_path.includes("://") || form.cover_asset_path.includes(".."))) {
       newErrors.cover_asset_path = "Cover path must be a relative path (no /, \\, ://, or ..)";
     }
@@ -151,11 +154,12 @@ export default function NewBookScreen() {
               <TextInput
                 style={styles.input}
                 value={form.language}
-                onChangeText={(v) => setForm({ ...form, language: v })}
+                onChangeText={(v) => setForm({ ...form, language: v.toLowerCase() })}
                 placeholder="en"
                 editable={!loading}
               />
-              <Caption>ISO 639-1 code (e.g., en, fr, de). Optional region: en-US</Caption>
+              {errors.language && <Text style={styles.fieldError}>{errors.language}</Text>}
+              <Caption>Content language: en for English, hi for Hindi, or mr for Marathi.</Caption>
             </View>
 
             <View style={styles.field}>

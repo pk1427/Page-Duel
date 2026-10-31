@@ -1,6 +1,6 @@
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { AppButton, Card, Title, Body, palette, space } from "./ui";
-import { copy } from "./copy/en";
+import { copy } from "./copy";
 
 export function ExitMatchDialog({
   visible,

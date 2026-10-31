@@ -48,15 +48,15 @@ test.describe("match history", () => {
 
     // 3. Verify the result screen reflects the actual outcome
     await expectPath(page, "/result");
-    await expect(page.getByText(/(Ann|Bob) wins|Draw/)).toBeVisible();
+    await expect(page.getByText(/(Ann|Bob) won|draw/i)).toBeVisible();
 
     // Wait for save to complete
-    await expect(page.getByText("Match saved to your history", { exact: false })).toBeVisible({
+    await expect(page.getByText("Match saved to History.", { exact: true })).toBeVisible({
       timeout: 10_000,
     });
 
     // 4. Verify the database-backed history contains exactly one matching record
-    await page.getByRole("button", { name: "View History", exact: true }).click();
+    await page.getByRole("button", { name: "View history", exact: true }).click();
     await expectPath(page, "/history");
 
     // Should see the match in the history list
@@ -74,13 +74,13 @@ test.describe("match history", () => {
 
     // Verify detail view has the correct data
     // Wait for the detail page to load (not showing "Loading match...")
-    await expect(page.getByText("Final page")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("Match result")).toBeVisible({ timeout: 15_000 });
     // Use visibleText helper which filters out aria-hidden stack screens
     const detailText = await visibleText(page);
     expect(detailText).toContain("Ann");
     expect(detailText).toContain("Bob");
     expect(detailText).toContain("The Book People Practice Book");
-    expect(detailText).toMatch(/(Ann|Bob) wins|Draw/);
+    expect(detailText).toMatch(/(Ann|Bob) won|draw/i);
     // Round numbers appear as "Round\n1" due to line breaks in the UI
     expect(detailText).toMatch(/Round\s+1/);
     expect(detailText).toMatch(/Round\s+5/);
@@ -88,7 +88,7 @@ test.describe("match history", () => {
     // 6. Refresh the page and verify persisted data remains visible
     await page.reload();
     await page.waitForURL(/\/history\/[a-f0-9-]+$/, { timeout: 20_000 });
-    await expect(page.getByText("Final page")).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("Match result")).toBeVisible({ timeout: 15_000 });
     const reloadedText = await visibleText(page);
     expect(reloadedText).toContain("Ann");
     expect(reloadedText).toContain("Bob");
@@ -111,11 +111,11 @@ test.describe("match history", () => {
       if (outcome === "result") break;
     }
 
-    await expect(page.getByText("Match saved to your history", { exact: false })).toBeVisible({
+    await expect(page.getByText("Match saved to History.", { exact: true })).toBeVisible({
       timeout: 10_000,
     });
 
-    await page.getByRole("button", { name: "View History", exact: true }).click();
+    await page.getByRole("button", { name: "View history", exact: true }).click();
     await expectPath(page, "/history");
 
     // Should see two matches, newest first (Carol vs Dave on top)
@@ -130,7 +130,7 @@ test.describe("match history", () => {
     await page.goto("/history");
     await expectPath(page, "/history");
     await expect(page.getByText("No matches yet")).toBeVisible();
-    await expect(page.getByText("Complete a game to see it here.")).toBeVisible();
+    await expect(page.getByText("Finish a game and it will appear here.")).toBeVisible();
 
     // 9. Abandon a separate unfinished match and verify it is absent from completed history
     await startMatch(page, {
@@ -146,7 +146,7 @@ test.describe("match history", () => {
 
     // Exit the match before completion
     await page.getByRole("button", { name: "Exit match", exact: true }).click();
-    await page.getByRole("button", { name: "Exit Match", exact: true }).click();
+    await page.getByRole("button", { name: "Exit match", exact: true }).last().click();
     await expectPath(page, "/books");
 
     // Go to history - should still only see 2 completed matches
@@ -177,7 +177,7 @@ test.describe("match history", () => {
       if (outcome === "result") break;
     }
 
-    await expect(page.getByText("Match saved to your history", { exact: false })).toBeVisible({
+    await expect(page.getByText("Match saved to History.", { exact: true })).toBeVisible({
       timeout: 10_000,
     });
 

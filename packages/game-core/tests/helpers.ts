@@ -1,7 +1,12 @@
 import type { Book, GameState, RoundCount, Spread } from "../src";
 import { flipSpread, isGameOver, scoreRound, startGame } from "../src";
 
-export function makeSpread(id: string, left: number, right: number, flags: Spread["flags"] = []): Spread {
+export function makeSpread(
+  id: string,
+  left: number,
+  right: number,
+  flags: Spread["flags"] = [],
+): Spread {
   return {
     id,
     left: { page: 1, image: `${id}-l.webp`, people: left },
@@ -17,7 +22,7 @@ export function makeBook(spreads: Spread[]): Book {
 /** n spreads with varied counts (all eligible). */
 export function varietyBook(n = 40): Book {
   return makeBook(
-    Array.from({ length: n }, (_, i) => makeSpread(`s${i}`, (i * 3) % 5 + 1, (i * 7) % 4 + 1)),
+    Array.from({ length: n }, (_, i) => makeSpread(`s${i}`, ((i * 3) % 5) + 1, ((i * 7) % 4) + 1)),
   );
 }
 

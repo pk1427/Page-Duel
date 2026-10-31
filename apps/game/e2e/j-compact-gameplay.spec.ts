@@ -35,9 +35,9 @@ test.describe("compact mobile gameplay layout", () => {
     for (const viewport of phoneViewports) {
       await page.setViewportSize(viewport);
       await expectInViewport(page, "Selected book");
-      await expectInViewport(page, "Change selected book");
+      await expectInViewport(page, "Change book");
       const card = await page.getByLabel("Selected book", { exact: true }).boundingBox();
-      const change = await page.getByLabel("Change selected book", { exact: true }).boundingBox();
+      const change = await page.getByLabel("Change book", { exact: true }).boundingBox();
       expect(card).not.toBeNull();
       expect(change).not.toBeNull();
       expect(change!.y).toBeGreaterThanOrEqual(card!.y);
@@ -57,6 +57,18 @@ test.describe("compact mobile gameplay layout", () => {
       await expectInViewport(page, "Bob score");
       await expectInViewport(page, "Open book spread");
       await expectInViewport(page, "Flip the page");
+      await expectInViewport(page, "Exit match");
+    }
+
+    await page.getByRole("button", { name: "Flip the page", exact: true }).click();
+    await page.getByRole("button", { name: "Next round", exact: true }).waitFor({ state: "visible" });
+
+    for (const viewport of phoneViewports) {
+      await page.setViewportSize(viewport);
+      await expectInViewport(page, "Ann score");
+      await expectInViewport(page, "Bob score");
+      await expectInViewport(page, "Open book spread");
+      await expectInViewport(page, "Next round");
       await expectInViewport(page, "Exit match");
     }
   });

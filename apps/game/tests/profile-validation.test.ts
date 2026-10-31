@@ -8,10 +8,12 @@ describe("validateDisplayName", () => {
     expect(validateDisplayName("x".repeat(40))).toBeNull();
   });
   it("rejects blank names", () => {
-    expect(validateDisplayName("")).toBe("Enter a display name.");
-    expect(validateDisplayName("   ")).toBe("Enter a display name.");
+    expect(validateDisplayName("")).toBe("Enter a display name, then try again.");
+    expect(validateDisplayName("   ")).toBe("Enter a display name, then try again.");
   });
   it("rejects names longer than the profiles CHECK allows", () => {
-    expect(validateDisplayName("x".repeat(41))).toBe("Use a display name of 1–40 characters.");
+    expect(validateDisplayName("x".repeat(41))).toBe(
+      "Use a display name with 1 to 40 characters, then try again.",
+    );
   });
 });

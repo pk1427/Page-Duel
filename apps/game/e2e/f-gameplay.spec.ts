@@ -47,10 +47,10 @@ test.describe("full match and gameplay scoring", () => {
 
     // One normal round through the real controls: banner + progress + scores.
     const banner = await playOneRound(page);
-    expect(["wins the round", "Draw"].some((fragment) => banner.includes(fragment))).toBe(true);
+    expect(["won the round.", "This round is a draw."].some((fragment) => banner.includes(fragment))).toBe(true);
     const afterRound = await visibleText(page);
-    expect(afterRound).toMatch(/wins the round|Draw/);
-    expect(afterRound).toMatch(/round wins/);
+    expect(afterRound).toMatch(/won the round\.|this round is a draw\./i);
+    expect(afterRound).toMatch(/round wins?/);
 
     // Finish the match; results show the actual final game state.
     await playFullMatch(page, 5);
@@ -58,8 +58,8 @@ test.describe("full match and gameplay scoring", () => {
 
     // Derive the expected outcome from the displayed totals (no hardcoded winner).
     const resultText = await visibleText(page);
-    const totals = [...resultText.matchAll(/(\d+)\s*people/g)].map((m) => Number(m[1]));
-    const wins = [...resultText.matchAll(/(\d+)\s*round wins/g)].map((m) => Number(m[1]));
+    const totals = [...resultText.matchAll(/(\d+)\s*(?:person|people)/g)].map((m) => Number(m[1]));
+    const wins = [...resultText.matchAll(/(\d+)\s*round wins?/g)].map((m) => Number(m[1]));
     expect(totals.length).toBeGreaterThanOrEqual(2);
     expect(wins.length).toBeGreaterThanOrEqual(2);
     const [annTotal, bobTotal] = totals;
@@ -67,14 +67,14 @@ test.describe("full match and gameplay scoring", () => {
     const heading = resultText;
     if (annTotal !== bobTotal) {
       const leader = annTotal > bobTotal ? "Ann" : "Bob";
-      expect(heading).toContain(`${leader} wins`);
+      expect(heading).toContain(`${leader} won the match.`);
       expect(heading).toMatch(/people total/);
     } else if (annWins !== bobWins) {
       const leader = annWins > bobWins ? "Ann" : "Bob";
-      expect(heading).toContain(`${leader} wins`);
+      expect(heading).toContain(`${leader} won the match.`);
       expect(heading).toMatch(/round wins/);
     } else {
-      expect(heading).toMatch(/draw|wins/i);
+      expect(heading).toMatch(/draw|won/i);
     }
     // Winner badge appears exactly once for decisive games, never for draws.
     const winnerBadges = resultText.split("\n").filter((line) => line === "Winner").length;
@@ -88,7 +88,7 @@ test.describe("full match and gameplay scoring", () => {
     // Finish again, then Choose Another Book returns to book selection.
     await playFullMatch(page, 5);
     await expectPath(page, "/result");
-    await page.getByRole("button", { name: "Choose Another Book", exact: true }).click();
+    await page.getByRole("button", { name: "Choose another book", exact: true }).click();
     await expectPath(page, "/books");
     // The visible "Choose a book" is the last in DOM order (Expo Router keeps
     // previous screens mounted with aria-hidden="true").
@@ -103,7 +103,7 @@ test.describe("full match and gameplay scoring", () => {
     });
     await playFullMatch(page, 5);
     await expectPath(page, "/result");
-    await page.getByRole("button", { name: "Return Home", exact: true }).click();
+    await page.getByRole("button", { name: "Back home", exact: true }).click();
     await expectPath(page, "/");
     await expect(page.getByText("Book People").first()).toBeVisible();
 

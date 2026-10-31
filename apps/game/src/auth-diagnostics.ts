@@ -1,3 +1,5 @@
+import { copy } from "./copy";
+
 export type AuthDiagnostic = {
   code: string | null;
   status: number | null;
@@ -8,19 +10,19 @@ export type AuthDiagnostic = {
 export function friendlyAuthError(message: string): string {
   const lower = message.toLowerCase();
   if (/invalid login credentials/i.test(message))
-    return "Those sign-in details did not match. Check them and try again.";
+    return copy.auth.invalidCredentials;
   if (/already registered|already exists/i.test(message))
-    return "That email already has an account. Sign in instead.";
+    return copy.auth.accountExists;
   if (/email address invalid/i.test(message) || /invalid email/i.test(lower))
     return copy.auth.invalidEmail;
   if (/weak_password|weak password/i.test(message))
-    return "Choose a stronger password, then try again.";
+    return copy.auth.weakPassword;
   if (/password/i.test(message) && /short|length|characters/i.test(message))
-    return "Use a password with at least 6 characters, then try again.";
+    return copy.auth.passwordTooShort(6);
   if (/rate.?limit|over_email_send_rate_limit|too many/i.test(lower)) return copy.auth.rateLimited;
   if (/email.not.confirmed|confirmation/i.test(lower)) return copy.auth.confirmationSent;
   if (/failed to fetch|network|connection/i.test(lower)) return copy.auth.noConnection;
-  return message;
+  return copy.auth.genericRetry;
 }
 
 /** Keep only stable AuthError metadata; never retain request/response or credential fields. */
@@ -39,4 +41,3 @@ export function sessionStatusForEmail(
 ): "signed-in" | "signed-out" {
   return email ? "signed-in" : "signed-out";
 }
-import { copy } from "./copy/en";

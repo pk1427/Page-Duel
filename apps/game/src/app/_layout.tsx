@@ -4,6 +4,7 @@ import { GameProvider } from "../game-store";
 import { BottomNav, TopNav } from "../navbar";
 import { SessionProvider } from "../session-store";
 import { hasWrongStagingEnvironment } from "../supabase";
+import { LanguageProvider } from "../copy";
 
 /** Desktop-width breakpoint: top bar on wide screens, bottom bar on handsets. */
 const WIDE_NAV_BREAKPOINT = 760;
@@ -33,11 +34,13 @@ function Shell() {
 
 export default function RootLayout() {
   return (
-    <SessionProvider>
-      <GameProvider>
-        <Shell />
-      </GameProvider>
-    </SessionProvider>
+    <LanguageProvider>
+      <SessionProvider>
+        <GameProvider>
+          <Shell />
+        </GameProvider>
+      </SessionProvider>
+    </LanguageProvider>
   );
 }
 

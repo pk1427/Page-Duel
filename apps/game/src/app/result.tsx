@@ -20,7 +20,7 @@ import {
 } from "../ui";
 
 import { RequireAuth } from "../require-auth";
-import { copy, personLabel, roundWins } from "../copy/en";
+import { copy, personLabel, roundWins } from "../copy";
 
 export default function Result() {
   const { state, start, selectedBook, selectedBookVersionId } = useGame();
@@ -165,8 +165,8 @@ function ResultContent({ state, start, saveStatus, saveError, retrySave }: Resul
 }
 
 const s = StyleSheet.create({
-  hero: { alignItems: "center", gap: space.xs, marginTop: space.lg, textAlign: "center" },
-  winner: { textAlign: "center" },
+  hero: { alignItems: "center", backgroundColor: palette.forestLight, borderColor: palette.forest, borderRadius: 24, borderWidth: 1, gap: space.xs, marginTop: space.lg, padding: space[400], textAlign: "center" },
+  winner: { color: palette.forestDark, textAlign: "center" },
   reason: { fontSize: 16, textAlign: "center" },
   saving: { color: palette.muted, marginTop: space.xs },
   saved: { color: palette.moss, marginTop: space.xs, fontWeight: "700" },
@@ -181,11 +181,11 @@ const s = StyleSheet.create({
     gap: space.xxs,
     maxWidth: 470,
     minHeight: 190,
-    padding: space.md,
+    padding: space[300],
   },
   winnerCard: {
-    backgroundColor: "#FFF4E9",
-    borderColor: palette.gold,
+    backgroundColor: palette.sunshineLight,
+    borderColor: palette.sunshineDark,
     borderWidth: 2,
   },
   playerName: { color: palette.ink, fontSize: 21, fontWeight: "800", marginTop: space.xs },

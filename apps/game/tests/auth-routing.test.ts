@@ -50,10 +50,14 @@ describe("validatePassword", () => {
     expect(validatePassword("longerpassword")).toBeNull();
   });
   it("rejects passwords shorter than the minimum", () => {
-    expect(validatePassword("")).toBe(`Use a password of at least ${MIN_PASSWORD_LENGTH} characters.`);
-    expect(validatePassword("abc")).toBe(`Use a password of at least ${MIN_PASSWORD_LENGTH} characters.`);
+    expect(validatePassword("")).toBe(
+      `Use a password with at least ${MIN_PASSWORD_LENGTH} characters, then try again.`,
+    );
+    expect(validatePassword("abc")).toBe(
+      `Use a password with at least ${MIN_PASSWORD_LENGTH} characters, then try again.`,
+    );
     expect(validatePassword("a".repeat(MIN_PASSWORD_LENGTH - 1))).toBe(
-      `Use a password of at least ${MIN_PASSWORD_LENGTH} characters.`,
+      `Use a password with at least ${MIN_PASSWORD_LENGTH} characters, then try again.`,
     );
   });
 });

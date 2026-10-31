@@ -1,4 +1,5 @@
 import type { SessionStatus } from "./session-store";
+import { copy } from "./copy";
 
 /** Routes that require a signed-in user. Everything else public stays public. */
 export const PROTECTED_ROUTES = [
@@ -29,7 +30,7 @@ export const MIN_PASSWORD_LENGTH = 6;
 /** Validate a new password meets the app's minimum requirements. */
 export function validatePassword(password: string): string | null {
   if (password.length < MIN_PASSWORD_LENGTH) {
-    return `Use a password of at least ${MIN_PASSWORD_LENGTH} characters.`;
+    return copy.auth.passwordTooShort(MIN_PASSWORD_LENGTH);
   }
   return null;
 }
@@ -53,8 +54,8 @@ export function resolveNextParam(raw: string | string[] | undefined): ProtectedR
 /** Pure validation mirroring the profiles display_name CHECK (1–40 chars, trimmed). */
 export function validateDisplayName(name: string): string | null {
   const clean = name.trim();
-  if (!clean) return "Enter a display name.";
-  if (clean.length > 40) return "Use a display name of 1–40 characters.";
+  if (!clean) return copy.profile.displayNameRequired;
+  if (clean.length > 40) return copy.profile.displayNameLength;
   return null;
 }
 

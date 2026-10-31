@@ -9,7 +9,7 @@ import type { CatalogBook } from "../catalog";
 import { Badge, Body, Caption, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
 
 import { RequireAuth } from "../require-auth";
-import { copy } from "../copy/en";
+import { copy } from "../copy";
 
 export default function BooksScreen() {
   return (
@@ -20,33 +20,74 @@ export default function BooksScreen() {
 }
 
 function BooksContent() {
-  const { playableBooks, selectBook, error, catalogLoading, catalogError } = useGame();
+  const {
+    playableBooks,
+    selectBook,
+    error,
+    catalogLoading,
+    catalogError,
+    bookshelfLanguage,
+    setBookshelfLanguage,
+  } = useGame();
+  const filters = [
+    { value: "en" as const, label: copy.language.english },
+    { value: "hi" as const, label: copy.language.hindi },
+    { value: "mr" as const, label: copy.language.marathi },
+    { value: "all" as const, label: copy.language.allBooks },
+  ];
   return (
     <Screen>
       <View style={styles.heading}>
-        <Eyebrow>Your library</Eyebrow>
+        <Eyebrow>{copy.books.eyebrow}</Eyebrow>
         <Title>{copy.actions.chooseBook}</Title>
-        <Body>Pick one book for this match.</Body>
+        <Body>{copy.books.detail}</Body>
+      </View>
+      <View accessibilityRole="radiogroup" style={styles.filters}>
+        {filters.map((filter) => {
+          const selected = bookshelfLanguage === filter.value;
+          return (
+            <Pressable
+              key={filter.value}
+              accessibilityLabel={filter.label}
+              accessibilityRole="radio"
+              accessibilityState={{ selected }}
+              onPress={() => setBookshelfLanguage(filter.value)}
+              style={[styles.filter, selected && styles.filterSelected]}
+            >
+              <Text style={[styles.filterText, selected && styles.filterTextSelected]}>{filter.label}</Text>
+            </Pressable>
+          );
+        })}
       </View>
       {catalogLoading ? (
         <Card style={styles.catalogState}>
-          <Text style={styles.catalogStateText}>Loading your library</Text>
+          <Text style={styles.catalogStateText}>{copy.books.loading}</Text>
         </Card>
       ) : catalogError ? (
         <Card style={styles.catalogState}>
           <Text accessibilityRole="alert" style={styles.error}>
             {copy.errors.catalogUnavailable}
           </Text>
-          <Caption>Try again when your connection is back.</Caption>
+          <Caption>{copy.books.retryWhenOnline}</Caption>
         </Card>
       ) : (
-        <View style={styles.shelf}>
+        playableBooks.length === 0 ? (
+          <Card style={styles.catalogState}>
+            <Text style={styles.catalogStateText}>{copy.language.noBooksTitle}</Text>
+            <Caption>{copy.language.noBooksDetail}</Caption>
+            {bookshelfLanguage !== "all" && (
+              <Pressable accessibilityRole="button" onPress={() => setBookshelfLanguage("all")}>
+                <Text style={styles.choose}>{copy.language.allBooks}</Text>
+              </Pressable>
+            )}
+          </Card>
+        ) : <View style={styles.shelf}>
           {playableBooks.map((book: CatalogBook, index) => {
             const bookContent = getPlayableBookContent(book);
             return (
               <Pressable
                 key={book.id}
-                accessibilityLabel={`Choose ${book.title}`}
+                accessibilityLabel={copy.books.chooseLabel(book.title)}
                 accessibilityRole="button"
                 onPress={() => {
                   selectBook(book.id);
@@ -63,16 +104,16 @@ function BooksContent() {
                   )}
                   <View style={styles.rowCopy}>
                     <Badge tone={index === 0 ? "accent" : "moss"}>
-                      {index === 0 ? "Featured" : "Ready"}
+                      {index === 0 ? copy.books.featured : copy.books.ready}
                     </Badge>
                     <Text style={styles.bookTitle}>{book.title}</Text>
                     {book.author && <Text style={styles.author}>{book.author}</Text>}
                     {bookContent && (
                       <Text style={styles.spreadCount}>
-                        {eligibleSpreads(toPlayableBook(bookContent)).length} spreads ready
+                        {copy.books.spreadsReady(eligibleSpreads(toPlayableBook(bookContent)).length)}
                       </Text>
                     )}
-                    <Text style={styles.choose}>Choose this book</Text>
+                    <Text style={styles.choose}>{copy.books.choose}</Text>
                   </View>
                 </Card>
               </Pressable>
@@ -81,7 +122,7 @@ function BooksContent() {
           <View style={styles.shelfBoard} />
         </View>
       )}
-      <Caption>Only published books appear here.</Caption>
+      <Caption>{copy.books.publishedOnly}</Caption>
       {error && (
         <Text accessibilityRole="alert" style={styles.error}>
           {error}
@@ -95,32 +136,37 @@ const styles = StyleSheet.create({
   heading: { gap: space.xs, maxWidth: 620 },
   catalogState: { gap: space.xs, minHeight: 120, justifyContent: "center" },
   catalogStateText: { color: palette.muted, fontSize: 16, fontWeight: "700", textAlign: "center" },
-  shelf: { gap: space.sm },
-  pressableRow: { width: "100%" },
+  shelf: { flexDirection: "row", flexWrap: "wrap", gap: space[300], justifyContent: "center" },
+  pressableRow: { flexBasis: 260, flexGrow: 1, maxWidth: 340 },
+  filters: { flexDirection: "row", flexWrap: "wrap", gap: space.xxs },
+  filter: { borderColor: palette.line, borderRadius: radius.round, borderWidth: 1, paddingHorizontal: space.sm, paddingVertical: 8 },
+  filterSelected: { backgroundColor: palette.ink, borderColor: palette.ink },
+  filterText: { color: palette.ink, fontSize: 14, fontWeight: "700" },
+  filterTextSelected: { color: palette.paper },
   rowPressed: { opacity: 0.85, transform: [{ scale: 0.995 }] },
   row: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: space.sm,
-    minHeight: 172,
+    alignItems: "stretch",
+    flexDirection: "column",
+    gap: space[100],
+    minHeight: 360,
     overflow: "hidden",
-    padding: space.sm,
-    paddingLeft: space.xs,
+    padding: space[200],
   },
   featuredRow: { borderColor: palette.gold, borderWidth: 2 },
   spineEdge: {
-    alignSelf: "stretch",
+    alignSelf: "auto",
     backgroundColor: palette.leather,
     borderRadius: radius.small,
-    width: 8,
+    height: 8,
+    width: "100%",
   },
-  cover: { height: 148, width: 100 },
+  cover: { alignSelf: "center", height: 210, maxWidth: "100%", width: 142 },
   coverFallback: { backgroundColor: palette.leatherDeep, borderRadius: radius.small },
-  rowCopy: { flex: 1, flexShrink: 1, gap: space.xxs, justifyContent: "center" },
+  rowCopy: { flex: 1, gap: space.xxs, justifyContent: "center" },
   bookTitle: {
     color: palette.ink,
     fontFamily: "serif",
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "800",
     lineHeight: 28,
   },

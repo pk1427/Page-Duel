@@ -2,6 +2,7 @@ import { getSupabase } from "./supabase";
 import { getResult } from "@book-people/game-core";
 import type { GameState, WinReason } from "@book-people/game-core";
 import type { BookContent } from "@book-people/book-data";
+import { copy } from "./copy";
 
 export interface HistoryMatch {
   id: string;
@@ -79,7 +80,7 @@ export async function saveMatch(
 ): Promise<SaveMatchResult> {
   const client = getSupabase();
   if (!client) {
-    return { ok: false, error: "Supabase is not configured" };
+    return { ok: false, error: copy.auth.signInUnavailable };
   }
 
   const result = getResult(state);
@@ -117,7 +118,7 @@ export async function saveMatch(
     if (sessionError.code === "23505") {
       return { ok: true, alreadySaved: true };
     }
-    return { ok: false, error: sessionError.message };
+    return { ok: false, error: copy.errors.saveMatch };
   }
 
   const roundsData = rounds.map((round) => ({
@@ -136,7 +137,7 @@ export async function saveMatch(
 
   if (roundsError) {
     await client.from("game_sessions").delete().eq("id", matchId);
-    return { ok: false, error: roundsError.message };
+    return { ok: false, error: copy.errors.saveMatch };
   }
 
   return { ok: true, alreadySaved: false, matchId };

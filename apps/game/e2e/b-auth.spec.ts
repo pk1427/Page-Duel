@@ -17,11 +17,11 @@ test.describe("authentication and session persistence", () => {
 
     // Home recognizes the signed-in user.
     await page.goto("/");
-    await expect(page.getByText("Signed in — press Play")).toBeVisible();
+    await expect(page.getByText("Signed in. Press Play.")).toBeVisible();
 
     // 4. Refresh restores the session (no bounce to sign-in).
     await page.reload();
-    await expect(page.getByText("Signed in — press Play")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText("Signed in. Press Play.")).toBeVisible({ timeout: 20_000 });
     await page.goto("/books");
     await expect(page.getByText("Choose a book")).toBeVisible();
 
@@ -35,7 +35,7 @@ test.describe("authentication and session persistence", () => {
     await expect(page.getByText("Sign in to play")).toBeVisible();
     await page.goto("/books");
     await page.waitForURL((url) => new URL(url).pathname === "/sign-in", { timeout: 20_000 });
-    await expect(page.getByText("Your shelf of finished games is waiting.")).toBeVisible();
+    await expect(page.getByText("Pick up where you left off.")).toBeVisible();
 
     expectNoAppErrors(ledger);
   });

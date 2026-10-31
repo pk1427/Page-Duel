@@ -4,7 +4,7 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import { getSupabase } from "../supabase";
 import { validatePassword } from "../auth-routing";
 import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
-import { copy } from "../copy/en";
+import { copy } from "../copy";
 
 type Status = "checking" | "ready" | "invalid" | "success" | "error";
 
@@ -39,11 +39,11 @@ export default function ResetPassword() {
         }
         // Verify this is a recovery session by checking the URL hash
         // for type=recovery. If the hash is missing, we may still have a
-        // valid session from a previous flow — treat as invalid for safety.
+        // valid session from a previous flow. Treat as invalid for safety.
         if (typeof window !== "undefined") {
           const hash = window.location.hash;
           if (!hash.includes("type=recovery") && !hash.includes("type%3Drecovery")) {
-            // No recovery token in URL — could be a stale session.
+            // No recovery token in URL. It could be a stale session.
             // Still allow if we have a session (user may have refreshed).
             // But if no recovery context, show invalid link.
             if (!hash.includes("access_token")) {
@@ -225,7 +225,7 @@ export default function ResetPassword() {
           disabled={busy || !newPassword || !confirmPassword}
           onPress={() => void submit()}
         >
-          {busy ? "Updating" : copy.actions.updatePassword}
+          {busy ? copy.actions.updating : copy.actions.updatePassword}
         </AppButton>
         <AppButton onPress={() => router.replace("/sign-in" as Href)} tone="quiet">
           {copy.nav.signIn}
@@ -236,8 +236,8 @@ export default function ResetPassword() {
 }
 
 const s = StyleSheet.create({
-  heading: { gap: space.xs, maxWidth: 620 },
-  form: { gap: space.sm, maxWidth: 520 },
+  heading: { alignSelf: "center", gap: space.xs, maxWidth: 520, width: "100%" },
+  form: { alignSelf: "center", backgroundColor: palette.paper, borderColor: palette.forest, borderRadius: radius.xlarge, borderWidth: 1, gap: space[300], maxWidth: 520, padding: space[400], width: "100%" },
   field: { gap: space.xxs },
   label: {
     color: palette.muted,
@@ -249,7 +249,7 @@ const s = StyleSheet.create({
   input: {
     backgroundColor: palette.white,
     borderColor: palette.line,
-    borderRadius: radius.small,
+    borderRadius: radius.medium,
     borderWidth: 1,
     color: palette.ink,
     fontSize: 18,

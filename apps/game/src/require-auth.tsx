@@ -2,7 +2,7 @@ import { router, type Href } from "expo-router";
 import { useEffect, type ReactNode } from "react";
 import { useSession } from "./session-store";
 import { AppButton, EmptyState, Screen } from "./ui";
-import { copy } from "./copy/en";
+import { copy } from "./copy";
 
 /**
  * Route-level gate for screens that require authentication.
@@ -24,7 +24,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
     return (
       <Screen>
         <EmptyState
-          title="Sign-in is unavailable"
+          title={copy.auth.signInTitleUnavailable}
           detail={copy.auth.signInUnavailable}
           action={
             <AppButton onPress={() => router.replace("/" as Href)}>
@@ -39,11 +39,11 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   return (
     <Screen>
       <EmptyState
-        title={status === "loading" ? "Checking your session" : "Sign in to play"}
+        title={status === "loading" ? copy.requireAuth.checkingTitle : copy.requireAuth.signInTitle}
         detail={
           status === "loading"
-            ? "This will only take a moment."
-            : "Sign in to start a match and save its history."
+            ? copy.requireAuth.checkingDetail
+            : copy.requireAuth.signInDetail
         }
         action={
           status === "loading" ? undefined : (

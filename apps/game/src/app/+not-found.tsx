@@ -1,7 +1,7 @@
 import { router, type Href } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, space } from "../ui";
-import { copy } from "../copy/en";
+import { copy } from "../copy";
 
 /** Friendly web and native fallback for an unknown Expo Router route. */
 export default function NotFoundScreen() {

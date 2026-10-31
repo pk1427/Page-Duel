@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from "react-na
 import type { BookContent } from "@book-people/book-data";
 import { resolveContentAsset } from "./content-assets";
 import { palette, radius } from "./ui";
-import { copy } from "./copy/en";
+import { copy } from "./copy";
 
 /** Resolve a book's cover to a remote URL, or null for the generated Practice Book. */
 function coverUri(book: BookContent): string | null {
@@ -28,7 +28,7 @@ export function BookCover({ book, style }: { book: BookContent; style?: StylePro
   return (
     <View style={[styles.frame, style]}>
       <Image
-        accessibilityLabel={`${book.title} cover`}
+        accessibilityLabel={copy.books.coverLabel(book.title)}
         source={{ uri }}
         contentFit="cover"
         transition={200}

@@ -12,6 +12,8 @@ export interface CatalogBook {
   readonly versionId: string;
   readonly versionLabel: string;
   readonly manifestSha256: string | null;
+  /** The language of the published book content, not the interface language. */
+  readonly language: "en" | "hi" | "mr";
   readonly content: BookContent | null;
 }
 
@@ -20,6 +22,13 @@ export interface CatalogState {
   readonly loading: boolean;
   readonly error: string | null;
   readonly books: readonly CatalogBook[];
+}
+
+export function filterCatalogByLanguage(
+  books: readonly CatalogBook[],
+  language: CatalogBook["language"] | "all",
+): readonly CatalogBook[] {
+  return language === "all" ? books : books.filter((book) => book.language === language);
 }
 
 const fallbackBookMap: Record<string, { id: string; versionId: string; versionLabel: string }> = {
@@ -83,6 +92,9 @@ function mapDbRowToCatalogBook(row: Record<string, unknown>): CatalogBook {
       (row as Record<string, unknown>).id) as string,
     versionLabel: (row as Record<string, unknown>).version_label as string,
     manifestSha256: (row as Record<string, unknown>).manifest_sha256 as string | null,
+    // Legacy published records predate required language metadata and are
+    // explicitly backfilled as English by the companion migration.
+    language: (row.language === "hi" || row.language === "mr" ? row.language : "en"),
     content,
   };
 }
@@ -105,6 +117,7 @@ function fallbackCatalogBooks(): readonly CatalogBook[] {
       versionId: meta.versionId,
       versionLabel: meta.versionLabel,
       manifestSha256: null,
+      language: "en",
       content: book,
     };
   });
@@ -119,7 +132,7 @@ export async function fetchCatalog(): Promise<readonly CatalogBook[]> {
   const { data, error } = await client
     .from("books")
     .select(
-      `slug, title, author, description, cover_asset_path, status,
+      `slug, title, author, description, cover_asset_path, status, language,
        book_versions!inner (id, version_label, manifest_sha256, content_json, publication_status)`,
     )
     .eq("book_versions.publication_status", "published")
@@ -142,6 +155,7 @@ export async function fetchCatalog(): Promise<readonly CatalogBook[]> {
       description: row.description,
       cover_asset_path: row.cover_asset_path,
       status: row.status,
+      language: row.language,
     });
   });
 }
@@ -155,7 +169,7 @@ export async function fetchCatalogBook(slugOrId: string): Promise<CatalogBook | 
   const { data, error } = await client
     .from("books")
     .select(
-      `slug, title, author, description, cover_asset_path, status,
+      `slug, title, author, description, cover_asset_path, status, language,
        book_versions!inner (id, version_label, manifest_sha256, content_json, publication_status)`,
     )
     .eq("book_versions.publication_status", "published")
@@ -180,6 +194,7 @@ export async function fetchCatalogBook(slugOrId: string): Promise<CatalogBook | 
     description: (data as Record<string, unknown>).description,
     cover_asset_path: (data as Record<string, unknown>).cover_asset_path,
     status: (data as Record<string, unknown>).status,
+    language: (data as Record<string, unknown>).language,
   });
 }
 

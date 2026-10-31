@@ -4,7 +4,7 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import { useSession } from "../session-store";
 import { isValidEmail } from "../auth-routing";
 import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
-import { copy } from "../copy/en";
+import { copy } from "../copy";
 
 function getResetRedirectUrl(): string {
   // Use the current origin + /reset-password so the link works in both
@@ -75,8 +75,8 @@ export default function ForgotPassword() {
     return (
       <Screen>
         <View style={s.heading}>
-          <Eyebrow>Check your email</Eyebrow>
-          <Title>Reset link sent</Title>
+          <Eyebrow>{copy.auth.resetSentEyebrow}</Eyebrow>
+          <Title>{copy.auth.resetSentTitle}</Title>
           <Body>{copy.auth.resetSent}</Body>
         </View>
         <Card style={s.form}>
@@ -100,11 +100,9 @@ export default function ForgotPassword() {
   return (
     <Screen>
       <View style={s.heading}>
-        <Eyebrow>Forgot your password</Eyebrow>
-        <Title>Reset your password</Title>
-        <Body>
-          Enter your email address. We’ll send a reset link if there is an account for it.
-        </Body>
+        <Eyebrow>{copy.auth.forgotEyebrow}</Eyebrow>
+        <Title>{copy.auth.forgotTitle}</Title>
+        <Body>{copy.auth.forgotDetail}</Body>
       </View>
       <Card style={s.form}>
         <View style={s.field}>
@@ -134,7 +132,7 @@ export default function ForgotPassword() {
           disabled={busy || !email.trim()}
           onPress={() => void submit()}
         >
-          {busy ? "Sending" : copy.actions.sendResetLink}
+          {busy ? copy.actions.sending : copy.actions.sendResetLink}
         </AppButton>
         <AppButton onPress={() => router.replace("/sign-in" as Href)} tone="quiet">
           {copy.nav.signIn}
@@ -145,8 +143,8 @@ export default function ForgotPassword() {
 }
 
 const s = StyleSheet.create({
-  heading: { gap: space.xs, maxWidth: 620 },
-  form: { gap: space.sm, maxWidth: 520 },
+  heading: { alignSelf: "center", gap: space.xs, maxWidth: 520, width: "100%" },
+  form: { alignSelf: "center", backgroundColor: palette.paper, borderColor: palette.forest, borderRadius: radius.xlarge, borderWidth: 1, gap: space[300], maxWidth: 520, padding: space[400], width: "100%" },
   field: { gap: space.xxs },
   label: {
     color: palette.muted,
@@ -158,7 +156,7 @@ const s = StyleSheet.create({
   input: {
     backgroundColor: palette.white,
     borderColor: palette.line,
-    borderRadius: radius.small,
+    borderRadius: radius.medium,
     borderWidth: 1,
     color: palette.ink,
     fontSize: 18,

@@ -7,6 +7,7 @@ import {
   sessionStatusForEmail,
   type AuthDiagnostic,
 } from "./auth-diagnostics";
+import { copy } from "./copy";
 
 export type SessionStatus = "loading" | "signed-in" | "signed-out" | "unconfigured";
 
@@ -88,7 +89,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     async (email, password) => {
       const client = getSupabase();
       if (!client) {
-        setError("Sign-in is unavailable: no backend is configured.");
+        setError(copy.auth.signInUnavailable);
         return { ok: false };
       }
       setError(null);
@@ -135,7 +136,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     async (email, password) => {
       const client = getSupabase();
       if (!client) {
-        setError("Sign-in is unavailable: no backend is configured.");
+        setError(copy.auth.signInUnavailable);
         return { ok: false };
       }
       setError(null);
@@ -179,7 +180,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const updateDisplayName: SessionStore["updateDisplayName"] = useCallback(async (name) => {
     const client = getSupabase();
     if (!client) {
-      setError("Sign-in is unavailable: no backend is configured.");
+      setError(copy.auth.signInUnavailable);
       return { ok: false };
     }
     const validationError = validateDisplayName(name);
@@ -194,7 +195,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     // still rejects any user_id that is not auth.uid().
     const { data: userData, error: userError } = await client.auth.getUser();
     if (userError || !userData.user) {
-      setError("Your session expired. Sign in again, then retry.");
+      setError(copy.errors.sessionExpired);
       return { ok: false };
     }
     const { data, error: updateError } = await client
@@ -204,7 +205,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       .select("display_name")
       .single();
     if (updateError) {
-      setError("Could not save that name. Try again.");
+      setError(copy.errors.saveName);
       return { ok: false };
     }
     setDisplayName(data?.display_name ?? clean);

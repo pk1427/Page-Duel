@@ -25,8 +25,8 @@ test.describe("account identity and two-player independence", () => {
     await page.goto("/profile");
     const nameField = page.getByRole("textbox", { name: "Display name", exact: true });
     await nameField.fill("Account Holder");
-    await page.getByRole("button", { name: "Save display name", exact: true }).click();
-    await expect(page.getByText("Saved to your shelf card.")).toBeVisible();
+    await page.getByRole("button", { name: "Save name", exact: true }).click();
+    await expect(page.getByText("Name saved.")).toBeVisible();
 
     // Start a match with unrelated player names; the game shows only those.
     await startMatch(page, {
@@ -43,14 +43,14 @@ test.describe("account identity and two-player independence", () => {
     // Play a round and exit the match (navigation is hidden during a match).
     await playOneRound(page);
     await page.getByRole("button", { name: "Exit match", exact: true }).click();
-    await page.getByRole("button", { name: "Exit Match", exact: true }).click();
+    await page.getByRole("button", { name: "Exit match", exact: true }).last().click();
     await expectPath(page, "/books");
 
     // Change the profile display name.
     await page.goto("/profile");
     await nameField.fill("Renamed Holder");
-    await page.getByRole("button", { name: "Save display name", exact: true }).click();
-    await expect(page.getByText("Saved to your shelf card.")).toBeVisible();
+    await page.getByRole("button", { name: "Save name", exact: true }).click();
+    await expect(page.getByText("Name saved.")).toBeVisible();
 
     // Start a fresh match with the same player names; the game must still
     // show the per-match player names, not the profile display name.

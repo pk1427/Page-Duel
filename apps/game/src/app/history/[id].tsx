@@ -18,7 +18,7 @@ import {
   palette,
   space,
 } from "../../ui";
-import { copy, people, personLabel, roundWins } from "../../copy/en";
+import { copy, people, personLabel, roundWins } from "../../copy";
 
 export default function HistoryDetail() {
   return (
@@ -90,11 +90,12 @@ function HistoryDetailContent() {
   }
 
   if (error || !match) {
+    const missingMatch = error === copy.errors.matchUnavailable;
     return (
       <Screen>
         <EmptyState
-          title={error || copy.history.loadFailedTitle}
-          detail={match ? "" : copy.history.missingDetail}
+          title={missingMatch ? copy.history.matchNotFoundTitle : copy.history.loadFailedTitle}
+          detail={missingMatch ? copy.errors.matchUnavailable : (error ?? copy.history.missingDetail)}
           action={<AppButton onPress={onRefresh}>{copy.actions.retry}</AppButton>}
         />
       </Screen>

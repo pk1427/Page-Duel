@@ -15,7 +15,8 @@ import {
   radius,
   space,
 } from "../ui";
-import { copy } from "../copy/en";
+import { copy } from "../copy";
+import { HeroBookIllustration } from "../illustrations";
 
 export default function SignIn() {
   const { signIn, error, authDiagnostic, status } = useSession();
@@ -34,7 +35,7 @@ export default function SignIn() {
     return (
       <Screen>
         <EmptyState
-          title="Sign-in is unavailable"
+          title={copy.auth.signInTitleUnavailable}
           detail={copy.auth.signInUnavailable}
           action={
             <AppButton onPress={() => router.replace("/" as Href)}>
@@ -54,11 +55,16 @@ export default function SignIn() {
   };
 
   return (
-    <Screen>
-      <View style={s.heading}>
-        <Eyebrow>Welcome back</Eyebrow>
-        <Title>{copy.nav.signIn}</Title>
-        <Body>Pick up where you left off.</Body>
+    <Screen style={s.page}>
+      <View style={s.intro}>
+        <View style={s.illustration} accessible accessibilityLabel={copy.home.storybookLabel}>
+          <HeroBookIllustration width={180} height={144} />
+        </View>
+        <View style={s.heading}>
+          <Eyebrow>{copy.auth.welcomeBack}</Eyebrow>
+          <Title style={s.headingTitle}>{copy.nav.signIn}</Title>
+          <Body style={s.headingBody}>{copy.auth.signInDetail}</Body>
+        </View>
       </View>
       <Card style={s.form}>
         <View style={s.field}>
@@ -89,7 +95,7 @@ export default function SignIn() {
             style={s.input}
           />
           <AppButton onPress={() => router.push("/forgot-password" as Href)} tone="quiet">
-            Forgot password
+            {copy.actions.forgotPassword}
           </AppButton>
         </View>
         {error && (
@@ -101,11 +107,11 @@ export default function SignIn() {
               <View>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Toggle technical sign-in details"
+                  accessibilityLabel={copy.auth.toggleTechnicalDetails}
                   onPress={() => setShowTechnicalDetails((visible) => !visible)}
                 >
                   <Text style={s.technicalToggle}>
-                    {showTechnicalDetails ? "Hide technical details" : "Technical details"}
+                    {showTechnicalDetails ? copy.auth.hideTechnicalDetails : copy.auth.technicalDetails}
                   </Text>
                 </Pressable>
                 {showTechnicalDetails && (
@@ -130,7 +136,7 @@ export default function SignIn() {
           }
           tone="quiet"
         >
-          Create an account
+          {copy.actions.createAccount}
         </AppButton>
       </Card>
     </Screen>
@@ -138,8 +144,13 @@ export default function SignIn() {
 }
 
 const s = StyleSheet.create({
-  heading: { gap: space.xs, maxWidth: 620 },
-  form: { gap: space.sm, maxWidth: 520 },
+  page: { justifyContent: "center", minHeight: "100%" },
+  intro: { alignItems: "center", alignSelf: "center", gap: space[200], maxWidth: 560, width: "100%" },
+  illustration: { alignItems: "center", backgroundColor: palette.forestLight, borderRadius: radius.xlarge, justifyContent: "center", minHeight: 168, minWidth: 210, padding: space[100] },
+  heading: { alignItems: "center", gap: space.xs, width: "100%" },
+  headingTitle: { textAlign: "center" },
+  headingBody: { textAlign: "center" },
+  form: { alignSelf: "center", backgroundColor: palette.paper, borderColor: palette.forest, borderRadius: radius.xlarge, borderWidth: 1, gap: space[300], maxWidth: 560, padding: space[400], width: "100%" },
   field: { gap: space.xxs },
   label: {
     color: palette.muted,
@@ -151,7 +162,7 @@ const s = StyleSheet.create({
   input: {
     backgroundColor: palette.white,
     borderColor: palette.line,
-    borderRadius: radius.small,
+    borderRadius: radius.medium,
     borderWidth: 1,
     color: palette.ink,
     fontSize: 18,

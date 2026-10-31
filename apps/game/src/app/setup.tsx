@@ -19,7 +19,7 @@ import {
 } from "../ui";
 
 import { RequireAuth } from "../require-auth";
-import { copy } from "../copy/en";
+import { copy } from "../copy";
 
 export default function Setup() {
   return (
@@ -43,9 +43,9 @@ function SetupContent() {
     return (
       <Screen>
         <EmptyState
-          title="Choose a book first"
-          detail="A game needs a ready book before its spreads can be dealt."
-          action={<AppButton onPress={() => router.replace("/books")}>Browse books</AppButton>}
+          title={copy.setup.chooseBookFirstTitle}
+          detail={copy.setup.chooseBookFirstDetail}
+          action={<AppButton onPress={() => router.replace("/books")}>{copy.actions.browseBooks}</AppButton>}
         />
       </Screen>
     );
@@ -87,8 +87,8 @@ function SetupContent() {
           <View style={s.playerField}>
             <Text style={s.playerTagLeft}>{copy.setup.playerOne}</Text>
             <TextInput
-              accessibilityLabel="Player 1 name"
-              placeholder="Player 1"
+              accessibilityLabel={copy.setup.playerOneName}
+              placeholder={copy.setup.playerOnePlaceholder}
               placeholderTextColor="#8B7D70"
               value={a}
               onChangeText={setA}
@@ -98,8 +98,8 @@ function SetupContent() {
           <View style={s.playerField}>
             <Text style={s.playerTagRight}>{copy.setup.playerTwo}</Text>
             <TextInput
-              accessibilityLabel="Player 2 name"
-              placeholder="Player 2"
+              accessibilityLabel={copy.setup.playerTwoName}
+              placeholder={copy.setup.playerTwoPlaceholder}
               placeholderTextColor="#8B7D70"
               value={b}
               onChangeText={setB}
@@ -121,7 +121,7 @@ function SetupContent() {
               style={[s.choice, rounds === n && s.active]}
             >
               <Text style={[s.choiceNumber, rounds === n && s.choiceNumberActive]}>{n}</Text>
-              <Text style={[s.choiceCopy, rounds === n && s.choiceCopyActive]}>rounds</Text>
+              <Text style={[s.choiceCopy, rounds === n && s.choiceCopyActive]}>{copy.setup.roundsLabel}</Text>
             </Pressable>
           ))}
         </View>
@@ -140,10 +140,10 @@ function SetupContent() {
 
 const s = StyleSheet.create({
   heading: { gap: space.xs, maxWidth: 620 },
-  section: { gap: space.xs },
-  label: { color: palette.ink, fontSize: 18, fontWeight: "800" },
-  players: { flexDirection: "row", flexWrap: "wrap", gap: space.sm },
-  playerField: { flexBasis: 260, flexGrow: 1, gap: space.xxs },
+  section: { backgroundColor: palette.paper, borderColor: palette.line, borderRadius: radius.large, borderWidth: 1, gap: space[200], padding: space[300] },
+  label: { color: palette.ink, fontFamily: "serif", fontSize: 20, fontWeight: "700" },
+  players: { flexDirection: "row", flexWrap: "wrap", gap: space[200] },
+  playerField: { backgroundColor: palette.white, borderColor: palette.line, borderRadius: radius.medium, borderWidth: 1, flexBasis: 260, flexGrow: 1, gap: space.xxs, padding: space[200] },
   playerTagLeft: {
     color: palette.leftPlayer,
     fontSize: 13,
@@ -159,9 +159,9 @@ const s = StyleSheet.create({
     textTransform: "uppercase",
   },
   input: {
-    backgroundColor: palette.white,
+    backgroundColor: palette.canvas,
     borderColor: palette.line,
-    borderRadius: radius.small,
+    borderRadius: radius.medium,
     borderWidth: 1,
     color: palette.ink,
     fontSize: 18,
@@ -173,20 +173,21 @@ const s = StyleSheet.create({
     alignItems: "center",
     backgroundColor: palette.white,
     borderColor: palette.line,
-    borderRadius: radius.medium,
+    borderRadius: radius.large,
     borderWidth: 2,
     minHeight: 78,
     minWidth: 94,
     justifyContent: "center",
   },
-  active: { backgroundColor: palette.plum, borderColor: palette.gold },
+  active: { backgroundColor: palette.forest, borderColor: palette.forestDark },
   choiceNumber: { color: palette.ink, fontSize: 25, fontWeight: "800" },
   choiceNumberActive: { color: palette.white },
   choiceCopy: { color: palette.muted, fontSize: 12, fontWeight: "800", textTransform: "uppercase" },
-  choiceCopyActive: { color: "#EFD8D3" },
+  choiceCopyActive: { color: palette.mintLight },
   book: {
     alignItems: "center",
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: space.xs,
     overflow: "hidden",
     padding: space.xs,
@@ -199,7 +200,7 @@ const s = StyleSheet.create({
     width: 8,
   },
   bookCover: { height: 78, width: 52 },
-  bookCopy: { flex: 1, gap: 2, minWidth: 0 },
+  bookCopy: { flex: 1, flexBasis: 150, gap: 2, minWidth: 0 },
   bookTitle: {
     color: palette.ink,
     fontFamily: "serif",

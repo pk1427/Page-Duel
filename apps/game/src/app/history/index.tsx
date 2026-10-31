@@ -5,7 +5,7 @@ import { RequireAuth } from "../../require-auth";
 import { getHistory, type HistoryMatch } from "../../history";
 import { BookCover } from "../../cover-image";
 import { reasonLabel } from "../../reason-label";
-import { copy, personLabel, roundWins } from "../../copy/en";
+import { copy, personLabel, roundWins } from "../../copy";
 import {
   AppButton,
   Badge,
@@ -192,10 +192,10 @@ function HistoryMatchCard({ match }: HistoryMatchCardProps) {
           />
           <View style={s.bookMeta}>
             <Text style={s.bookTitle} numberOfLines={1}>
-              {match.bookTitle}
+              {copy.history.matchRowTitle(match.player1Name, match.player2Name)}
             </Text>
             <Caption style={s.bookMetaText}>
-              {copy.history.matchMeta(match.player1Name, match.player2Name, dateStr, timeStr)}
+              {copy.history.matchRowDate(dateStr, timeStr)}
             </Caption>
           </View>
         </View>
@@ -235,24 +235,24 @@ function HistoryMatchCard({ match }: HistoryMatchCardProps) {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
-  header: { gap: space.xs, marginTop: space.lg, paddingHorizontal: space.md },
+  header: { backgroundColor: palette.forestLight, borderColor: palette.forest, borderRadius: radius.large, borderWidth: 1, gap: space.xs, marginTop: space.lg, padding: space[300] },
   list: { paddingHorizontal: space.md, paddingBottom: space.xl, gap: space.md },
   loadMore: { paddingVertical: space.md, alignItems: "center" },
   card: {
-    backgroundColor: palette.paper,
+    backgroundColor: palette.white,
     borderColor: palette.line,
     borderWidth: 1,
     borderRadius: radius.large,
-    padding: space.md,
-    gap: space.md,
+    padding: space[300],
+    gap: space[200],
   },
-  cardTop: { flexDirection: "row", alignItems: "center", gap: space.md },
+  cardTop: { alignItems: "center", flexDirection: "row", flexWrap: "wrap", gap: space.md },
   bookInfo: { flex: 1, flexDirection: "row", alignItems: "center", gap: space.sm, minWidth: 0 },
   cover: { width: 48, height: 48, borderRadius: radius.small, backgroundColor: palette.canvas },
   bookMeta: { flex: 1, gap: 2, minWidth: 0 },
   bookTitle: { color: palette.ink, fontFamily: "serif", fontSize: 17, fontWeight: "700" },
   bookMetaText: { color: palette.muted },
-  resultBadge: { alignItems: "flex-end", gap: space.xxs },
+  resultBadge: { alignItems: "flex-end", flexGrow: 1, gap: space.xxs },
   reasonText: { color: palette.muted, textAlign: "right" },
   scores: { flexDirection: "row", gap: space.md, paddingTop: space.xs },
   playerScore: { flex: 1, gap: space.xxs },

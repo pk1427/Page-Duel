@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Staging asset verification", () => {
+// This suite uses a hosted project and is intentionally excluded from the
+// local-only E2E workflow. Keep its selectors current, but never run it as
+// part of the local browser suite.
+test.describe.skip("Staging asset verification", () => {
   test("Alice cover and page load from Supabase Storage", async ({ page }) => {
     // Sign in with pre-created user
     await page.goto("/sign-in?next=/books");
@@ -24,13 +27,13 @@ test.describe("Staging asset verification", () => {
     await page.getByPlaceholder("Player 1").fill("Left Reader");
     await page.getByPlaceholder("Player 2").fill("Right Reader");
     await page.getByRole("radio", { name: "5 rounds", exact: true }).click();
-    await page.getByRole("button", { name: "Start Game", exact: true }).click();
+    await page.getByRole("button", { name: "Start game", exact: true }).click();
     await page.waitForURL((url) => new URL(url).pathname === "/game");
     await expect(page.getByText("Round 1 of 5")).toBeVisible();
 
     // Flip spread and verify page images load from Supabase
-    await page.getByRole("button", { name: "Flip spread", exact: true }).click();
-    const continueButton = page.getByRole("button", { name: "Continue game", exact: true });
+    await page.getByRole("button", { name: "Flip the page", exact: true }).click();
+    const continueButton = page.getByRole("button", { name: "Next round", exact: true });
     await continueButton.waitFor({ state: "visible", timeout: 60000 });
 
     const leftPage = page.getByRole("img", { name: "Left Reader page" });
@@ -63,7 +66,7 @@ test.describe("Staging asset verification", () => {
     expect(rightSize.h).toBeGreaterThan(0);
 
     // Continue to complete round
-    await page.getByRole("button", { name: "Continue game", exact: true }).click();
+    await page.getByRole("button", { name: "Next round", exact: true }).click();
     try {
       await page.waitForURL((url) => new URL(url).pathname === "/result", { timeout: 8000 });
       console.log("Match completed to result screen");
@@ -95,13 +98,13 @@ test.describe("Staging asset verification", () => {
     await page.getByPlaceholder("Player 1").fill("Left Reader");
     await page.getByPlaceholder("Player 2").fill("Right Reader");
     await page.getByRole("radio", { name: "5 rounds", exact: true }).click();
-    await page.getByRole("button", { name: "Start Game", exact: true }).click();
+    await page.getByRole("button", { name: "Start game", exact: true }).click();
     await page.waitForURL((url) => new URL(url).pathname === "/game");
     await expect(page.getByText("Round 1 of 5")).toBeVisible();
 
     // Flip spread and verify page images load from Supabase
-    await page.getByRole("button", { name: "Flip spread", exact: true }).click();
-    const continueButton = page.getByRole("button", { name: "Continue game", exact: true });
+    await page.getByRole("button", { name: "Flip the page", exact: true }).click();
+    const continueButton = page.getByRole("button", { name: "Next round", exact: true });
     await continueButton.waitFor({ state: "visible", timeout: 60000 });
 
     const leftPage = page.getByRole("img", { name: "Left Reader page" });
@@ -147,12 +150,12 @@ test.describe("Staging asset verification", () => {
     await page.getByPlaceholder("Player 1").fill("Ann");
     await page.getByPlaceholder("Player 2").fill("Bob");
     await page.getByRole("radio", { name: "5 rounds", exact: true }).click();
-    await page.getByRole("button", { name: "Start Game", exact: true }).click();
+    await page.getByRole("button", { name: "Start game", exact: true }).click();
     await page.waitForURL((url) => new URL(url).pathname === "/game");
     await expect(page.getByText("Round 1 of 5")).toBeVisible();
 
-    await page.getByRole("button", { name: "Flip spread", exact: true }).click();
-    const continueButton = page.getByRole("button", { name: "Continue game", exact: true });
+    await page.getByRole("button", { name: "Flip the page", exact: true }).click();
+    const continueButton = page.getByRole("button", { name: "Next round", exact: true });
     await continueButton.waitFor({ state: "visible", timeout: 30000 });
 
     console.log("Practice book round completed");

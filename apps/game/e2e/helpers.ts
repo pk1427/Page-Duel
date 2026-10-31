@@ -163,12 +163,12 @@ export async function playOneRound(page: Page): Promise<string> {
   await page.getByRole("button", { name: "Flip the page", exact: true }).click();
   const continueButton = page.getByRole("button", { name: "Next round", exact: true });
   await continueButton.waitFor({ state: "visible", timeout: REVEAL_MS + 15_000 });
-  // Round banner text ("X wins the round" / "Draw") on the active screen.
+  // Round banner text ("X won the round." / "This round is a draw.") on the active screen.
   const body = await visibleText(page);
-  const banner = /wins the round/.test(body)
-    ? (body.match(/.+ wins the round/)?.[0] ?? "")
-    : /Draw/.test(body)
-      ? "Draw"
+  const banner = /won the round\./i.test(body)
+    ? (body.match(/.+ won the round\./i)?.[0] ?? "")
+    : /this round is a draw\./i.test(body)
+      ? "This round is a draw."
       : "";
   return banner;
 }
