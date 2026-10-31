@@ -1,4 +1,4 @@
-import type { WinReason } from "@book-people/game-core";
+import { reasonLabel as coreReasonLabel, type WinReason } from "@book-people/game-core";
 import { copy } from "./copy";
 
 export function reasonLabel(reason: WinReason): string {

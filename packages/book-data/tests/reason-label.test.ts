@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { reasonLabel } from "../../../apps/game/src/reason-label";
+import { reasonLabel } from "@book-people/game-core";
 
 describe("reasonLabel", () => {
   it("maps every game result reason to player-facing text", () => {
