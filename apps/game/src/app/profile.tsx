@@ -1,6 +1,6 @@
 import { router, type Href } from "expo-router";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
 import { useSession } from "../session-store";
 import { RequireAuth } from "../require-auth";
 import { AppButton, Body, Card, Eyebrow, Screen, Title, palette, radius, space } from "../ui";
@@ -21,6 +21,8 @@ function initialsFor(displayName: string | null, email: string | null): string {
 }
 
 function ProfileContent() {
+  const { width } = useWindowDimensions();
+  const desktop = width >= 768;
   const { userEmail, displayName, error, updateDisplayName, signOut } = useSession();
   const { language, setLanguage } = useLanguage();
   const [name, setName] = useState("");
@@ -28,8 +30,6 @@ function ProfileContent() {
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // When the user hasn't edited, the input shows the session displayName.
-  // When the user has edited, the input shows the local name state.
   const inputValue = hasEdited ? name : (displayName ?? "");
   const dirty = hasEdited && name.trim() !== (displayName ?? "");
 
@@ -45,17 +45,17 @@ function ProfileContent() {
 
   return (
     <Screen>
-      <View style={s.heading}>
+      <View style={[s.heading, desktop && s.headingDesktop]}>
         <Eyebrow>{copy.profile.eyebrow}</Eyebrow>
         <Title>{copy.profile.title}</Title>
       </View>
-      <Card style={s.card}>
-        <View style={s.identity}>
-          <View style={s.avatar}>
-            <Text style={s.avatarText}>{initialsFor(displayName, userEmail)}</Text>
+      <Card style={[s.card, desktop && s.cardDesktop]}>
+        <View style={[s.identity, desktop && s.identityDesktop]}>
+          <View style={[s.avatar, desktop && s.avatarDesktop]}>
+            <Text style={[s.avatarText, desktop && s.avatarTextDesktop]}>{initialsFor(displayName, userEmail)}</Text>
           </View>
           <View style={s.identityCopy}>
-            <Text style={s.name}>{displayName || copy.profile.displayNamePlaceholder}</Text>
+            <Text style={[s.name, desktop && s.nameDesktop]}>{displayName || copy.profile.displayNamePlaceholder}</Text>
             {userEmail && <Body>{userEmail}</Body>}
           </View>
         </View>
@@ -90,10 +90,10 @@ function ProfileContent() {
           {copy.profile.detail}
         </Body>
       </Card>
-      <Card style={s.languageCard}>
+      <Card style={[s.languageCard, desktop && s.languageCardDesktop]}>
         <Text style={s.label}>{copy.language.title}</Text>
         <Body>{copy.language.detail}</Body>
-        <View accessibilityRole="radiogroup" style={s.languageOptions}>
+        <View accessibilityRole="radiogroup" style={[s.languageOptions, desktop && s.languageOptionsDesktop]}>
           {languageOptions.map((option) => {
             const selected = option.value === language;
             return (
@@ -103,21 +103,17 @@ function ProfileContent() {
                 accessibilityRole="radio"
                 accessibilityState={{ selected }}
                 onPress={() => setLanguage(option.value)}
-                style={[s.languageOption, selected && s.languageOptionSelected]}
+                style={[s.languageOption, selected && s.languageOptionSelected, desktop && s.languageOptionDesktop]}
               >
-                <Text style={[s.languageOptionText, selected && s.languageOptionTextSelected]}>{option.label}</Text>
+                <Text style={[s.languageOptionText, selected && s.languageOptionTextSelected, desktop && s.languageOptionTextDesktop]}>{option.label}</Text>
               </Pressable>
             );
           })}
         </View>
       </Card>
-      <View style={s.actions}>
+      <View style={[s.actions, desktop && s.actionsDesktop]}>
         <AppButton
           onPress={() => {
-            // Navigate home first while the auth gate is still satisfied, then
-            // end the session. The reverse order races the RequireAuth
-            // signed-out redirect (stale Profile screen bounces to /sign-in),
-            // making sign-out land on two different screens nondeterministically.
             router.replace("/" as Href);
             void signOut();
           }}
@@ -132,8 +128,11 @@ function ProfileContent() {
 
 const s = StyleSheet.create({
   heading: { gap: space.xs, maxWidth: 620 },
+  headingDesktop: { maxWidth: 720 },
   card: { borderColor: palette.forest, gap: space[300], maxWidth: 520 },
+  cardDesktop: { maxWidth: 640, padding: space[400] },
   identity: { alignItems: "center", flexDirection: "row", gap: space.sm },
+  identityDesktop: { gap: space.md },
   avatar: {
     alignItems: "center",
     backgroundColor: palette.plum,
@@ -142,9 +141,12 @@ const s = StyleSheet.create({
     justifyContent: "center",
     width: 56,
   },
+  avatarDesktop: { height: 72, width: 72 },
   avatarText: { color: palette.paper, fontSize: 20, fontWeight: "800" },
+  avatarTextDesktop: { fontSize: 28 },
   identityCopy: { flex: 1, gap: 2 },
   name: { color: palette.ink, fontFamily: "serif", fontSize: 26, fontWeight: "800" },
+  nameDesktop: { fontSize: 32 },
   field: { gap: space.xxs },
   label: {
     color: palette.muted,
@@ -167,10 +169,15 @@ const s = StyleSheet.create({
   saved: { color: palette.moss, fontSize: 15, fontWeight: "700" },
   note: { fontSize: 15 },
   actions: { maxWidth: 520 },
+  actionsDesktop: { maxWidth: 640 },
   languageCard: { backgroundColor: palette.forestLight, borderColor: palette.forest, gap: space[200], maxWidth: 520 },
+  languageCardDesktop: { maxWidth: 640, padding: space[400] },
   languageOptions: { flexDirection: "row", flexWrap: "wrap", gap: space.xxs },
+  languageOptionsDesktop: { gap: space.sm },
   languageOption: { borderColor: palette.line, borderRadius: radius.round, borderWidth: 1, paddingHorizontal: space.sm, paddingVertical: 9 },
+  languageOptionDesktop: { paddingHorizontal: space.md, paddingVertical: 12 },
   languageOptionSelected: { backgroundColor: palette.forest, borderColor: palette.forest },
   languageOptionText: { color: palette.ink, fontSize: 15, fontWeight: "700" },
+  languageOptionTextDesktop: { fontSize: 16 },
   languageOptionTextSelected: { color: palette.paper },
 });
